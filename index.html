@@ -30,35 +30,10 @@
     tr:hover td { background-color: #f1f3f5; }
     .status-msg { text-align: center; color: #888; padding: 40px !important; font-style: italic; }
     
-    /* 🔴 ALERTA ROJA (CHECKLIST / FEBRERO / PROYECTO S) */
-    .alerta-roja { 
-      background-color: #ffebee !important; 
-      color: #c62828; 
-      border-left: 5px solid #d32f2f;
-    }
-    .indicacion-critica {
-      display: block;
-      font-size: 11px;
-      color: #d32f2f;
-      margin-top: 4px;
-      text-transform: uppercase;
-      font-weight: 800;
-    }
-
-    /* 🟢 ALERTA VERDE (PASA POR GARANTÍA) */
-    .alerta-garantia {
-      background-color: #e8f5e9 !important;
-      color: #1b5e20;
-      border-left: 5px solid #2e7d32;
-    }
-    .indicacion-garantia {
-      display: block;
-      font-size: 11px;
-      color: #2e7d32;
-      margin-top: 4px;
-      text-transform: uppercase;
-      font-weight: 800;
-    }
+    .alerta-roja { background-color: #ffebee !important; color: #c62828; border-left: 5px solid #d32f2f; }
+    .indicacion-critica { display: block; font-size: 11px; color: #d32f2f; margin-top: 4px; text-transform: uppercase; font-weight: 800; }
+    .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; border-left: 5px solid #2e7d32; }
+    .indicacion-garantia { display: block; font-size: 11px; color: #2e7d32; margin-top: 4px; text-transform: uppercase; font-weight: 800; }
   </style>
 </head>
 <body>
@@ -76,7 +51,7 @@
   <div id="modulo-agencias" class="tab-content active">
     <div class="search-container">
       <h3>Segmentador de Agencias Autorizadas</h3>
-      <p>Búsqueda por nombre o número. Las alertas de procesos se calculan dinámicamente.</p>
+      <p>Búsqueda por nombre o número. Las alertas se calculan automáticamente.</p>
       <div class="input-box">
         <input type="text" id="input-agencia" placeholder="Ej. Tlalnepantla, Ecatepec..." onkeyup="buscarAgencias()">
       </div>
@@ -86,10 +61,10 @@
       <table id="tabla-agencias">
         <thead>
           <tr>
-            <th style="width: 10%;">Nº (Col A)</th>
-            <th style="width: 35%;">Agencia (Col B)</th>
-            <th style="width: 25%;">Acción a Realizar (Col N)</th>
-            <th style="width: 30%;">Estatus / Indicación (Col O)</th>
+            <th style="width: 10%;">Nº</th>
+            <th style="width: 35%;">Agencia</th>
+            <th style="width: 25%;">Acción a Realizar</th>
+            <th style="width: 30%;">Estatus / Indicación</th>
           </tr>
         </thead>
         <tbody>
@@ -102,7 +77,7 @@
   <div id="modulo-series" class="tab-content">
     <div class="search-container" style="border-color: #222;">
       <h3>Segmentador de Números de Serie</h3>
-      <p>Escribe el número de serie para comprobar detalles de recepción y dictamen.</p>
+      <p>Escribe el número de serie para comprobar detalles de recepción.</p>
       <div class="input-box">
         <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
       </div>
@@ -131,21 +106,118 @@
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
 
     window.onload = function() {
-      fetch(urlAgencias).then(r => r.text()).then(data => procesarAgenciasCSV(data));
-      fetch(urlSeries).then(r => r.text()).then(data => procesarSeriesCSV(data));
+      fetch(urlAgencias).then(r => r.text()).then(data => procesarAgenciasCSV(data)).catch(e => console.error(e));
+      fetch(urlSeries).then(r => r.text()).then(data => procesarSeriesCSV(data)).catch(e => console.error(e));
     };
 
     function cambiarPestana(evt, idModulo, esNegro = false) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
-      
       document.getElementById(idModulo).classList.add('active');
       evt.currentTarget.classList.add('active');
-      if(esNegro) {
-        evt.currentTarget.classList.add('black-tab');
-      }
+      if(esNegro) evt.currentTarget.classList.add('black-tab');
+    }
+
+    // Convertidor seguro de CSV a Matriz de celdas
+    function parsearCSVLineas(texto) {
+      const lineas = texto.split(/\r?\n/);
+      return lineas.map(linea => {
+        const resultado = [];
+        let dentroDeComillas = false;
+        let celdaActual = '';
+        for (let i = 0; i < linea.length; i++) {
+          let char = linea[i];
+          if (char === '"') {
+            dentroDeComillas = !dentroDeComillas;
+          } else if (char === ',' && !dentroDeComillas) {
+            resultado.push(celdaActual.trim());
+            celdaActual = '';
+          } else {
+            celdaActual += char;
+          }
+        }
+        resultado.push(celdaActual.trim());
+        return resultado;
+      });
     }
 
     function procesarAgenciasCSV(texto) {
-      const lineas = texto.split('\n');
+      const filas = parsearCSVLineas(texto);
       const tbody = document.querySelector('#tabla-agencias tbody');
+      tbody.innerHTML = '';
+      
+      for(let i = 1; i < filas.length; i++) {
+        const columnas = filas[i];
+        if(columnas.length < 2 || !columnas[1]) continue;
+        
+        const colA = columnas[0] || ''; 
+        const colB = columnas[1] || ''; 
+        const colN = columnas[13] || ''; 
+        const colO = columnas[14] || ''; 
+        
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-search', colB.toLowerCase());
+        
+        const accionTexto = colN.toUpperCase();
+        const estatusTexto = colO.toUpperCase();
+        
+        if (accionTexto.includes("GARANTIA") || accionTexto.includes("GARANTÍA")) {
+          tr.classList.add('alerta-garantia');
+          tr.innerHTML = `
+            <td>${colA}</td>
+            <td><strong>${colB}</strong></td>
+            <td><strong>${colN}</strong></td>
+            <td>${colO} <span class="indicacion-garantia">📸 AGREGAR CAPTURA DE PANTALLA Y PASAR POR GARANTÍA</span></td>
+          `;
+        } else if (accionTexto.includes("CHECK LIST") || accionTexto.includes("CHECKLIST") || estatusTexto.includes("1 DE FEBRERO") || estatusTexto.includes("PROYECTO S")) {
+          tr.classList.add('alerta-roja');
+          tr.innerHTML = `
+            <td>${colA}</td>
+            <td><strong>${colB}</strong></td>
+            <td>${colN}</td>
+            <td>${colO} <span class="indicacion-critica">⚠️ ¡BUSCAR TIENDA EN PESTAÑA PROYECTO S!</span></td>
+          `;
+        } else {
+          tr.innerHTML = `<td>${colA}</td><td><strong>${colB}</strong></td><td>${colN}</td><td>${colO}</td>`;
+        }
+        tbody.appendChild(tr);
+      }
+    }
+
+    function procesarSeriesCSV(texto) {
+      const filas = parsearCSVLineas(texto);
+      const tbody = document.querySelector('#tabla-series tbody');
+      tbody.innerHTML = '';
+      
+      for(let i = 1; i < filas.length; i++) {
+        const columnas = filas[i];
+        if(columnas.length < 1 || !columnas[0]) continue;
+        
+        const serie = columnas[0] || '';
+        const art = columnas[1] || '';
+        const fec = columnas[2] || '';
+        const acc = columnas[3] || '';
+        
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-search', serie.toLowerCase());
+        tr.innerHTML = `<td><strong>${serie}</strong></td><td>${art}</td><td>${fec}</td><td>${acc}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function buscarAgencias() {
+      const val = document.getElementById('input-agencia').value.toLowerCase();
+      document.querySelectorAll('#tabla-agencias tbody tr').forEach(tr => {
+        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
+      });
+    }
+
+    function buscarSeries() {
+      const val = document.getElementById('input-serie').value.toLowerCase();
+      document.querySelectorAll('#tabla-series tbody tr').forEach(tr => {
+        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
