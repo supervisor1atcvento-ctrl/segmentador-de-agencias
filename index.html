@@ -16,7 +16,6 @@
     .tab-content { display: none; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-top: -17px; }
     .tab-content.active { display: block; }
     
-    /* CAJA DE INSTRUCCIONES ESCRITAS ARRIBA */
     .instrucciones-box { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 15px; margin-bottom: 15px; font-size: 12px; line-height: 1.5; }
     .instrucciones-box h4 { margin: 0 0 8px 0; color: #334155; text-transform: uppercase; font-size: 13px; font-weight: 700; }
     .instrucciones-list { margin: 0; padding-left: 20px; }
@@ -37,7 +36,7 @@
     tr:hover td { background-color: #f1f3f5; }
     .status-msg { text-align: center; color: #888; padding: 40px !important; font-style: italic; }
     
-    /* ALERTAS VISUALES */
+    /* CONFIGURACIÓN DE COLORES POR RENGLÓN */
     .alerta-roja { background-color: #ffebee !important; color: #c62828; border-left: 5px solid #d32f2f; }
     .indicacion-critica { display: block; font-size: 11px; color: #d32f2f; margin-top: 4px; text-transform: uppercase; font-weight: 800; }
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; border-left: 5px solid #2e7d32; }
@@ -61,9 +60,9 @@
     <div class="instrucciones-box">
       <h4>📋 Guía de Acción Rápida para Asesores</h4>
       <ul class="instrucciones-list">
-        <li>🔴 <strong style="color: #d32f2f;">Si el registro es ROJO (Check List / Proyecto S):</strong> Indica que la unidad requiere validación especial. Debes ir inmediatamente a la pestaña <strong>"PROYECTO S (SERIES)"</strong> de arriba y buscar el estatus por número de serie.</li>
-        <li>🟢 <strong style="color: #2e7d32;">Si el registro es VERDE (Pasa por Garantía):</strong> El proceso está autorizado. Solicita y <strong>agrega la captura de pantalla</strong> correspondiente en el ticket y procésalo directamente por garantía.</li>
-        <li>🛠️ <strong>Kit de Herramientas (Col. O):</strong> Revisa el valor (SÍ/NO) para confirmar si la agencia cuenta con el equipamiento necesario antes de proceder.</li>
+        <li>🔴 <strong style="color: #d32f2f;">Si la Acción es ROJA (SE REQUIERE CHECK LIST):</strong> Cambia de inmediato a la pestaña superior <strong>"PROYECTO S (SERIES)"</strong> para validar los detalles del número de serie.</li>
+        <li>🟢 <strong style="color: #2e7d32;">Si la Acción es VERDE (PASA COMO GARANTIA):</strong> Proceso aprobado. Es obligatorio que <strong>agregues la captura de pantalla en el ticket</strong> antes de procesar el trámite.</li>
+        <li>🛠️ <strong>Kit de Herramientas:</strong> Muestra si la tienda cuenta con el equipo (SÍ / NO). No genera alertas visuales adicionales.</li>
       </ul>
     </div>
 
@@ -81,8 +80,8 @@
           <tr>
             <th style="width: 10%;">Nº</th>
             <th style="width: 35%;">Agencia</th>
-            <th style="width: 30%;">Acción a Realizar (Col N)</th>
-            <th style="width: 25%;">Kit Herramientas (Col O)</th>
+            <th style="width: 35%;">Acción a Realizar (Col N)</th>
+            <th style="width: 20%;">Kit Herramientas (Col O)</th>
           </tr>
         </thead>
         <tbody>
@@ -170,32 +169,41 @@
         const colA = columnas[0] || ''; 
         const colB = columnas[1] || ''; 
         const colN = columnas[13] || ''; // Acción a realizar
-        const colO = columnas[14] || ''; // Kit Herramientas (Sí/No)
+        const colO = columnas[14] || ''; // Kit Herramientas
         
         const tr = document.createElement('tr');
         tr.setAttribute('data-search', colB.toLowerCase());
         
         const accionTexto = colN.toUpperCase();
-        const estatusTexto = colO.toUpperCase();
         
+        // REGLA 1: EVALUACIÓN EN COLUMNA N PARA GARANTÍA (VERDE)
         if (accionTexto.includes("GARANTIA") || accionTexto.includes("GARANTÍA")) {
           tr.classList.add('alerta-garantia');
           tr.innerHTML = `
             <td>${colA}</td>
             <td><strong>${colB}</strong></td>
-            <td><strong>${colN}</strong></td>
-            <td>${colO} <span class="indicacion-garantia">📸 ADREGAR CAPTURA Y PASAR POR GARANTÍA</span></td>
+            <td><strong>${colN}</strong> <span class="indicacion-garantia">📸 AGREGAR CAPTURA DE PANTALLA EN EL TICKET</span></td>
+            <td><strong>${colO}</strong></td>
           `;
-        } else if (accionTexto.includes("CHECK LIST") || accionTexto.includes("CHECKLIST") || estatusTexto.includes("1 DE FEBRERO") || estatusTexto.includes("PROYECTO S")) {
+        } 
+        // REGLA 2: EVALUACIÓN EN COLUMNA N PARA CHECK LIST (ROJO)
+        else if (accionTexto.includes("CHECK LIST") || accionTexto.includes("CHECKLIST")) {
           tr.classList.add('alerta-roja');
           tr.innerHTML = `
             <td>${colA}</td>
             <td><strong>${colB}</strong></td>
-            <td>${colN}</td>
-            <td>${colO} <span class="indicacion-critica">⚠️ ¡BUSCAR TIENDA EN PROYECTO S!</span></td>
+            <td><strong>${colN}</strong> <span class="indicacion-critica">⚠️ BUSCAR EN PESTAÑA PROYECTO S</span></td>
+            <td><strong>${colO}</strong></td>
           `;
-        } else {
-          tr.innerHTML = `<td>${colA}</td><td><strong>${colB}</strong></td><td>${colN}</td><td><strong>${colO}</strong></td>`;
+        } 
+        // REGLA 3: REGISTRO NORMAL SINO CUMPLE NINGUNA
+        else {
+          tr.innerHTML = `
+            <td>${colA}</td>
+            <td><strong>${colB}</strong></td>
+            <td>${colN}</td>
+            <td><strong>${colO}</strong></td>
+          `;
         }
         tbody.appendChild(tr);
       }
