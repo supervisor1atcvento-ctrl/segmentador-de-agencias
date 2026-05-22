@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Segmentador de Agencias - ATC</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #222; }
+    .search-container { background: #ffffff; border: 2px solid #ff5722; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
+    .search-container h3 { margin: 0 0 5px 0; font-size: 16px; color: #ff5722; text-transform: uppercase; font-weight: 700; }
+    .search-container p { margin: 0 0 10px 0; font-size: 11px; color: #666; }
+    .input-box { display: flex; flex-direction: column; gap: 5px; }
+    .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 450px; box-sizing: border-box; }
+    .input-box input:focus { border-color: #ff5722; outline: none; }
+    .table-scroll { max-height: 400px; overflow-y: auto; border: 1px solid #e1e4e8; border-radius: 6px; background: #ffffff; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background-color: #ff5722; color: #ffffff; padding: 10px; font-weight: 600; position: sticky; top: 0; z-index: 5; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+    tr:nth-child(even) td { background-color: #fafafa; }
+    tr:hover td { background-color: #f1f3f5; }
+    .status-msg { text-align: center; color: #888; padding: 30px !important; font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <div class="search-container">
+    <h3>Segmentador de Agencias Autorizadas</h3>
+    <p>Escribe el nombre o número de la agencia para filtrar los resultados de la Columna B en tiempo real.</p>
+    <div class="input-box">
+      <input type="text" id="input-agencia" placeholder="Ej. Tlalnepantla, Ecatepec, 05..." onkeyup="filtrarAgencias()">
+    </div>
+  </div>
+  
+  <div class="table-scroll">
+    <table id="tabla-agencias">
+      <thead>
+        <tr>
+          <th style="width: 15%;">Nº (Col A)</th>
+          <th style="width: 45%;">Agencia (Col B)</th>
+          <th style="width: 20%;">Ubicación (Col E)</th>
+          <th style="width: 20%;">Regional (Col H)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4" class="status-msg">Cargando base de datos de Agencias...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
+    const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
+
+    window.onload = function() {
+      fetch(urlAgencias)
+        .then(r => r.text())
+        .then(data => procesarCSV(data))
+        .catch(err => console.error("Error al conectar con Google Sheets:", err));
+    };
+
+    function procesarCSV(texto) {
+      const lineas = texto.split('\n');
+      const tbody = document.querySelector('#tabla-agencias tbody');
+      tbody.innerHTML = '';
+      
+      for(let i = 1; i < lineas.length; i++) {
+        if(!lineas[i]) continue;
+        
+        const columnas = lineas[i].split('","').map(c => c.replace(/"/g, '').trim());
+        
+        const num = columnas[0] || '';       
+        const nombre = columnas[1] || '';    
+        const ubi = columnas[4] || '';       
+        const reg = columnas[7] || '';       
+        
+        if(!nombre) continue; 
+        
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-search', nombre.toLowerCase());
+        tr.innerHTML = `
+          <td>${num}</td>
+          <td><strong>${nombre}</strong></td>
+          <td>${ubi}</td>
+          <td>${reg}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function filtrarAgencias() {
+      const val = document.getElementById('input-agencia').value.toLowerCase();
+      document.querySelectorAll('#tabla-agencias tbody tr').forEach(tr => {
+        const criterio = tr.getAttribute('data-search') || '';
+        tr.style.display = criterio.includes(val) ? '' : 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>
