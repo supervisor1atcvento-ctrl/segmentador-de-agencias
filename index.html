@@ -2,98 +2,164 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador de Agencias - ATC</title>
+  <title>Segmentador ATC - Vento</title>
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #222; }
-    .search-container { background: #ffffff; border: 2px solid #ff5722; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    .search-container h3 { margin: 0 0 5px 0; font-size: 16px; color: #ff5722; text-transform: uppercase; font-weight: 700; }
-    .search-container p { margin: 0 0 10px 0; font-size: 11px; color: #666; }
+    body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; color: #222; }
+    .hub-header { background-color: #0d0d0d; color: #ffffff; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 6px solid #ff5722; }
+    .brand-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
+    .hub-title { font-size: 18px; font-weight: 800; margin-top: 3px; }
+    .tabs-nav { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #e1e4e8; padding-bottom: 2px; }
+    .tab-button { background-color: #e1e4e8; border: none; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 6px 6px 0 0; cursor: pointer; color: #555; transition: all 0.2s; }
+    .tab-button:hover { background-color: #d1d5db; color: #111; }
+    .tab-button.active { background-color: #ff5722; color: #ffffff; }
+    .tab-button.active.black-tab { background-color: #222222; color: #ffffff; }
+    .tab-content { display: none; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-top: -17px; }
+    .tab-content.active { display: block; }
+    .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+    .search-container h3 { margin: 0 0 5px 0; font-size: 15px; color: #111; text-transform: uppercase; }
+    .search-container p { margin: 0 0 12px 0; font-size: 11px; color: #666; }
     .input-box { display: flex; flex-direction: column; gap: 5px; }
-    .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 450px; box-sizing: border-box; }
+    .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 400px; box-sizing: border-box; }
     .input-box input:focus { border-color: #ff5722; outline: none; }
-    .table-scroll { max-height: 400px; overflow-y: auto; border: 1px solid #e1e4e8; border-radius: 6px; background: #ffffff; }
+    .table-scroll { max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th { background-color: #ff5722; color: #ffffff; padding: 10px; font-weight: 600; position: sticky; top: 0; z-index: 5; text-align: left; }
+    .black-theme th { background-color: #222222; }
     td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
     tr:nth-child(even) td { background-color: #fafafa; }
     tr:hover td { background-color: #f1f3f5; }
-    .status-msg { text-align: center; color: #888; padding: 30px !important; font-style: italic; }
+    .status-msg { text-align: center; color: #888; padding: 40px !important; font-style: italic; }
   </style>
 </head>
 <body>
 
-  <div class="search-container">
-    <h3>Segmentador de Agencias Autorizadas</h3>
-    <p>Escribe el nombre o número de la agencia para filtrar los resultados de la Columna B en tiempo real.</p>
-    <div class="input-box">
-      <input type="text" id="input-agencia" placeholder="Ej. Tlalnepantla, Ecatepec, 05..." onkeyup="filtrarAgencias()">
+  <div class="hub-header">
+    <div class="brand-title">VENTO MOTORCYCLES U.S.A.</div>
+    <div class="hub-title">SISTEMA SEGMENTADOR DE CONTROL - ATC</div>
+  </div>
+
+  <div class="tabs-nav">
+    <button class="tab-button active" onclick="cambiarPestana(event, 'modulo-agencias')">AGENCIAS</button>
+    <button class="tab-button" onclick="cambiarPestana(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
+  </div>
+
+  <div id="modulo-agencias" class="tab-content active">
+    <div class="search-container">
+      <h3>Segmentador de Agencias Autorizadas</h3>
+      <p>Escribe el nombre o número de la agencia para filtrar los datos en tiempo real.</p>
+      <div class="input-box">
+        <input type="text" id="input-agencia" placeholder="Ej. Tlalnepantla, Ecatepec..." onkeyup="buscarAgencias()">
+      </div>
+    </div>
+    
+    <div class="table-scroll">
+      <table id="tabla-agencias">
+        <thead>
+          <tr>
+            <th style="width: 15%;">Nº</th>
+            <th style="width: 45%;">Agencia</th>
+            <th style="width: 20%;">Ubicación</th>
+            <th style="width: 20%;">Regional</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" class="status-msg">Cargando base de datos de Agencias...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  
-  <div class="table-scroll">
-    <table id="tabla-agencias">
-      <thead>
-        <tr>
-          <th style="width: 15%;">Nº (Col A)</th>
-          <th style="width: 45%;">Agencia (Col B)</th>
-          <th style="width: 20%;">Ubicación (Col E)</th>
-          <th style="width: 20%;">Regional (Col H)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td colspan="4" class="status-msg">Cargando base de datos de Agencias...</td></tr>
-      </tbody>
-    </table>
+
+  <div id="modulo-series" class="tab-content">
+    <div class="search-container" style="border-color: #222;">
+      <h3>Segmentador de Números de Serie</h3>
+      <p>Escribe el número de serie para comprobar su estatus de validación actual.</p>
+      <div class="input-box">
+        <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
+      </div>
+    </div>
+    
+    <div class="table-scroll black-theme">
+      <table id="tabla-series">
+        <thead>
+          <tr>
+            <th>Número de Serie</th>
+            <th>Artículo / Modelo</th>
+            <th>Fecha Recepción</th>
+            <th>Acción Dictaminada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" class="status-msg">Cargando base de datos de Proyecto S...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
     const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
+    const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
 
     window.onload = function() {
-      fetch(urlAgencias)
-        .then(r => r.text())
-        .then(data => procesarCSV(data))
-        .catch(err => console.error("Error al conectar con Google Sheets:", err));
+      fetch(urlAgencias).then(r => r.text()).then(data => procesarCSV(data, '#tabla-agencias tbody', true));
+      fetch(urlSeries).then(r => r.text()).then(data => procesarCSV(data, '#tabla-series tbody', false));
     };
 
-    function procesarCSV(texto) {
+    function cambiarPestana(evt, idModulo, esNegro = false) {
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
+      
+      document.getElementById(idModulo).classList.add('active');
+      evt.currentTarget.classList.add('active');
+      if(esNegro) {
+        evt.currentTarget.classList.add('black-tab');
+      }
+    }
+
+    function procesarCSV(texto, targetSelector, esAgencia) {
       const lineas = texto.split('\n');
-      const tbody = document.querySelector('#tabla-agencias tbody');
+      const tbody = document.querySelector(targetSelector);
       tbody.innerHTML = '';
       
       for(let i = 1; i < lineas.length; i++) {
         if(!lineas[i]) continue;
-        
         const columnas = lineas[i].split('","').map(c => c.replace(/"/g, '').trim());
         
-        const num = columnas[0] || '';       
-        const nombre = columnas[1] || '';    
-        const ubi = columnas[4] || '';       
-        const reg = columnas[7] || '';       
-        
-        if(!nombre) continue; 
-        
         const tr = document.createElement('tr');
-        tr.setAttribute('data-search', nombre.toLowerCase());
-        tr.innerHTML = `
-          <td>${num}</td>
-          <td><strong>${nombre}</strong></td>
-          <td>${ubi}</td>
-          <td>${reg}</td>
-        `;
+        if(esAgencia) {
+          const num = columnas[0] || '';
+          const nombre = columnas[1] || '';
+          const ubi = columnas[4] || '';
+          const reg = columnas[7] || '';
+          if(!nombre) continue;
+          tr.setAttribute('data-search', nombre.toLowerCase());
+          tr.innerHTML = `<td>${num}</td><td><strong>${nombre}</strong></td><td>${ubi}</td><td>${reg}</td>`;
+        } else {
+          const serie = columnas[0] || '';
+          const art = columnas[1] || '';
+          const fec = columnas[2] || '';
+          const acc = columnas[3] || 'SE REQUIERE CHECK LIST';
+          if(!serie) continue;
+          tr.setAttribute('data-search', serie.toLowerCase());
+          tr.innerHTML = `<td><strong>${serie}</strong></td><td>${art}</td><td>${fec}</td><td>${acc}</td>`;
+        }
         tbody.appendChild(tr);
       }
     }
 
-    function filtrarAgencias() {
+    function buscarAgencias() {
       const val = document.getElementById('input-agencia').value.toLowerCase();
       document.querySelectorAll('#tabla-agencias tbody tr').forEach(tr => {
-        const criterio = tr.getAttribute('data-search') || '';
-        tr.style.display = criterio.includes(val) ? '' : 'none';
+        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
+      });
+    }
+
+    function buscarSeries() {
+      const val = document.getElementById('input-serie').value.toLowerCase();
+      document.querySelectorAll('#tabla-series tbody tr').forEach(tr => {
+        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
       });
     }
   </script>
-
 </body>
 </html>
