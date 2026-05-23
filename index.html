@@ -43,7 +43,9 @@
     
     .alerta-roja { background-color: #ffebee !important; color: #c62828; }
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
-    .fila-comodin { background-color: #f8fafc !important; display: none; }
+    
+    /* Corrección de visualización para la fila comodín */
+    .fila-comodin { background-color: #eff6ff !important; display: none; }
   </style>
 </head>
 <body>
@@ -130,11 +132,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr id="fila-nueva-agencia" class="fila-comodin">
+          <tr id="fila-nueva-agencia" class="fila-comodin" style="display: none;">
             <td><button class="btn-seleccionar" style="background:#2563eb;" onclick="seleccionarAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">📋 Iniciar</button></td>
             <td>N/A</td>
-            <td style="color:#2563eb;"><strong>📍 AGENCIA NUEVA O NO ENCONTRADA</strong></td>
-            <td>PASA POR GARANTIA</td>
+            <td style="color:#2563eb;"><strong>📍 TIENDA NO ENCONTRADA (¿Es una agencia nueva?)</strong></td>
+            <td>PASA POR GARANTIA (POR DEFECTO)</td>
             <td><strong>SI</strong></td>
           </tr>
           <tr><td colspan="5" class="status-msg">Cargando catálogo...</td></tr>
@@ -211,7 +213,6 @@
       const filas = parsearCSVLineas(texto);
       const tbody = document.querySelector('#tabla-agencias tbody');
       
-      // Conservar la fila comodín de agencia nueva
       const filaComodin = document.getElementById('fila-nueva-agencia');
       tbody.innerHTML = '';
       tbody.appendChild(filaComodin);
@@ -350,12 +351,12 @@
         if (pertenece) coincidencias++;
       });
       
-      // 🚀 DETECTOR DE AGENCIA NUEVA
+      // 🛠️ CORRECCIÓN DE VISIBILIDAD FORZADA PARA EL COMODÍN
       const filaComodin = document.getElementById('fila-nueva-agencia');
-      if (val.length > 2 && coincidencias === 0) {
-        filaComodin.style.display = ''; // Si no hay resultados de lo escrito, se muestra la opción comodín
+      if (val.trim().length > 0 && coincidencias === 0) {
+        filaComodin.style.setProperty('display', 'table-row', 'important'); 
       } else {
-        filaComodin.style.display = 'none';
+        filaComodin.style.setProperty('display', 'none', 'important');
       }
     }
 
