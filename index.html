@@ -16,31 +16,33 @@
     .tab-content { display: none; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-top: -17px; }
     .tab-content.active { display: block; }
     
-    .instrucciones-box { background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 15px; margin-bottom: 15px; font-size: 12px; line-height: 1.5; }
-    .instrucciones-box h4 { margin: 0 0 8px 0; color: #334155; text-transform: uppercase; font-size: 13px; font-weight: 700; }
-    .instrucciones-list { margin: 0; padding-left: 20px; }
-    .instrucciones-list li { margin-bottom: 5px; }
+    /* MODULO DIAGNÓSTICO INTERACTIVO */
+    .wizard-card { background: #ffffff; border: 2px solid #ff5722; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .wizard-card h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff5722; text-transform: uppercase; }
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; }
+    .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+    .btn-wizard { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 16px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 12px; color: #334155; }
+    .btn-wizard:hover { background-color: #e2e8f0; }
+    
+    .resultado-box { padding: 12px; border-radius: 6px; font-weight: bold; margin-top: 10px; font-size: 13px; line-height: 1.4; display: none; }
+    .res-garantia { background-color: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
+    .res-cotizacion { background-color: #ffebee; color: #c62828; border-left: 5px solid #d32f2f; }
+    .res-series { background-color: #fff8e1; color: #b78103; border-left: 5px solid #ffb300; }
 
     .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
     .search-container h3 { margin: 0 0 5px 0; font-size: 15px; color: #111; text-transform: uppercase; }
-    .search-container p { margin: 0 0 12px 0; font-size: 11px; color: #666; }
-    .input-box { display: flex; flex-direction: column; gap: 5px; }
     .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 400px; box-sizing: border-box; }
-    .input-box input:focus { border-color: #ff5722; outline: none; }
-    .table-scroll { max-height: 380px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
+    .table-scroll { max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th { background-color: #ff5722; color: #ffffff; padding: 10px; font-weight: 600; position: sticky; top: 0; z-index: 5; text-align: left; }
     .black-theme th { background-color: #222222; }
     td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
-    tr:nth-child(even) td { background-color: #fafafa; }
-    tr:hover td { background-color: #f1f3f5; }
-    .status-msg { text-align: center; color: #888; padding: 40px !important; font-style: italic; }
+    tr:hover td { background-color: #f1f3f5; cursor: pointer; }
+    .btn-seleccionar { background: #ff5722; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; cursor: pointer; }
     
-    /* CONFIGURACIÓN DE COLORES POR RENGLÓN */
-    .alerta-roja { background-color: #ffebee !important; color: #c62828; border-left: 5px solid #d32f2f; }
-    .indicacion-critica { display: block; font-size: 11px; color: #d32f2f; margin-top: 4px; text-transform: uppercase; font-weight: 800; }
-    .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; border-left: 5px solid #2e7d32; }
-    .indicacion-garantia { display: block; font-size: 11px; color: #2e7d32; margin-top: 4px; text-transform: uppercase; font-weight: 800; }
+    .alerta-roja { background-color: #ffebee !important; color: #c62828; }
+    .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
   </style>
 </head>
 <body>
@@ -57,20 +59,61 @@
 
   <div id="modulo-agencias" class="tab-content active">
     
-    <div class="instrucciones-box">
-      <h4>📋 Guía de Acción Rápida para Asesores</h4>
-      <ul class="instrucciones-list">
-        <li>🔴 <strong style="color: #d32f2f;">Si la Acción es ROJA (SE REQUIERE CHECK LIST):</strong> Cambia de inmediato a la pestaña superior <strong>"PROYECTO S (SERIES)"</strong> para validar los detalles del número de serie.</li>
-        <li>🟢 <strong style="color: #2e7d32;">Si la Acción es VERDE (PASA COMO GARANTIA):</strong> Proceso aprobado. Es obligatorio que <strong>agregues la captura de pantalla en el ticket</strong> antes de procesar el trámite.</li>
-        <li>🛠️ <strong>Kit de Herramientas:</strong> Muestra si la tienda cuenta con el equipo (SÍ / NO). No genera alertas visuales adicionales.</li>
-      </ul>
+    <div class="wizard-card" id="wizard-contenedor" style="display:none;">
+      <h3>🧠 DIAGNÓSTICO EN TIEMPO REAL: <span id="wiz-nombre-agencia" style="color:#222;"></span></h3>
+      
+      <div id="step-activacion" class="wizard-step active">
+        <label><strong>1. ¿Quién activó la unidad según Ventonet/Freshdesk?</strong></label>
+        <div class="btn-group">
+          <button class="btn-wizard" onclick="evaluarActivacion('CESVE')">CESVE</button>
+          <button class="btn-wizard" onclick="evaluarActivacion('CEDIS')">CEDIS</button>
+        </div>
+      </div>
+
+      <div id="step-armado" class="wizard-step">
+        <label><strong>2. ¿La unidad cuenta con registro de Ticket de Armado y Activado previo?</strong></label>
+        <div class="btn-group">
+          <button class="btn-wizard" onclick="evaluarArmado('SI')">SÍ TIENE</button>
+          <button class="btn-wizard" onclick="evaluarArmado('NO')">NO TIENE</button>
+        </div>
+      </div>
+
+      <div id="step-reporte" class="wizard-step">
+        <label><strong>3. ¿Qué tipo de reporte está levantando la agencia?</strong></label>
+        <div class="btn-group">
+          <button class="btn-wizard" onclick="evaluarReporte('REVISION')">REVISIÓN GENERAL</button>
+          <button class="btn-wizard" onclick="evaluarReporte('FALLA')">FALLA ESPECÍFICA</button>
+        </div>
+      </div>
+
+      <div id="step-revisiones" class="wizard-step">
+        <label><strong>4. ¿Es la primera revisión general de esta motocicleta?</strong></label>
+        <div class="btn-group">
+          <button class="btn-wizard" onclick="evaluarRevision('PRIMERA')">SÍ, ES LA 1ª REVISIÓN</button>
+          <button class="btn-wizard" onclick="evaluarRevision('OTRA')">NO, YA ES LA 2ª O MÁS</button>
+        </div>
+      </div>
+
+      <div id="res-pasa-garantia" class="resultado-box res-garantia">
+        🟢 DICTAMEN: PASA POR GARANTÍA DIRECTA.<br>
+        <span style="font-weight:normal; font-size:11px;">👉 Acción: Solicita y agrega la captura de pantalla en el ticket de Freshdesk y autoriza el proceso.</span>
+      </div>
+      <div id="res-pasa-cotizacion" class="resultado-box res-cotizacion">
+        🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA.<br>
+        <span style="font-weight:normal; font-size:11px;">👉 Acción: Rechaza la garantía por incumplimiento. Solicita obligatoriamente el CHECK LIST a la agencia.</span>
+      </div>
+      <div id="res-ir-series" class="resultado-box res-series">
+        🔍 DICTAMEN: REVISIÓN DE UNIDAD REQUERIDA.<br>
+        <span style="font-weight:normal; font-size:11px;">👉 Acción: Cambia a la pestaña de "PROYECTO S" arriba y busca el estatus detallado usando el número de serie.</span>
+      </div>
+      
+      <button class="btn-wizard" style="margin-top:12px; background:#64748b; color:#fff;" onclick="reiniciarWizard()">🔄 Diagnosticar otra tienda</button>
     </div>
 
     <div class="search-container">
-      <h3>Segmentador de Agencias Autorizadas</h3>
-      <p>Búsqueda en tiempo real por nombre o número de tienda.</p>
+      <h3>1. Busca la Agencia para iniciar el Diagnóstico</h3>
       <div class="input-box">
-        <input type="text" id="input-agencia" placeholder="Ej. Tlalnepantla, Ecatepec..." onkeyup="buscarAgencias()">
+        <input type="text" id="input-agencia" placeholder="Escribe el nombre de la agencia..." onkeyup="buscarAgencias()">
       </div>
     </div>
     
@@ -78,14 +121,15 @@
       <table id="tabla-agencias">
         <thead>
           <tr>
-            <th style="width: 10%;">Nº</th>
-            <th style="width: 35%;">Agencia</th>
-            <th style="width: 35%;">Acción a Realizar (Col N)</th>
-            <th style="width: 20%;">Kit Herramientas (Col O)</th>
+            <th>Acción</th>
+            <th>Nº</th>
+            <th>Agencia</th>
+            <th>Acción Base</th>
+            <th>Kit Herramientas</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td colspan="4" class="status-msg">Cargando base de datos de Agencias...</td></tr>
+          <tr><td colspan="5" class="status-msg">Cargando catálogo...</td></tr>
         </tbody>
       </table>
     </div>
@@ -99,7 +143,6 @@
         <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
       </div>
     </div>
-    
     <div class="table-scroll black-theme">
       <table id="tabla-series">
         <thead>
@@ -122,6 +165,8 @@
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
 
+    let agenciaSeleccionada = null;
+
     window.onload = function() {
       fetch(urlAgencias).then(r => r.text()).then(data => procesarAgenciasCSV(data));
       fetch(urlSeries).then(r => r.text()).then(data => procesarSeriesCSV(data));
@@ -143,14 +188,11 @@
         let celdaActual = '';
         for (let i = 0; i < linea.length; i++) {
           let char = linea[i];
-          if (char === '"') {
-            dentroDeComillas = !dentroDeComillas;
-          } else if (char === ',' && !dentroDeComillas) {
+          if (char === '"') dentroDeComillas = !dentroDeComillas;
+          else if (char === ',' && !dentroDeComillas) {
             resultado.push(celdaActual.trim());
             celdaActual = '';
-          } else {
-            celdaActual += char;
-          }
+          } else celdaActual += char;
         }
         resultado.push(celdaActual.trim());
         return resultado;
@@ -168,64 +210,107 @@
         
         const colA = columnas[0] || ''; 
         const colB = columnas[1] || ''; 
-        const colN = columnas[13] || ''; // Acción a realizar
-        const colO = columnas[14] || ''; // Kit Herramientas
+        const colN = columnas[13] || ''; // Acción base
+        const colO = columnas[14] || ''; // Kit (SI/NO)
         
         const tr = document.createElement('tr');
         tr.setAttribute('data-search', colB.toLowerCase());
         
         const accionTexto = colN.toUpperCase();
+        let claseColor = '';
+        if(accionTexto.includes("GARANTIA") || accionTexto.includes("GARANTÍA")) claseColor = 'alerta-garantia';
+        if(accionTexto.includes("CHECK LIST") || accionTexto.includes("CHECKLIST")) claseColor = 'alerta-roja';
         
-        // REGLA 1: EVALUACIÓN EN COLUMNA N PARA GARANTÍA (VERDE)
-        if (accionTexto.includes("GARANTIA") || accionTexto.includes("GARANTÍA")) {
-          tr.classList.add('alerta-garantia');
-          tr.innerHTML = `
-            <td>${colA}</td>
-            <td><strong>${colB}</strong></td>
-            <td><strong>${colN}</strong> <span class="indicacion-garantia">📸 AGREGAR CAPTURA DE PANTALLA EN EL TICKET</span></td>
-            <td><strong>${colO}</strong></td>
-          `;
-        } 
-        // REGLA 2: EVALUACIÓN EN COLUMNA N PARA CHECK LIST (ROJO)
-        else if (accionTexto.includes("CHECK LIST") || accionTexto.includes("CHECKLIST")) {
-          tr.classList.add('alerta-roja');
-          tr.innerHTML = `
-            <td>${colA}</td>
-            <td><strong>${colB}</strong></td>
-            <td><strong>${colN}</strong> <span class="indicacion-critica">⚠️ BUSCAR EN PESTAÑA PROYECTO S</span></td>
-            <td><strong>${colO}</strong></td>
-          `;
-        } 
-        // REGLA 3: REGISTRO NORMAL SINO CUMPLE NINGUNA
-        else {
-          tr.innerHTML = `
-            <td>${colA}</td>
-            <td><strong>${colB}</strong></td>
-            <td>${colN}</td>
-            <td><strong>${colO}</strong></td>
-          `;
-        }
+        tr.innerHTML = `
+          <td><button class="btn-seleccionar" onclick="seleccionarAgencia('${colB}', '${colN}', '${colO}')">📋 Iniciar</button></td>
+          <td>${colA}</td>
+          <td class="${claseColor}"><strong>${colB}</strong></td>
+          <td>${colN}</td>
+          <td><strong>${colO}</strong></td>
+        `;
         tbody.appendChild(tr);
       }
+    }
+
+    function seleccionarAgencia(nombre, accionBase, tieneKit) {
+      agenciaSeleccionada = {
+        nombre: nombre,
+        accionBase: accionBase.toUpperCase(),
+        tieneKit: tieneKit.toUpperCase().trim()
+      };
+      
+      document.getElementById('wiz-nombre-agencia').innerText = nombre;
+      document.getElementById('wizard-contenedor').style.display = 'block';
+      reiniciarWizard();
+      document.getElementById('wizard-contenedor').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function evaluarActivacion(tipo) {
+      ocultarPasos();
+      if (tipo === 'CESVE') {
+        mostrarResultado('res-pasa-garantia');
+      } else {
+        document.getElementById('step-armado').classList.add('active');
+      }
+    }
+
+    function evaluarArmado(respuesta) {
+      ocultarPasos();
+      if (respuesta === 'SI') {
+        mostrarResultado('res-pasa-garantia');
+      } else {
+        document.getElementById('step-reporte').classList.add('active');
+      }
+    }
+
+    function evaluarReporte(tipo) {
+      ocultarPasos();
+      if (tipo === 'FALLA') {
+        mostrarResultado('res-ir-series');
+      } else {
+        // REGLA CLAVE AUTOMÁTICA DEL KIT DE HERRAMIENTAS DESDE LA BASE DE DATOS
+        if (agenciaSeleccionada.tieneKit === 'SI' || agenciaSeleccionada.tieneKit === 'SÍ') {
+          mostrarResultado('res-pasa-cotizacion'); // Si tiene Kit, Revisión General es rechazo directo
+        } else {
+          document.getElementById('step-revisiones').classList.add('active'); // Si NO tiene kit, se pregunta si es la primera
+        }
+      }
+    }
+
+    function evaluarRevision(tipo) {
+      ocultarPasos();
+      if (tipo === 'PRIMERA') {
+        mostrarResultado('res-pasa-garantia');
+      } else {
+        mostrarResultado('res-pasa-cotizacion');
+      }
+    }
+
+    function ocultarPasos() {
+      document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    }
+
+    function mostrarResultado(id) {
+      document.querySelectorAll('.resultado-box').forEach(r => r.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function reiniciarWizard() {
+      ocultarPasos();
+      document.querySelectorAll('.resultado-box').forEach(r => r.style.display = 'none');
+      document.getElementById('step-activacion').classList.add('active');
     }
 
     function procesarSeriesCSV(texto) {
       const filas = parsearCSVLineas(texto);
       const tbody = document.querySelector('#tabla-series tbody');
       tbody.innerHTML = '';
-      
       for(let i = 1; i < filas.length; i++) {
         const columnas = filas[i];
-        if(columnas.length < 1 || !columnas[0]) continue;
-        
-        const serie = columnas[0] || '';
-        const art = columnas[1] || '';
-        const fec = columnas[2] || '';
-        const acc = columnas[3] || '';
-        
+        if(!columnas[0]) continue;
         const tr = document.createElement('tr');
-        tr.setAttribute('data-search', serie.toLowerCase());
-        tr.innerHTML = `<td><strong>${serie}</strong></td><td>${art}</td><td>${fec}</td><td>${acc}</td>`;
+        tr.setAttribute('data-search', columnas[0].toLowerCase());
+        tr.innerHTML = `<td><strong>${columnas[0]}</strong></td><td>${columnas[1]||''}</td><td>${columnas[2]||''}</td><td>${columnas[3]||''}</td>`;
         tbody.appendChild(tr);
       }
     }
