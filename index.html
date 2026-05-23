@@ -43,6 +43,7 @@
     
     .alerta-roja { background-color: #ffebee !important; color: #c62828; }
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
+    .fila-comodin { background-color: #f8fafc !important; display: none; }
   </style>
 </head>
 <body>
@@ -62,7 +63,7 @@
     <div class="wizard-card" id="wizard-contenedor" style="display:none;">
       <h3>🧠 DIAGNÓSTICO EN TIEMPO REAL: <span id="wiz-nombre-agencia" style="color:#222;"></span></h3>
       
-      <div id="step-activacion" class="wizard-step active">
+      <div id="step-activacion" class="wizard-step">
         <label><strong>1. ¿Quién activó la unidad según Ventonet/Freshdesk?</strong></label>
         <div class="btn-group">
           <button class="btn-wizard" onclick="evaluarActivacion('CESVE')">CESVE</button>
@@ -107,7 +108,7 @@
         <span style="font-weight:normal; font-size:11px;">👉 Acción: Cambia a la pestaña de "PROYECTO S" arriba y busca el estatus detallado usando el número de serie.</span>
       </div>
       
-      <button class="btn-wizard" style="margin-top:12px; background:#64748b; color:#fff;" onclick="reiniciarWizard()">🔄 Diagnosticar otra tienda</button>
+      <button class="btn-wizard" style="margin-top:12px; background:#64748b; color:#fff;" onclick="reiniciarWizard(true)">🔄 Diagnosticar otra tienda</button>
     </div>
 
     <div class="search-container">
@@ -124,11 +125,18 @@
             <th>Acción</th>
             <th>Nº</th>
             <th>Agencia</th>
-            <th>Acción Base</th>
-            <th>Kit Herramientas</th>
+            <th>Acción Base (Col N)</th>
+            <th>¿Puede Reportar Rev. Gral? (Col O)</th>
           </tr>
         </thead>
         <tbody>
+          <tr id="fila-nueva-agencia" class="fila-comodin">
+            <td><button class="btn-seleccionar" style="background:#2563eb;" onclick="seleccionarAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">📋 Iniciar</button></td>
+            <td>N/A</td>
+            <td style="color:#2563eb;"><strong>📍 AGENCIA NUEVA O NO ENCONTRADA</strong></td>
+            <td>PASA POR GARANTIA</td>
+            <td><strong>SI</strong></td>
+          </tr>
           <tr><td colspan="5" class="status-msg">Cargando catálogo...</td></tr>
         </tbody>
       </table>
@@ -202,7 +210,11 @@
     function procesarAgenciasCSV(texto) {
       const filas = parsearCSVLineas(texto);
       const tbody = document.querySelector('#tabla-agencias tbody');
+      
+      // Conservar la fila comodín de agencia nueva
+      const filaComodin = document.getElementById('fila-nueva-agencia');
       tbody.innerHTML = '';
+      tbody.appendChild(filaComodin);
       
       for(let i = 1; i < filas.length; i++) {
         const columnas = filas[i];
@@ -210,10 +222,11 @@
         
         const colA = columnas[0] || ''; 
         const colB = columnas[1] || ''; 
-        const colN = columnas[13] || ''; // Acción base
-        const colO = columnas[14] || ''; // Kit (SI/NO)
+        const colN = columnas[13] || ''; 
+        const colO = columnas[14] || ''; 
         
         const tr = document.createElement('tr');
+        tr.className = 'fila-datos';
         tr.setAttribute('data-search', colB.toLowerCase());
         
         const accionTexto = colN.toUpperCase();
@@ -232,16 +245,23 @@
       }
     }
 
-    function seleccionarAgencia(nombre, accionBase, tieneKit) {
+    function seleccionarAgencia(nombre, accionBase, puedeReportar) {
       agenciaSeleccionada = {
         nombre: nombre,
-        accionBase: accionBase.toUpperCase(),
-        tieneKit: tieneKit.toUpperCase().trim()
+        accionBase: accionBase.toUpperCase().trim(),
+        puedeReportar: puedeReportar.toUpperCase().trim()
       };
       
       document.getElementById('wiz-nombre-agencia').innerText = nombre;
       document.getElementById('wizard-contenedor').style.display = 'block';
-      reiniciarWizard();
+      
+      if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
+        ocultarPasos();
+        mostrarResultado('res-pasa-garantia');
+      } else {
+        reiniciarWizard(false); 
+      }
+      
       document.getElementById('wizard-contenedor').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -268,11 +288,10 @@
       if (tipo === 'FALLA') {
         mostrarResultado('res-ir-series');
       } else {
-        // REGLA CLAVE AUTOMÁTICA DEL KIT DE HERRAMIENTAS DESDE LA BASE DE DATOS
-        if (agenciaSeleccionada.tieneKit === 'SI' || agenciaSeleccionada.tieneKit === 'SÍ') {
-          mostrarResultado('res-pasa-cotizacion'); // Si tiene Kit, Revisión General es rechazo directo
+        if (agenciaSeleccionada.puedeReportar === 'NO') {
+          mostrarResultado('res-pasa-cotizacion'); 
         } else {
-          document.getElementById('step-revisiones').classList.add('active'); // Si NO tiene kit, se pregunta si es la primera
+          document.getElementById('step-revisiones').classList.add('active'); 
         }
       }
     }
@@ -295,10 +314,16 @@
       document.getElementById(id).style.display = 'block';
     }
 
-    function reiniciarWizard() {
+    function reiniciarWizard(completamente = false) {
       ocultarPasos();
       document.querySelectorAll('.resultado-box').forEach(r => r.style.display = 'none');
       document.getElementById('step-activacion').classList.add('active');
+      
+      if (completamente) {
+        document.getElementById('wizard-contenedor').style.display = 'none';
+        document.getElementById('input-agencia').value = '';
+        buscarAgencias();
+      }
     }
 
     function procesarSeriesCSV(texto) {
@@ -317,9 +342,21 @@
 
     function buscarAgencias() {
       const val = document.getElementById('input-agencia').value.toLowerCase();
-      document.querySelectorAll('#tabla-agencias tbody tr').forEach(tr => {
-        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
+      let coincidencias = 0;
+      
+      document.querySelectorAll('#tabla-agencias tbody tr.fila-datos').forEach(tr => {
+        const pertenece = tr.getAttribute('data-search').includes(val);
+        tr.style.display = pertenece ? '' : 'none';
+        if (pertenece) coincidencias++;
       });
+      
+      // 🚀 DETECTOR DE AGENCIA NUEVA
+      const filaComodin = document.getElementById('fila-nueva-agencia');
+      if (val.length > 2 && coincidencias === 0) {
+        filaComodin.style.display = ''; // Si no hay resultados de lo escrito, se muestra la opción comodín
+      } else {
+        filaComodin.style.display = 'none';
+      }
     }
 
     function buscarSeries() {
