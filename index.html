@@ -38,7 +38,7 @@
     .widget-ia-boton { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.2s ease; }
     .widget-ia-boton:hover { background: #0f172a; transform: translateY(-2px); }
     
-    .widget-ia-ventana { position: fixed; bottom: 85px; right: 20px; width: 380px; max-height: 550px; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #38bdf8; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+    .widget-ia-ventana { position: fixed; bottom: 85px; right: 20px; width: 380px; max-height: 500px; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #38bdf8; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
     .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
     .widget-header-titulo { font-weight: bold; font-size: 13px; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
     .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
@@ -55,19 +55,14 @@
     .btn-opcion-wiz { background: #334155; border: 1px solid #475569; color: #f8fafc; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
     .btn-opcion-wiz:hover { background: #475569; border-color: #38bdf8; }
     
-    /* RESPUESTAS DE LA IA DENTRO DEL WIDGET */
-    .ia-analisis-alerta { background: #0f172a; padding: 10px; border-radius: 6px; font-size: 11px; line-height: 1.4; border-left: 3px solid #38bdf8; margin-top: 10px; display: none; }
-    .ia-output-box { background: #334155; padding: 10px; border-radius: 6px; margin-top: 10px; display: none; }
-    .ia-output-box label { font-size: 10px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 4px; }
-    .ia-output-text { background: #1e293b; color: #f1f5f9; padding: 8px; border-radius: 4px; font-size: 11px; white-space: pre-wrap; border: 1px solid #475569; max-height: 120px; overflow-y: auto; font-family: monospace; }
-    .btn-widget-copiar { background: #38bdf8; color: #0f172a; border: none; padding: 6px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 6px; font-size: 11px; width: 100%; }
-    .btn-widget-copiar:hover { background: #7dd3fc; }
+    /* DICTAMEN FINAL EN EL WIDGET */
+    .ia-analisis-alerta { background: #0f172a; padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; border-left: 4px solid #38bdf8; margin-top: 15px; display: none; }
 
-    .resultado-widget-box { padding: 10px; border-radius: 4px; font-weight: bold; margin-top: 10px; font-size: 12px; display: none; }
-    .wres-garantia { background-color: #14532d; color: #bbf7d0; }
-    .wres-cotizacion { background-color: #7f1d1d; color: #fecaca; }
-    .wres-series { background-color: #78350f; color: #fef3c7; }
-    .wres-checklist { background-color: #1e3a8a; color: #dbeafe; }
+    .resultado-widget-box { padding: 12px; border-radius: 5px; font-weight: bold; margin-top: 12px; font-size: 12px; line-height: 1.4; display: none; }
+    .wres-garantia { background-color: #14532d; color: #bbf7d0; border-left: 4px solid #22c55e; }
+    .wres-cotizacion { background-color: #7f1d1d; color: #fecaca; border-left: 4px solid #ef4444; }
+    .wres-series { background-color: #78350f; color: #fef3c7; border-left: 4px solid #f59e0b; }
+    .wres-checklist { background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6; }
   </style>
 </head>
 <body>
@@ -145,13 +140,13 @@
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div class="widget-header-titulo"><span>🤖</span> IA COPILOTO & DIAGNÓSTICO</div>
+      <div class="widget-header-titulo"><span>🤖</span> ASISTENTE DE TOMA DE DECISIONES</div>
       <button class="widget-btn-cerrar" onclick="toggleWidgetIA()">×</button>
     </div>
     <div class="widget-body">
       
       <div id="widget-tienda-activa" style="font-weight: bold; font-size: 12px; margin-bottom: 10px; color: #38bdf8;">
-        ⚠️ Primero selecciona una agencia en la lista usando el botón azul "🧠 Diagnosticar" o busca de forma libre.
+        ⚠️ Selecciona una agencia en la tabla haciendo clic en "🧠 Diagnosticar" para iniciar el árbol interactivo.
       </div>
       
       <div class="wiz-card" id="widget-wizard-flujo" style="display:none;">
@@ -200,26 +195,34 @@
           </div>
         </div>
 
-        <div id="wres-pasa-garantia" class="resultado-widget-box wres-garantia">🟢 GARANTÍA DIRECTA AUTORIZADA</div>
-        <div id="wres-pasa-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 PROCEDE COMO COTIZACIÓN</div>
-        <div id="wres-ir-series" class="resultado-widget-box wres-series">🔄 REDIRECCIONANDO A SERIES...</div>
-        <div id="wres-solicitar-evidencia" class="resultado-widget-box wres-checklist">🔵 SE REQUIERE CHECK LIST</div>
+        <div id="wres-pasa-garantia" class="resultado-widget-box wres-garantia">
+          🟢 DICTAMEN: GARANTÍA DIRECTA AUTORIZADA<br>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Acción: Usa la macro de Autorización en Freshdesk.</small>
+        </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:10px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Diagnóstico</button>
+        <div id="wres-pasa-cotizacion" class="resultado-widget-box wres-cotizacion">
+          🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA<br>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Acción: Usa la macro de Rechazo por Incumplimiento.</small>
+        </div>
+        
+        <div id="wres-ir-series" class="resultado-widget-box wres-series">
+          🔄 REDIRECCIONANDO A VALIDACIÓN DE SERIES...
+        </div>
+        
+        <div id="wres-solicitar-evidencia" class="resultado-widget-box wres-checklist">
+          🔵 DICTAMEN: SE REQUIERE CHECK LIST Y EVIDENCIA<br>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Acción: Solicita de forma obligatoria las pruebas de arribo.</small>
+        </div>
+        
+        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Diagnóstico</button>
       </div>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
-      
-      <div id="w-ia-speech-cont" class="ia-output-box">
-        <label>📋 RESPUESTA SUGERIDA (COPIAR Y PEGAR):</label>
-        <div id="w-ia-speech" class="ia-output-text"></div>
-        <button class="btn-widget-copiar" onclick="copiarTextoWidgetIA()">📋 Copiar Texto</button>
-      </div>
 
     </div>
   </div>
 
-  <script>
+  <script {id="segmentador-logica"}>
     const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
@@ -302,16 +305,13 @@
       }
     }
 
-    // ACTIVA EL WIDGET DESDE LA FILA
     function abrirWidgetConAgencia(nombre, accionBase, puedeReportar) {
       agenciaSeleccionada = { nombre: nombre, accionBase: accionBase.toUpperCase().trim(), puedeReportar: puedeReportar.toUpperCase().trim() };
       
-      // Mostrar contenedor del flujo dentro de la mini-ventana
       document.getElementById('widget-tienda-activa').style.display = 'none';
       document.getElementById('widget-wizard-flujo').style.display = 'block';
       document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 Tienda: ${nombre}`;
       
-      // Forzar apertura de la IA si estaba cerrada
       document.getElementById('ventana-ia').style.display = 'flex';
       
       if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
@@ -333,7 +333,6 @@
       wOcultarPasos();
       document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
       document.getElementById('w-ia-analisis').style.display = 'none';
-      document.getElementById('w-ia-speech-cont').style.display = 'none';
       document.getElementById('wstep-activacion').classList.add('active');
     }
 
@@ -389,7 +388,7 @@
           inputS.focus();
           document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
           wReiniciarFlujo(false);
-          toggleWidgetIA(); // Cierra el widget para dejarlo buscar la serie libremente
+          toggleWidgetIA(); 
         }, 500);
       }
     }
@@ -405,72 +404,49 @@
       }
     }
 
-    // LÓGICA DE TEXTOS DE LA IA EN EL WIDGET
+    // CRITERIOS DE CONTEXTO TÉCNICO (EL "POR QUÉ")
     function wEjecutarIA(escenario) {
       const boxAnalisis = document.getElementById('w-ia-analisis');
-      const boxSpeech = document.getElementById('w-ia-speech-cont');
-      const txtSpeech = document.getElementById('w-ia-speech');
-      
       boxAnalisis.style.display = 'block';
-      boxSpeech.style.display = 'block';
       
-      let analisis = ""; let speech = "";
-      const saludo = `Hola, estimado distribuidor de ${agenciaSeleccionada.nombre}.\n\n`;
-      const firma = `\n\nQuedamos a sus órdenes.\nAtentamente,\nÁrea de Atención al Cliente\nVento Motorcycles U.S.A.`;
+      let analisis = ""; 
 
       switch(escenario) {
         case 'GARANTIA_BASE':
-          analisis = `🤖 <b>IA:</b> Acción Base es Garantía Directa (Columna N). Aprobado de inmediato.`;
-          speech = `${saludo}Su solicitud de garantía ha sido AUTORIZADA de manera directa. Procederemos con el envío de componentes.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Acción Base es Garantía Directa (Columna N). No se requiere diagnóstico adicional, la cuenta está libre de candados.`;
           break;
         case 'CESVE':
-          analisis = `🤖 <b>IA:</b> Activado por CESVE. Cobertura total directa aprobada de inmediato.`;
-          speech = `${saludo}Confirmamos registro de activación por CESVE, por lo que su caso se encuentra AUTORIZADO por garantía directa.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Activado por CESVE. Las activaciones directas por centro de servicio validado cuentan con respaldo total e inmediato.`;
           break;
         case 'SIN_REGISTRO':
-          analisis = `🤖 <b>IA:</b> ⚠️ Unidad sin registro de Armado/Activación. Bloqueado. Exigir Check List y evidencias fotográficas.`;
-          speech = `${saludo}Detectamos en sistema que la unidad no cuenta con el registro de Armado y Activación. Para proceder, solicitamos obligatoriamente el Check List de recepción y fotos/video del arribo de la moto.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> ⚠️ Unidad sin registro de Armado/Activación previo. Bloqueo obligatorio por control técnico hasta recibir evidencias físicas de arribo.`;
           break;
         case 'ARMADO_SI':
-          analisis = `🤖 <b>IA:</b> Ticket de Armado validado correctamente en sistema. Procede garantía.`;
-          speech = `${saludo}Validamos historial físico y confirmamos Ticket de Armado previo. El caso es AUTORIZADO por garantía directa.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Historial de control correcto. Cuenta con Ticket de Armado registrado con anterioridad.`;
           break;
         case 'REVISION_PROHIBIDA':
-          analisis = `🤖 <b>IA:</b> La tienda no tiene permitido ingresar Revisiones Generales (Col O = NO). Pasa a cotización.`;
-          speech = `${saludo}Le informamos que su solicitud no procede como garantía debido a restricciones en el perfil de reportes de revisiones generales. El caso se procesará como COTIZACIÓN DIRECTA.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Candado de perfil aplicado. Esta sucursal tiene restringidas las revisiones generales (Columna O = NO) y procedió a levantar una. Derivar a cotización de pago.`;
           break;
         case 'BATERIA':
-          analisis = `🤖 <b>IA:</b> Daño en Batería. Aplica criterio de excepción de refacciones prioritarias.`;
-          speech = `${saludo}Al tratarse de una incidencia directamente vinculada con la batería de la unidad, se dictamina como AUTORIZADA por garantía directa.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Componente clasificado como Refacción Prioritaria con cobertura total de garantía directa.`;
           break;
         case 'VICIO_OCULTO':
-          analisis = `🤖 <b>IA:</b> Vicio oculto de armado/fábrica determinado. Pasa directo.`;
-          speech = `${saludo}Posterior al análisis de la evidencia, el departamento técnico determinó un vicio oculto de fabricación. Queda totalmente AUTORIZADA bajo garantía Vento.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Diagnóstico amparado bajo concepto de vicio de origen/fábrica. Cobertura directa autorizada.`;
           break;
         case 'ELEC_MEC':
-          analisis = `🤖 <b>IA:</b> Excepción especial aprobada. Es un daño Mecánico o Eléctrico real, por ende se rescata y se otorga garantía directa.`;
-          speech = `${saludo}Al identificarse una afectación en los componentes mecánicos/eléctricos esenciales de la unidad, su reporte técnico ha sido AUTORIZADO por garantía.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> 🌟 Excepción Operativa: Aunque la tienda tiene restricciones para revisiones ordinarias, el reporte es de carácter Mecánico/Eléctrico explícito. El contra-candado de supervisión salva el caso y autoriza la garantía.`;
           break;
         case 'PRIMERA_REVISION':
-          analisis = `🤖 <b>IA:</b> Primera revisión general aprobada bajo perfil válido de distribuidor.`;
-          speech = `${saludo}Confirmamos que corresponde a la primera revisión técnica oficial de la motocicleta, por lo cual se valida como AUTORIZADA por garantía.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Primera revisión general ingresada bajo un perfil de distribuidor con permisos habilitados.`;
           break;
         case 'VARIAS_REVISIONES':
-          analisis = `🤖 <b>IA:</b> Ya cuenta con historial de revisiones previas. Excede póliza básica, pasa como cotización de pago.`;
-          speech = `${saludo}Le informamos que su solicitud NO PROCEDE debido a que la unidad ya cuenta con registros previos de revisiones técnicas generales. El caso deberá gestionarse como una COTIZACIÓN DIRECTA con costo.${firma}`;
+          analisis = `💡 <b>Criterio Técnico:</b> Reincidencia detectada. Es la segunda revisión general o posterior de la unidad, lo cual invalida los términos de la póliza básica. Enviar a cotización.`;
           break;
         case 'OTRA_FALLA_PROYECTOS':
-          analisis = `🤖 <b>IA:</b> Requiere validación de fechas. Saltando automáticamente a la pestaña Proyecto S para buscar número de serie.`;
-          boxSpeech.style.display = 'none';
+          analisis = `🤖 Redireccionando a la pestaña "Proyecto S" para evaluar el número de serie en la base de datos...`;
           break;
       }
       boxAnalisis.innerHTML = analisis;
-      txtSpeech.innerText = speech;
-    }
-
-    function copiarTextoWidgetIA() {
-      const txt = document.getElementById('w-ia-speech').innerText;
-      navigator.clipboard.writeText(txt).then(() => { alert("¡Texto copiado desde el Widget con éxito!"); });
     }
 
     function procesarSeriesCSV(texto) {
