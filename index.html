@@ -158,11 +158,10 @@
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
     
     let cacheAgencias = [];
-    let cacheSeries = []; // Base de datos cargada tras bambalinas
+    let cacheSeries = []; 
     let agenciaActiva = null;
 
     window.onload = () => {
-      // Carga paralela de ambos Sheets
       fetch(urlAgencias).then(r => r.text()).then(csv => procesarAgencias(csv));
       fetch(urlSeries).then(r => r.text()).then(csv => procesarSeries(csv));
       setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString(); }, 1000);
@@ -217,19 +216,20 @@
       }
     }
 
+    // MAPEO AJUSTADO A COLUMNA F (ÍNDICE 5)
     function procesarSeries(texto) {
       const lineas = texto.split(/\r?\n/);
       for(let i = 1; i < lineas.length; i++) {
         if(!lineas[i]) continue;
         const col = parsearLineaCSV(lineas[i]);
-        if(!col[0]) continue;
+        if(col.length <= 5 || !col[5]) continue; // Asegura que exista la Columna F
         
         cacheSeries.push({
-          vin: col[0].replace(/"/g, '').trim().toLowerCase(),
-          originalVin: col[0].replace(/"/g, '').trim(),
-          modelo: (col[1] || '').replace(/"/g, '').trim(),
-          fecha: (col[2] || '').replace(/"/g, '').trim(),
-          dictamen: (col[3] || '').replace(/"/g, '').trim()
+          vin: col[5].replace(/"/g, '').trim().toLowerCase(), // Columna F como identificador único
+          originalVin: col[5].replace(/"/g, '').trim(),
+          modelo: (col[6] || '').replace(/"/g, '').trim(),     // Siguiente columna para el modelo
+          fecha: (col[7] || '').replace(/"/g, '').trim(),      // Siguiente columna para la fecha
+          dictamen: (col[8] || '').replace(/"/g, '').trim()    // Siguiente columna para el dictamen
         });
       }
     }
@@ -247,7 +247,6 @@
       agenciaActiva = { nombre, base: base.toUpperCase(), puede };
       document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ${nombre}`;
       
-      // Limpieza de inputs y estados previos
       document.getElementById('input-vin-modal').value = '';
       document.getElementById('resultado-vin-box').style.display = 'none';
       document.querySelectorAll('.wiz-step, .resultado-widget-box, .ia-analisis-alerta').forEach(el => el.style.display = 'none');
@@ -270,7 +269,6 @@
       b.style.display = s ? 'none' : 'block';
     }
 
-    // FLUJO LOGICO GENERAL
     function wP1(v) {
       ocultarTodo();
       if(v === 'CESVE') { document.getElementById('res-garantia').style.display = 'block'; imprimirIA('CESVE'); }
@@ -308,7 +306,6 @@
       else { document.getElementById('res-cotizacion').style.display = 'block'; imprimirIA('P2'); }
     }
 
-    /* AUDITORÍA EN TIEMPO REAL DEL VIN DENTRO DE EVA */
     function auditarVinEnModal() {
       const buscador = document.getElementById('input-vin-modal').value.trim().toLowerCase();
       const respuestaBox = document.getElementById('resultado-vin-box');
@@ -318,26 +315,22 @@
         return;
       }
 
-      // Búsqueda exacta o coincidencia en la base de datos precargada
       const registro = cacheSeries.find(s => s.vin === buscador || s.vin.includes(buscador));
-
       respuestaBox.style.display = 'block';
 
       if(registro) {
         respuestaBox.innerHTML = `
-          <b style="color:#38bdf8;"> Unidad Localizada:</b><br>
-          🏍️ Modelo: ${registro.modelo}<br>
-          📅 Ingreso: ${registro.fecha}<br>
-          ⚠️ Dictamen Oficial: <span style="color:#ffb74d; font-weight:bold;">${registro.dictamen}</span>
+          <b style="color:#38bdf8;"> Unidad Localizada (Columna F):</b><br>
+          🏍️ Modelo: ${registro.modelo || 'N/A'}<br>
+          📅 Ingreso: ${registro.fecha || 'N/A'}<br>
+          ⚠️ Dictamen Oficial: <span style="color:#ffb74d; font-weight:bold;">${registro.dictamen || 'Sin dictamen'}</span>
         `;
         
-        // Evaluación automática del dictamen de la serie encontrada
-        const dictamenUpper = registro.dictamen.toUpperCase();
         document.getElementById('ia-fundamento').style.display = 'block';
-        document.getElementById('ia-fundamento').innerHTML = `📋 <b>Análisis EVA:</b> El VIN se encuentra registrado bajo estatus del Proyecto S. Acatar resolución oficial de planta.`;
+        document.getElementById('ia-fundamento').innerHTML = `📋 <b>Análisis EVA:</b> Cruce de VIN exitoso con el Proyecto S. Por favor acatar la resolución de planta mostrada arriba.`;
         
       } else {
-        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">No se encontró registro exacto de este VIN en el listado del Proyecto S.</span>`;
+        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">No se encontró registro del VIN en la Columna F del Proyecto S.</span>`;
         document.getElementById('ia-fundamento').style.display = 'none';
       }
     }
