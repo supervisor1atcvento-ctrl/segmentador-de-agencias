@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento (Opción 1: Kiosco Completo)</title>
+  <title>Segmentador ATC - Vento (Opción 1: Kiosco Limpio)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #222; }
     
@@ -27,21 +28,26 @@
     .input-box input:focus { outline: none; border-color: #ff5722; box-shadow: 0 0 8px rgba(255,87,34,0.3); }
 
     /* REJILLA DE EXHIBICIÓN KIOSCO */
-    #kiosco-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 10px; }
+    #kiosco-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 10px; }
     
-    /* TARJETA INDIVIDUAL */
-    .kiosco-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 2px solid #e1e4e8; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; justify-content: space-between; }
+    /* TARJETA INDIVIDUAL (ESTILO MOTO) */
+    .kiosco-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 2px solid #e1e4e8; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: space-between; min-height: 220px; }
     .kiosco-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-color: #ff5722; }
     
-    .card-num { font-size: 36px; font-weight: 900; color: #ff5722; margin-bottom: 5px; line-height: 1; }
-    .card-name { font-size: 16px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 15px; }
-    .card-meta { font-size: 12px; color: #64748b; font-weight: 500; border-top: 1px dashed #e2e8f0; padding-top: 10px; margin-top: auto; }
+    /* CONTENEDOR FIGURA DE MOTO */
+    .card-motorcycle-icon { background: #f1f5f9; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px solid #e2e8f0; transition: all 0.2s; }
+    .card-motorcycle-icon i { font-size: 32px; color: #64748b; }
+    .kiosco-card:hover .card-motorcycle-icon { background: #fff3e0; border-color: #ffb74d; }
+    .kiosco-card:hover .card-motorcycle-icon i { color: #ff5722; }
 
-    /* ESTILOS DE ADVERTENCIA PARA VALIDACIÓN INICIAL */
+    .card-name { font-size: 15px; font-weight: 700; color: #111; line-height: 1.4; margin-bottom: 15px; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
+    .card-meta { font-size: 11.5px; color: #64748b; font-weight: 500; border-top: 1px dashed #e2e8f0; padding-top: 10px; width: 100%; }
+
+    /* ESTILOS DE ADVERTENCIA BASADOS EN LA ACCIÓN BASE */
     .alerta-garantia { border-color: #a7f3d0; background-color: #f0fdf4; }
-    .alerta-garantia .card-num { color: #059669; }
+    .alerta-garantia .card-motorcycle-icon i { color: #059669; }
     .alerta-roja { border-color: #fecaca; background-color: #fef2f2; }
-    .alerta-roja .card-num { color: #dc2626; }
+    .alerta-roja .card-motorcycle-icon i { color: #dc2626; }
 
     /* BOTÓN COMODÍN AGENCIA NUEVA */
     #comodin-nueva-agencia { background-color: #eff6ff; border-color: #38bdf8; border-style: dashed; color: #1e40af; grid-column: 1 / -1; text-align: center; padding: 30px; border-radius: 12px; display: none; cursor: pointer; font-weight: bold; }
@@ -94,7 +100,7 @@
     <div class="search-container">
       <h3>Ingresa Número de Agencia o Filtro de Nombre</h3>
       <div class="input-box">
-        <input type="text" id="input-agencia" placeholder="Ej. 36 o 'Naucalpan'..." onkeyup="filtrarKiosco()">
+        <input type="text" id="input-agencia" placeholder="Busca escribiendo el número (ej: 36) o nombre..." onkeyup="filtrarKiosco()">
       </div>
     </div>
 
@@ -250,7 +256,6 @@
       }
     }
 
-    // Limpia y parsea el CSV quitando comillas de protección del feed de Google
     function parsearLineaCSV(linea) {
       let resultado = [];
       let comillas = false;
@@ -268,7 +273,6 @@
 
     function limpiarYProcesarAgencias(texto) {
       const lineas = texto.split(/\r?\n/);
-      const contenedor = document.getElementById('card-container');
       const containerKiosco = document.getElementById('kiosco-container');
       const msg = document.getElementById('load-msg');
       if(msg) msg.remove();
@@ -287,19 +291,21 @@
 
         const tarjeta = document.createElement('div');
         tarjeta.className = 'kiosco-card card-datos-agencia';
+        // Conservamos los atributos ocultos para que el motor de búsqueda pueda operar tras bambalinas
         tarjeta.setAttribute('data-id', id);
         tarjeta.setAttribute('data-search', nombre.toLowerCase());
         
-        // Estilos semánticos automáticos basados en la hoja de control
-        if(accionBase.toUpperCase().includes("GARANTIA")) tarjeta.classList.add('alerta-garantia');
+        if(accionBase.toUpperCase().includes("GARANTIA") || accionBase.toUpperCase().includes("GARANTÍA")) tarjeta.classList.add('alerta-garantia');
         if(accionBase.toUpperCase().includes("CHECK LIST")) tarjeta.classList.add('alerta-roja');
 
         tarjeta.onclick = () => { abrirEVA(nombre, accionBase, puedeReportar); };
+        
+        // El diseño ahora omite el número visual e integra la figura vectorial de la moto
         tarjeta.innerHTML = `
-          <div>
-            <div class="card-num">${id}</div>
-            <div class="card-name">${nombre}</div>
+          <div class="card-motorcycle-icon">
+            <i class="fa-solid fa-motorcycle"></i>
           </div>
+          <div class="card-name">${nombre}</div>
           <div class="card-meta">
             ⚙️ Base: ${accionBase || 'No especificado'} <br>
             📋 Rev. Gral: ${puedeReportar || 'SI'}
@@ -309,7 +315,7 @@
       }
     }
 
-    /* FILTRADO INTELIGENTE EXACTO POR NÚMERO */
+    /* MOTOR DE BÚSQUEDA INTEGRAL (BUSCA POR ID TIPO "36" AUNQUE NO SEA VISIBLE) */
     function filtrarKiosco() {
       const input = document.getElementById('input-agencia').value.trim();
       const inputMinuscula = input.toLowerCase();
@@ -322,9 +328,9 @@
         if(input === '') {
           visualiza = true;
         } else if(esNumero) {
-          visualiza = (card.getAttribute('data-id') === input); // Validación matemática exacta de columna A
+          visualiza = (card.getAttribute('data-id') === input); // Comprobación exacta por ID de Columna A
         } else {
-          visualiza = card.getAttribute('data-search').includes(inputMinuscula); // Coincidencia parcial textual
+          visualiza = card.getAttribute('data-search').includes(inputMinuscula); // Coincidencia textual
         }
         
         card.style.display = visualiza ? 'flex' : 'none';
@@ -339,7 +345,6 @@
       }
     }
 
-    /* PROCESAMIENTO MÓDULO SERIES */
     function procesarProyectoS(texto) {
       const lineas = texto.split(/\r?\n/);
       const tbody = document.getElementById('tbody-series');
@@ -372,7 +377,6 @@
       });
     }
 
-    /* CONTROL DE INTERFAZ EVA */
     function toggleWidgetIA() {
       const modal = document.getElementById('ventana-ia');
       const backdrop = document.getElementById('backdrop-modal');
@@ -395,12 +399,12 @@
       toggleWidgetIA();
     }
 
+    function年には() {}
     function wDecisionInicial(quiereAyuda) {
       document.getElementById('presentacion-eva').style.display = 'none';
       if(quiereAyuda) {
         document.getElementById('wrapper-arbol-logico').style.display = 'block';
         
-        // Atajo operacional: Si la hoja dicta garantía directa por defecto, brinca el árbol
         if(agenciaActiva.base.includes("GARANTIA") || agenciaActiva.base.includes("GARANTÍA")) {
           wOcultarPasosArbol();
           document.getElementById('res-garantia').style.display = 'block';
@@ -432,7 +436,6 @@
       toggleWidgetIA();
     }
 
-    /* LOGICA COMPLETA DEL ÁRBOL DE DECISIONES DE EVA */
     function wProcesarP1(valor) {
       wOcultarPasosArbol();
       if(valor === 'CESVE') {
