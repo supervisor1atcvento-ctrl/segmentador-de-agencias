@@ -8,6 +8,12 @@
     .hub-header { background-color: #0d0d0d; color: #ffffff; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 6px solid #ff5722; }
     .brand-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
     .hub-title { font-size: 18px; font-weight: 800; margin-top: 3px; }
+    
+    /* DISEÑO DE DOBLE PANEL */
+    .workspace-container { display: flex; gap: 20px; align-items: flex-start; }
+    .panel-izquierdo { flex: 1.2; min-width: 0; }
+    .panel-derecho-ia { flex: 0.8; background: #1e293b; color: #f8fafc; border-radius: 8px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-top: 4px solid #38bdf8; position: sticky; top: 15px; }
+
     .tabs-nav { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #e1e4e8; padding-bottom: 2px; }
     .tab-button { background-color: #e1e4e8; border: none; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 6px 6px 0 0; cursor: pointer; color: #555; transition: all 0.2s; }
     .tab-button:hover { background-color: #d1d5db; color: #111; }
@@ -25,16 +31,22 @@
     .btn-wizard { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 16px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 12px; color: #334155; transition: all 0.2s; }
     .btn-wizard:hover { background-color: #e2e8f0; }
     
-    .resultado-box { padding: 12px; border-radius: 6px; font-weight: bold; margin-top: 10px; font-size: 13px; line-height: 1.4; display: none; }
-    .res-garantia { background-color: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
-    .res-cotizacion { background-color: #ffebee; color: #c62828; border-left: 5px solid #d32f2f; }
-    .res-series { background-color: #fff8e1; color: #b78103; border-left: 5px solid #ffb300; }
-    .res-checklist { background-color: #f0f5ff; color: #1e3a8a; border-left: 5px solid #3b82f6; }
+    /* COMPONENTES DE LA IA */
+    .ia-header { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
+    .ia-avatar { width: 32px; height: 32px; background: #38bdf8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .ia-title { font-weight: bold; font-size: 14px; color: #38bdf8; letter-spacing: 1px; }
+    .ia-status-idle { color: #94a3b8; font-style: italic; font-size: 12px; }
+    .ia-analisis-box { background: #0f172a; padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; border-left: 3px solid #38bdf8; margin-bottom: 15px; display: none; }
+    .ia-speech-box { background: #334155; padding: 12px; border-radius: 6px; display: none; }
+    .ia-speech-box label { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 5px; text-transform: uppercase; }
+    .ia-speech-text { background: #1e293b; color: #f1f5f9; padding: 10px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; border: 1px solid #475569; max-height: 180px; overflow-y: auto; font-family: monospace; }
+    .btn-copy { background: #38bdf8; color: #0f172a; border: none; padding: 6px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 11px; width: 100%; transition: background 0.2s; }
+    .btn-copy:hover { background: #7dd3fc; }
 
     .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
     .search-container h3 { margin: 0 0 5px 0; font-size: 15px; color: #111; text-transform: uppercase; }
     .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 400px; box-sizing: border-box; }
-    .table-scroll { max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
+    .table-scroll { max-height: 250px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th { background-color: #ff5722; color: #ffffff; padding: 10px; font-weight: 600; position: sticky; top: 0; z-index: 5; text-align: left; }
     .black-theme th { background-color: #222222; }
@@ -45,6 +57,12 @@
     .alerta-roja { background-color: #ffebee !important; color: #c62828; }
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
     .fila-comodin { background-color: #eff6ff !important; display: none; }
+    
+    .resultado-box { padding: 12px; border-radius: 6px; font-weight: bold; margin-top: 10px; font-size: 13px; line-height: 1.4; display: none; }
+    .res-garantia { background-color: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
+    .res-cotizacion { background-color: #ffebee; color: #c62828; border-left: 5px solid #d32f2f; }
+    .res-series { background-color: #fff8e1; color: #b78103; border-left: 5px solid #ffb300; }
+    .res-checklist { background-color: #f0f5ff; color: #1e3a8a; border-left: 5px solid #3b82f6; }
   </style>
 </head>
 <body>
@@ -54,137 +72,146 @@
     <div class="hub-title">SISTEMA SEGMENTADOR DE CONTROL - ATC</div>
   </div>
 
-  <div class="tabs-nav">
-    <button id="btn-tab-agencias" class="tab-button active" onclick="cambiarPestanaManual(event, 'modulo-agencias')">AGENCIAS</button>
-    <button id="btn-tab-series" class="tab-button" onclick="cambiarPestanaManual(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
-  </div>
-
-  <div id="modulo-agencias" class="tab-content active">
+  <div class="workspace-container">
     
-    <div class="wizard-card" id="wizard-contenedor" style="display:none;">
-      <h3>🧠 DIAGNÓSTICO EN TIEMPO REAL: <span id="wiz-nombre-agencia" style="color:#222;"></span></h3>
-      
-      <div id="step-activacion" class="wizard-step">
-        <label><strong>1. ¿Quién activó la unidad según Ventonet/Freshdesk?</strong></label>
-        <div class="btn-group">
-          <button class="btn-wizard" onclick="evaluarActivacion('CESVE')">CESVE</button>
-          <button class="btn-wizard" onclick="evaluarActivacion('CEDIS')">CEDIS</button>
-          <button class="btn-wizard" style="border-color: #ef4444;" onclick="evaluarActivacion('SIN_REGISTRO')">⚠️ SIN REGISTRO DE ARMADO</button>
+    <div class="panel-izquierdo">
+      <div class="tabs-nav">
+        <button id="btn-tab-agencias" class="tab-button active" onclick="cambiarPestanaManual(event, 'modulo-agencias')">AGENCIAS</button>
+        <button id="btn-tab-series" class="tab-button" onclick="cambiarPestanaManual(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
+      </div>
+
+      <div id="modulo-agencias" class="tab-content active">
+        
+        <div class="wizard-card" id="wizard-contenedor" style="display:none;">
+          <h3>🧠 DIAGNÓSTICO EN TIEMPO REAL: <span id="wiz-nombre-agencia" style="color:#222;"></span></h3>
+          
+          <div id="step-activacion" class="wizard-step">
+            <label><strong>1. ¿Quién activó la unidad según Ventonet/Freshdesk?</strong></label>
+            <div class="btn-group">
+              <button class="btn-wizard" onclick="evaluarActivacion('CESVE')">CESVE</button>
+              <button class="btn-wizard" onclick="evaluarActivacion('CEDIS')">CEDIS</button>
+              <button class="btn-wizard" style="border-color: #ef4444;" onclick="evaluarActivacion('SIN_REGISTRO')">⚠️ SIN REGISTRO DE ARMADO</button>
+            </div>
+          </div>
+
+          <div id="step-armado" class="wizard-step">
+            <label><strong>2. ¿La unidad cuenta con registro de Ticket de Armado y Activado previo?</strong></label>
+            <div class="btn-group">
+              <button class="btn-wizard" onclick="evaluarArmado('SI')">SÍ TIENE</button>
+              <button class="btn-wizard" onclick="evaluarArmado('NO')">NO TIENE</button>
+            </div>
+          </div>
+
+          <div id="step-reporte" class="wizard-step">
+            <label><strong>3. ¿Qué tipo de reporte está levantando la agencia?</strong></label>
+            <div class="btn-group">
+              <button class="btn-wizard" onclick="evaluarReporte('REVISION')">REVISIÓN GENERAL</button>
+              <button class="btn-wizard" onclick="evaluarReporte('FALLA')">FALLA ESPECÍFICA</button>
+            </div>
+          </div>
+
+          <div id="step-variante-falla" class="wizard-step">
+            <label><strong>3.5. Selecciona el tipo de Falla Específica reportada:</strong></label>
+            <div class="btn-group">
+              <button class="btn-wizard" onclick="evaluarVarianteFalla('BATERIA')">🔋 BATERÍA</button>
+              <button class="btn-wizard" onclick="evaluarVarianteFalla('VICIO_OCULTO')">🔍 VICIO OCULTO</button>
+              <button class="btn-wizard" onclick="evaluarVarianteFalla('ELEC_MEC')">⚡ SISTEMA ELÉCTRICO / MECÁNICO</button>
+              <button class="btn-wizard" onclick="evaluarVarianteFalla('OTRA')">⚙️ CUALQUIER OTRA FALLA</button>
+            </div>
+          </div>
+
+          <div id="step-revisiones" class="wizard-step">
+            <label><strong>4. ¿Es la primera revisión general de esta motocicleta?</strong></label>
+            <div class="btn-group">
+              <button class="btn-wizard" onclick="evaluarRevision('PRIMERA')">SÍ, ES LA 1ª REVISIÓN</button>
+              <button class="btn-wizard" onclick="evaluarRevision('OTRA')">NO, YA ES LA 2ª O MÁS</button>
+            </div>
+          </div>
+
+          <div id="res-pasa-garantia" class="resultado-box res-garantia">🟢 DICTAMEN: PASA POR GARANTÍA DIRECTA.</div>
+          <div id="res-pasa-cotizacion" class="resultado-box res-cotizacion">🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA.</div>
+          <div id="res-ir-series" class="resultado-box res-series">🔄 REDIRECCIONANDO A VALIDACIÓN DE SERIES...</div>
+          <div id="res-solicitar-evidencia" class="resultado-box res-checklist">🔵 DICTAMEN: SE REQUIERE DOCUMENTACIÓN DE CONTROL.</div>
+          
+          <button class="btn-wizard" style="margin-top:12px; background:#64748b; color:#fff;" onclick="reiniciarWizard(true)">🔄 Diagnosticar otra tienda</button>
+        </div>
+
+        <div class="search-container">
+          <h3>1. Busca la Agencia para iniciar el Diagnóstico</h3>
+          <div class="input-box">
+            <input type="text" id="input-agencia" placeholder="Escribe el nombre de la agencia..." onkeyup="buscarAgencias()">
+          </div>
+        </div>
+        
+        <div class="table-scroll">
+          <table id="tabla-agencias">
+            <thead>
+              <tr>
+                <th>Acción</th>
+                <th>Nº</th>
+                <th>Agencia</th>
+                <th>Acción Base</th>
+                <th>¿Puede Reportar Rev. Gral?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="fila-nueva-agencia" class="fila-comodin" style="display: none;">
+                <td><button class="btn-seleccionar" style="background:#2563eb;" onclick="seleccionarAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">📋 Iniciar</button></td>
+                <td>N/A</td>
+                <td style="color:#2563eb;"><strong>📍 TIENDA NO ENCONTRADA (¿Es una agencia nueva?)</strong></td>
+                <td>PASA POR GARANTIA (POR DEFECTO)</td>
+                <td><strong>SI</strong></td>
+              </tr>
+              <tr><td colspan="5" class="status-msg">Cargando catálogo...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div id="step-armado" class="wizard-step">
-        <label><strong>2. ¿La unidad cuenta con registro de Ticket de Armado y Activado previo?</strong></label>
-        <div class="btn-group">
-          <button class="btn-wizard" onclick="evaluarArmado('SI')">SÍ TIENE</button>
-          <button class="btn-wizard" onclick="evaluarArmado('NO')">NO TIENE</button>
+      <div id="modulo-series" class="tab-content">
+        <div class="search-container" id="contenedor-buscador-series" style="border-color: #222;">
+          <h3>Segmentador de Números de Serie</h3>
+          <p>Escribe el número de serie para comprobar detalles de recepción.</p>
+          <div class="input-box">
+            <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
+          </div>
         </div>
-      </div>
-
-      <div id="step-reporte" class="wizard-step">
-        <label><strong>3. ¿Qué tipo de reporte está levantando la agencia?</strong></label>
-        <div class="btn-group">
-          <button class="btn-wizard" onclick="evaluarReporte('REVISION')">REVISIÓN GENERAL</button>
-          <button class="btn-wizard" onclick="evaluarReporte('FALLA')">FALLA ESPECÍFICA</button>
+        <div class="table-scroll black-theme">
+          <table id="tabla-series">
+            <thead>
+              <tr>
+                <th>Número de Serie</th>
+                <th>Artículo / Modelo</th>
+                <th>Fecha Recepción</th>
+                <th>Acción Dictaminada</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" class="status-msg">Cargando base de datos de Proyecto S...</td></tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-
-      <div id="step-variante-falla" class="wizard-step">
-        <label><strong>3.5. Selecciona el tipo de Falla Específica reportada:</strong></label>
-        <div class="btn-group">
-          <button class="btn-wizard" onclick="evaluarVarianteFalla('BATERIA')">🔋 BATERÍA</button>
-          <button class="btn-wizard" onclick="evaluarVarianteFalla('VICIO_OCULTO')">🔍 VICIO OCULTO</button>
-          <button class="btn-wizard" onclick="evaluarVarianteFalla('ELEC_MEC')">⚡ SISTEMA ELÉCTRICO / MECÁNICO</button>
-          <button class="btn-wizard" onclick="evaluarVarianteFalla('OTRA')">⚙️ CUALQUIER OTRA FALLA</button>
-        </div>
-      </div>
-
-      <div id="step-revisiones" class="wizard-step">
-        <label><strong>4. ¿Es la primera revisión general de esta motocicleta?</strong></label>
-        <div class="btn-group">
-          <button class="btn-wizard" onclick="evaluarRevision('PRIMERA')">SÍ, ES LA 1ª REVISIÓN</button>
-          <button class="btn-wizard" onclick="evaluarRevision('OTRA')">NO, YA ES LA 2ª O MÁS</button>
-        </div>
-      </div>
-
-      <div id="res-pasa-garantia" class="resultado-box res-garantia">
-        🟢 DICTAMEN: PASA POR GARANTÍA DIRECTA.<br>
-        <span style="font-weight:normal; font-size:11px;">👉 Acción: Solicita y agrega la captura de pantalla en el ticket de Freshdesk y autoriza el proceso.</span>
-      </div>
-      
-      <div id="res-pasa-cotizacion" class="resultado-box res-cotizacion">
-        🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA.<br>
-        <span style="font-weight:normal; font-size:11px;">👉 Acción: Rechaza la garantía por incumplimiento. Solicita obligatoriamente el CHECK LIST a la agencia.</span>
-      </div>
-      
-      <div id="res-ir-series" class="resultado-box res-series">
-        🔄 REDIRECCIONANDO A VALIDACIÓN DE SERIES...<br>
-        <span style="font-weight:normal; font-size:11px;">👉 Un momento por favor...</span>
-      </div>
-
-      <div id="res-solicitar-evidencia" class="resultado-box res-checklist">
-        🔵 DICTAMEN: SE REQUIERE DOCUMENTACIÓN DE CONTROL.<br>
-        <span style="font-weight:normal; font-size:11px;">👉 Acción: Al no existir registro de Armado/Activado, se debe realizar obligatoriamente la solicitud del CHECK LIST y la evidencia fotográfica/video de cómo llegó la unidad.</span>
-      </div>
-      
-      <button class="btn-wizard" style="margin-top:12px; background:#64748b; color:#fff;" onclick="reiniciarWizard(true)">🔄 Diagnosticar otra tienda</button>
-    </div>
-
-    <div class="search-container">
-      <h3>1. Busca la Agencia para iniciar el Diagnóstico</h3>
-      <div class="input-box">
-        <input type="text" id="input-agencia" placeholder="Escribe el nombre de la agencia..." onkeyup="buscarAgencias()">
       </div>
     </div>
     
-    <div class="table-scroll">
-      <table id="tabla-agencias">
-        <thead>
-          <tr>
-            <th>Acción</th>
-            <th>Nº</th>
-            <th>Agencia</th>
-            <th>Acción Base (Col N)</th>
-            <th>¿Puede Reportar Rev. Gral? (Col O)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="fila-nueva-agencia" class="fila-comodin" style="display: none;">
-            <td><button class="btn-seleccionar" style="background:#2563eb;" onclick="seleccionarAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">📋 Iniciar</button></td>
-            <td>N/A</td>
-            <td style="color:#2563eb;"><strong>📍 TIENDA NO ENCONTRADA (¿Es una agencia nueva?)</strong></td>
-            <td>PASA POR GARANTIA (POR DEFECTO)</td>
-            <td><strong>SI</strong></td>
-          </tr>
-          <tr><td colspan="5" class="status-msg">Cargando catálogo...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div id="modulo-series" class="tab-content">
-    <div class="search-container" id="contenedor-buscador-series" style="border-color: #222;">
-      <h3>Segmentador de Números de Serie</h3>
-      <p>Escribe el número de serie para comprobar detalles de recepción.</p>
-      <div class="input-box">
-        <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
+    <div class="panel-derecho-ia">
+      <div class="ia-header">
+        <div class="ia-avatar">🤖</div>
+        <div>
+          <div class="ia-title">IA COPILOTO ATC</div>
+          <div id="ia-status" class="ia-status-idle">Esperando selección de agencia...</div>
+        </div>
+      </div>
+      
+      <div id="ia-analisis" class="ia-analisis-box"></div>
+      
+      <div id="ia-speech-contenedor" class="ia-speech-box">
+        <label>📋 RESPUESTA SUGERIDA PARA FRESHDESK / WHATSAPP</label>
+        <div id="ia-speech" class="ia-speech-text"></div>
+        <button class="btn-copy" onclick="copiarTextoIA()">📋 Copiar al Portapapeles</button>
       </div>
     </div>
-    <div class="table-scroll black-theme">
-      <table id="tabla-series">
-        <thead>
-          <tr>
-            <th>Número de Serie</th>
-            <th>Artículo / Modelo</th>
-            <th>Fecha Recepción</th>
-            <th>Acción Dictaminada</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="4" class="status-msg">Cargando base de datos de Proyecto S...</td></tr>
-        </tbody>
-      </table>
-    </div>
+
   </div>
 
   <script>
@@ -206,9 +233,7 @@
     function ejecutarCambioPestana(idModulo, esNegro = false) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
-      
       document.getElementById(idModulo).classList.add('active');
-      
       if(idModulo === 'modulo-agencias') {
         document.getElementById('btn-tab-agencias').classList.add('active');
       } else {
@@ -240,7 +265,6 @@
     function procesarAgenciasCSV(texto) {
       const filas = parsearCSVLineas(texto);
       const tbody = document.querySelector('#tabla-agencias tbody');
-      
       const filaComodin = document.getElementById('fila-nueva-agencia');
       tbody.innerHTML = '';
       tbody.appendChild(filaComodin);
@@ -249,57 +273,50 @@
         const columnas = filas[i];
         if(columnas.length < 2 || !columnas[1]) continue;
         
-        const colA = columnas[0] || ''; 
-        const colB = columnas[1] || ''; 
-        const colN = columnas[13] || ''; 
-        const colO = columnas[14] || ''; 
-        
         const tr = document.createElement('tr');
         tr.className = 'fila-datos';
-        tr.setAttribute('data-search', colB.toLowerCase());
+        tr.setAttribute('data-search', columnas[1].toLowerCase());
         
-        const accionTexto = colN.toUpperCase();
         let claseColor = '';
-        if(accionTexto.includes("GARANTIA") || accionTexto.includes("GARANTÍA")) claseColor = 'alerta-garantia';
-        if(accionTexto.includes("CHECK LIST") || accionTexto.includes("CHECKLIST")) claseColor = 'alerta-roja';
+        if(columnas[13].toUpperCase().includes("GARANTIA")) claseColor = 'alerta-garantia';
+        if(columnas[13].toUpperCase().includes("CHECK LIST")) claseColor = 'alerta-roja';
         
         tr.innerHTML = `
-          <td><button class="btn-seleccionar" onclick="seleccionarAgencia('${colB}', '${colN}', '${colO}')">📋 Iniciar</button></td>
-          <td>${colA}</td>
-          <td class="${claseColor}"><strong>${colB}</strong></td>
-          <td>${colN}</td>
-          <td><strong>${colO}</strong></td>
+          <td><button class="btn-seleccionar" onclick="seleccionarAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">📋 Iniciar</button></td>
+          <td>${columnas[0]}</td>
+          <td class="${claseColor}"><strong>${columnas[1]}</strong></td>
+          <td>${columnas[13]}</td>
+          <td><strong>${columnas[14]}</strong></td>
         `;
         tbody.appendChild(tr);
       }
     }
 
     function seleccionarAgencia(nombre, accionBase, puedeReportar) {
-      agenciaSeleccionada = {
-        nombre: nombre,
-        accionBase: accionBase.toUpperCase().trim(),
-        puedeReportar: puedeReportar.toUpperCase().trim()
-      };
-      
+      agenciaSeleccionada = { nombre: nombre, accionBase: accionBase.toUpperCase().trim(), puedeReportar: puedeReportar.toUpperCase().trim() };
       document.getElementById('wiz-nombre-agencia').innerText = nombre;
       document.getElementById('wizard-contenedor').style.display = 'block';
+      
+      document.getElementById('ia-status').innerText = `Analizando caso de: ${nombre}`;
+      document.getElementById('ia-status').style.color = '#38bdf8';
       
       if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
         ocultarPasos();
         mostrarResultado('res-pasa-garantia');
+        ejecutarLogicaIA('GARANTIA_BASE');
       } else {
         reiniciarWizard(false); 
       }
-      
-      document.getElementById('wizard-contenedor').scrollIntoView({ behavior: 'smooth' });
     }
 
     function evaluarActivacion(tipo) {
       ocultarPasos();
       if (tipo === 'CESVE') {
         mostrarResultado('res-pasa-garantia');
+        ejecutarLogicaIA('CESVE');
       } else if (tipo === 'SIN_REGISTRO') {
         mostrarResultado('res-solicitar-evidencia');
+        ejecutarLogicaIA('SIN_REGISTRO');
       } else {
         document.getElementById('step-armado').classList.add('active');
       }
@@ -309,6 +326,7 @@
       ocultarPasos();
       if (respuesta === 'SI') {
         mostrarResultado('res-pasa-garantia');
+        ejecutarLogicaIA('ARMADO_SI');
       } else {
         document.getElementById('step-reporte').classList.add('active');
       }
@@ -320,8 +338,8 @@
         document.getElementById('step-variante-falla').classList.add('active');
       } else {
         if (agenciaSeleccionada.puedeReportar === 'NO') {
-          // Si no puede reportar revisión gral y seleccionó Revisión General -> Al check list/cotización directo
           mostrarResultado('res-pasa-cotizacion'); 
+          ejecutarLogicaIA('REVISION_PROHIBIDA');
         } else {
           document.getElementById('step-revisiones').classList.add('active'); 
         }
@@ -330,12 +348,12 @@
 
     function evaluarVarianteFalla(variante) {
       ocultarPasos();
-      // 🛠️ ACTUALIZACIÓN DE REGLA: Si es Batería, Vicio Oculto O Eléctrico/Mecánico -> PASA DIRECTO
       if (variante === 'BATERIA' || variante === 'VICIO_OCULTO' || variante === 'ELEC_MEC') {
         mostrarResultado('res-pasa-garantia');
+        ejecutarLogicaIA(variante);
       } else {
-        // Cualquier otra falla -> Salto automático a Series
         mostrarResultado('res-ir-series');
+        ejecutarLogicaIA('OTRA_FALLA_PROYECTOS');
         
         setTimeout(() => {
           ejecutarCambioPestana('modulo-series', true);
@@ -343,7 +361,7 @@
           inputS.focus();
           document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
           reiniciarWizard(true);
-        }, 400);
+        }, 600);
       }
     }
 
@@ -351,15 +369,87 @@
       ocultarPasos();
       if (tipo === 'PRIMERA') {
         mostrarResultado('res-pasa-garantia');
+        ejecutarLogicaIA('PRIMERA_REVISION');
       } else {
         mostrarResultado('res-pasa-cotizacion');
+        ejecutarLogicaIA('VARIAS_REVISIONES');
       }
     }
 
-    function ocultarPasos() {
-      document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    // 🤖 MOTOR DE INTELIGENCIA LÓGICA CONVERSACIONAL (IA COPILOTO)
+    function ejecutarLogicaIA(escenario) {
+      const analisis = document.getElementById('ia-analisis');
+      const speechCont = document.getElementById('ia-speech-contenedor');
+      const speech = document.getElementById('ia-speech');
+      
+      analisis.style.display = 'block';
+      speechCont.style.display = 'block';
+      
+      let mensajeAnalisis = "";
+      let textoSpeech = "";
+      
+      const saludo = `Hola, estimado distribuidor de ${agenciaSeleccionada ? agenciaSeleccionada.nombre : 'Vento'}.\n\n`;
+      const firma = `\n\nQuedamos a sus órdenes para cualquier aclaración adicional.\nAtentamente,\nÁrea de Atención al Cliente\nVento Motorcycles U.S.A.`;
+
+      switch(escenario) {
+        case 'GARANTIA_BASE':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> Esta agencia tiene configurada la acción base de <b>Garantía Directa</b> en la columna N. El proceso está completamente libre y aprobado de inmediato. No requiere más cuestionamientos.`;
+          textoSpeech = `${saludo}Posterior a la revisión de su caso en nuestros sistemas, le informamos que su solicitud de garantía ha sido AUTORIZADA de manera directa. A la brevedad procesaremos las refacciones correspondientes.${firma}`;
+          break;
+        case 'CESVE':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> El asesor indicó que la unidad fue activada por <b>CESVE</b>. Por política operativa interna, toda unidad activada por CESVE cuenta con el respaldo total y pasa directamente por garantía.`;
+          textoSpeech = `${saludo}Confirmamos que la unidad cuenta con registro de activación por CESVE, por lo que su reporte técnico ha sido AUTORIZADA por garantía directa. Favor de proceder con el ingreso de la orden.${firma}`;
+          break;
+        case 'SIN_REGISTRO':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> ⚠️ ALERTA CRÍTICA: No existe ningún registro de Armado/Activación de la unidad en Ventonet ni Freshdesk. Se bloquea el dictamen directo y se exige documentación de control para validar el arribo de la moto.`;
+          textoSpeech = `${saludo}Hemos verificado los sistemas Ventonet y Freshdesk y detectamos que la unidad no cuenta con el registro de Armado y Activación correspondiente. Por tal motivo, para continuar con la evaluación del caso, le solicitamos de manera obligatoria nos proporcione el Check List de recepción así como la evidencia en fotografía/video de las condiciones en las que arribó la unidad a sus instalaciones.${firma}`;
+          break;
+        case 'ARMADO_SI':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> El asesor validó que existe un Ticket de Armado previo en Freshdesk. Al tener este antecedente de control correcto, se libera la cobertura y pasa por garantía directa.`;
+          textoSpeech = `${saludo}Validamos el historial de control y confirmamos la existencia del Ticket de Armado y Activado previo. Por consiguiente, su reporte técnico ha sido AUTORIZADA por garantía directa.${firma}`;
+          break;
+        case 'REVISION_PROHIBIDA':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> Caso crítico de control. La agencia seleccionada tiene prohibido reportar Revisiones Generales (Columna O = NO) e intentó ingresar una. Se rechaza la solicitud de inmediato y se pasa a cotización.`;
+          textoSpeech = `${saludo}Con base en los lineamientos operativos de la marca, le informamos que su solicitud no procede como garantía debido a restricciones en el perfil de reportes de revisiones generales. El caso se procesará como COTIZACIÓN DIRECTA. Se le solicita enviar el Check List para estructurar la cotización correspondiente.${firma}`;
+          break;
+        case 'BATERIA':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> El componente afectado es una <b>Batería</b>. Las baterías son excepciones prioritarias del área técnica y cuentan con cobertura de Garantía Directa automática.`;
+          textoSpeech = `${saludo}Le informamos que al tratarse de una incidencia relacionada con la batería de la unidad, su solicitud aplica dentro de las excepciones aprobadas y ha sido AUTORIZADA por garantía directa.${firma}`;
+          break;
+        case 'VICIO_OCULTO':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> El asesor dictaminó el daño como un <b>Vicio Oculto</b> de fabricación. Siguiendo las directrices del manual y la política legal de soporte, pasa directo por garantía.`;
+          textoSpeech = `${saludo}Posterior al análisis de la evidencia enviada, el departamento técnico determinó la existencia de un vicio oculto de fabricación. Por este motivo, la reparación queda totalmente AUTORIZADA bajo la cobertura de garantía de Vento Motorcycles.${firma}`;
+          break;
+        case 'ELEC_MEC':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> 🌟 Excepción Aplicada: Aunque la tienda tenga restricciones operativas base, el reporte es por una falla real en el <b>Sistema Eléctrico o Mecánico</b>. El lineamiento de supervisión indica que estos casos se rescatan y pasan por garantía directa.`;
+          textoSpeech = `${saludo}Hacemos de su conocimiento que al identificarse una afectación directa en los componentes mecánicos/eléctricos esenciales de la unidad, su reporte técnico ha sido validado y AUTORIZADA la garantía correspondiente para el reemplazo de refacciones.${firma}`;
+          break;
+        case 'PRIMERA_REVISION':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> La agencia está reportando la primera revisión general de la unidad y tiene los permisos vigentes. El dictamen es aprobatorio por garantía directa.`;
+          textoSpeech = `${saludo}Confirmamos que se trata de la primera revisión técnica oficial de la motocicleta, por lo cual se le da el visto bueno como AUTORIZADA por garantía directa.${firma}`;
+          break;
+        case 'VARIAS_REVISIONES':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> Rechazo por reincidencia. La unidad ya se encuentra en su segunda revisión general o posterior. De acuerdo con la póliza oficial, esto ya no es cubierto por la marca y se debe mandar a cotización de pago.`;
+          textoSpeech = `${saludo}Lamentamos informarle que su solicitud de garantía NO PROCEDE debido a que la unidad ya cuenta con registros previos de revisiones técnicas generales, excediendo la cobertura inicial autorizada. El proceso deberá gestionarse como una COTIZACIÓN DIRECTA de servicio con costo.${firma}`;
+          break;
+        case 'OTRA_FALLA_PROYECTOS':
+          mensajeAnalisis = `💡 <b>Análisis de IA:</b> La falla reportada requiere cruce de datos. Redireccionando en automático al asesor hacia el <b>Proyecto S</b> para buscar la serie y verificar si la unidad llegó antes del 1 de febrero o pertenece al listado.`;
+          textoSpeech = `[LA IA ESTÁ ESPERANDO QUE EL ASESOR BUSQUE LA SERIE EN LA OTRA PESTAÑA...]`;
+          speechCont.style.display = 'none';
+          break;
+      }
+      
+      speech.innerText = textoSpeech;
     }
 
+    function copiarTextoIA() {
+      const texto = document.getElementById('ia-speech').innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("¡Texto copiado al portapapeles con éxito! Ya puedes pegarlo en Freshdesk.");
+      });
+    }
+
+    function ocultarPasos() { document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active')); }
     function mostrarResultado(id) {
       document.querySelectorAll('.resultado-box').forEach(r => r.style.display = 'none');
       document.getElementById(id).style.display = 'block';
@@ -369,10 +459,13 @@
       ocultarPasos();
       document.querySelectorAll('.resultado-box').forEach(r => r.style.display = 'none');
       document.getElementById('step-activacion').classList.add('active');
-      
       if (completamente) {
         document.getElementById('wizard-contenedor').style.display = 'none';
         document.getElementById('input-agencia').value = '';
+        document.getElementById('ia-analisis').style.display = 'none';
+        document.getElementById('ia-speech-contenedor').style.display = 'none';
+        document.getElementById('ia-status').innerText = 'Esperando selección de agencia...';
+        document.getElementById('ia-status').style.color = '#94a3b8';
         buscarAgencias();
       }
     }
@@ -394,13 +487,11 @@
     function buscarAgencias() {
       const val = document.getElementById('input-agencia').value.toLowerCase();
       let coincidencias = 0;
-      
       document.querySelectorAll('#tabla-agencias tbody tr.fila-datos').forEach(tr => {
         const pertenece = tr.getAttribute('data-search').includes(val);
         tr.style.display = pertenece ? '' : 'none';
         if (pertenece) coincidencias++;
       });
-      
       const filaComodin = document.getElementById('fila-nueva-agencia');
       if (val.trim().length > 0 && coincidencias === 0) {
         filaComodin.style.setProperty('display', 'table-row', 'important'); 
