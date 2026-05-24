@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento (Opción 1: Kiosco Limpio)</title>
+  <title>Segmentador ATC - Vento (Opción 1: Kiosco Fix)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #222; }
@@ -237,6 +237,7 @@
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
 
     let cacheAgencias = [];
+    let agenciaActiva = null;
 
     window.onload = function() {
       fetch(urlAgencias).then(r => r.text()).then(data => limpiarYProcesarAgencias(data));
@@ -291,7 +292,6 @@
 
         const tarjeta = document.createElement('div');
         tarjeta.className = 'kiosco-card card-datos-agencia';
-        // Conservamos los atributos ocultos para que el motor de búsqueda pueda operar tras bambalinas
         tarjeta.setAttribute('data-id', id);
         tarjeta.setAttribute('data-search', nombre.toLowerCase());
         
@@ -300,7 +300,6 @@
 
         tarjeta.onclick = () => { abrirEVA(nombre, accionBase, puedeReportar); };
         
-        // El diseño ahora omite el número visual e integra la figura vectorial de la moto
         tarjeta.innerHTML = `
           <div class="card-motorcycle-icon">
             <i class="fa-solid fa-motorcycle"></i>
@@ -315,7 +314,6 @@
       }
     }
 
-    /* MOTOR DE BÚSQUEDA INTEGRAL (BUSCA POR ID TIPO "36" AUNQUE NO SEA VISIBLE) */
     function filtrarKiosco() {
       const input = document.getElementById('input-agencia').value.trim();
       const inputMinuscula = input.toLowerCase();
@@ -328,9 +326,9 @@
         if(input === '') {
           visualiza = true;
         } else if(esNumero) {
-          visualiza = (card.getAttribute('data-id') === input); // Comprobación exacta por ID de Columna A
+          visualiza = (card.getAttribute('data-id') === input);
         } else {
-          visualiza = card.getAttribute('data-search').includes(inputMinuscula); // Coincidencia textual
+          visualiza = card.getAttribute('data-search').includes(inputMinuscula);
         }
         
         card.style.display = visualiza ? 'flex' : 'none';
@@ -399,7 +397,6 @@
       toggleWidgetIA();
     }
 
-    function年には() {}
     function wDecisionInicial(quiereAyuda) {
       document.getElementById('presentacion-eva').style.display = 'none';
       if(quiereAyuda) {
