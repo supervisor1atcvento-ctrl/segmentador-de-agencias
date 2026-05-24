@@ -305,7 +305,7 @@
       else { document.getElementById('res-cotizacion').style.display = 'block'; imprimirIA('P2'); }
     }
 
-    /* 🧠 NUEVA LÓGICA DE AUDITORÍA CON FECHAS PARA PROYECTO S */
+/* 🧠 LÓGICA CORREGIDA PARA PROYECTO S (PRIORIDAD DE TEXTO Y DICTAMEN) */
     function auditarVinEnModal() {
       const buscador = document.getElementById('input-vin-modal').value.trim().toLowerCase();
       const respuestaBox = document.getElementById('resultado-vin-box');
@@ -325,31 +325,31 @@
 
       if(registro) {
         const celdaFecha = (registro.fechaRecepcion || '').trim();
-        let esGarantiaDirecta = false;
-        let motivoGarantia = "";
+        const estatusDictamen = (registro.dictamen || '').trim().toUpperCase();
+        
+        // --- NUEVA LÓGICA DE PRIORIDAD ---
+        // 1. Es garantía si dice "Proyecto S" o si el dictamen dice que pasa por garantía
+        const esProyectoS = celdaFecha.toUpperCase() === "PROYECTO S";
+        const esGarantiaDictamen = estatusDictamen.includes("PASA POR GARANTIA");
+        
+        let esGarantiaDirecta = (esProyectoS || esGarantiaDictamen);
+        let motivoGarantia = esProyectoS ? "Unidad identificada como Proyecto S." : "Dictamen técnico: Pasa por Garantía.";
 
-        // Evaluar si es texto plano "Proyecto S"
-        if(celdaFecha.toLowerCase() === 'proyecto s' || celdaFecha.toLowerCase().includes('proyecto')) {
-          esGarantiaDirecta = true;
-          motivoGarantia = "La unidad pertenece explícitamente al plan 'Proyecto S'.";
-        } else {
-          // Intentar parsear fecha (asumiendo formatos comunes DD/MM/AAAA o MM/DD/AAAA)
+        // 2. Si no es Proyecto S ni tiene dictamen de garantía, validamos la fecha
+        if (!esGarantiaDirecta && celdaFecha !== "" && celdaFecha.toLowerCase() !== 'proyecto s') {
           const partes = celdaFecha.split('/');
           if(partes.length === 3) {
-            // Reconstruir para comparar contra el 1 de Febrero del 2026
             let dia = parseInt(partes[0], 10);
-            let mes = parseInt(partes[1], 10) - 1; // Ene es 0
+            let mes = parseInt(partes[1], 10) - 1;
             let anio = parseInt(partes[2], 10);
-            
-            // Si el año viene en formato corto de 2 dígitos (ej. 26)
-            if(anio < 100) anio += 2000;
+            if (anio < 100) anio += 2000;
 
             const fechaMoto = new Date(anio, mes, dia);
             const fechaCorte = new Date(2026, 1, 1); // 1 de Febrero 2026
 
             if (!isNaN(fechaMoto.getTime()) && fechaMoto < fechaCorte) {
               esGarantiaDirecta = true;
-              motivoGarantia = `Fecha de recepción (${celdaFecha}) es anterior al 01/Feb/26 (Pre-cotizaciones).`;
+              motivoGarantia = `Fecha de recepción (${celdaFecha}) anterior al 01/Feb/26.`;
             }
           }
         }
@@ -358,7 +358,7 @@
         respuestaBox.innerHTML = `
           <b style="color:#38bdf8;"> Unidad Localizada:</b><br>
           🏍️ Modelo: ${registro.modelo || 'N/A'}<br>
-          📅 Recepción (Col H): <b>${celdaFecha || 'N/A'}</b><br>
+          📅 Recepción: <b>${celdaFecha || 'N/A'}</b><br>
           ⚠️ Estatus Base: ${registro.dictamen || 'Registrado'}
         `;
 
@@ -366,18 +366,18 @@
 
         if(esGarantiaDirecta) {
           document.getElementById('res-garantia').style.display = 'block';
-          boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> ${motivoGarantia} Pasa automático por Garantía.`;
+          boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> ${motivoGarantia} 🟢 Pase automático por Garantía.`;
         } else {
           document.getElementById('res-checklist').style.display = 'block';
-          boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Ingreso del 01/Feb/26 en adelante. Al ser proceso por cotización, se debe solicitar el Check List para armar expediente.`;
+          boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Ingreso posterior al 01/Feb/26 o proceso por cotización. Solicitar Check List obligatorio.`;
         }
         
       } else {
         // Si la unidad no se detecta en la base
-        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">El VIN no se encuentra registrado en el listado maestro del Proyecto S.</span>`;
+        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">El VIN no se encuentra registrado en el listado maestro.</span>`;
         document.getElementById('res-checklist').style.display = 'block';
         boxFundamento.style.display = 'block';
-        boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Unidad no localizada en base de datos. Al ser externa, el proceso corre por cotización y se requiere solicitar Check List obligatorio.`;
+        boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Unidad no localizada. Al ser externa, el proceso corre por cotización y se requiere solicitar Check List obligatorio.`;
       }
     }
 
