@@ -2,42 +2,56 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento (EVA)</title>
+  <title>Segmentador ATC - Vento (Catalogo EVA)</title>
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #222; }
     .hub-header { background-color: #0d0d0d; color: #ffffff; padding: 15px; border-radius: 6px; margin-bottom: 25px; border-left: 6px solid #ff5722; }
     .brand-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
     .hub-title { font-size: 18px; font-weight: 800; margin-top: 3px; }
     
-    /* PESTAÑAS PRINCIPALES */
-    .tabs-nav { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #e1e4e8; padding-bottom: 2px; }
-    .tab-button { background-color: #e1e4e8; border: none; padding: 12px 24px; font-size: 13px; font-weight: 700; border-radius: 6px 6px 0 0; cursor: pointer; color: #555; transition: all 0.2s; }
-    .tab-button:hover { background-color: #d1d5db; color: #111; }
-    .tab-button.active { background-color: #ff5722; color: #ffffff; }
-    .tab-button.active.black-tab { background-color: #222222; color: #ffffff; }
-    .tab-content { display: none; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-top: -17px; }
-    .tab-content.active { display: block; }
-    
-    /* BUSCADORES Y TABLAS */
-    .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-    .search-container h3 { margin: 0 0 5px 0; font-size: 15px; color: #111; text-transform: uppercase; }
-    .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 400px; box-sizing: border-box; }
-    .table-scroll { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background-color: #ff5722; color: #ffffff; padding: 12px 10px; font-weight: 600; position: sticky; top: 0; z-index: 5; text-align: left; }
-    .black-theme th { background-color: #222222; }
-    td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; }
-    tr:hover td { background-color: #f1f3f5; cursor: pointer; }
-    
-    .alerta-roja { background-color: #ffebee !important; color: #c62828; }
-    .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
-    .fila-comodin { background-color: #eff6ff !important; display: none; }
+    /* BUSCADOR ESTILIZADO */
+    .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 20px; border-radius: 6px; margin-bottom: 25px; text-align: center; }
+    .search-container h3 { margin: 0 0 10px 0; font-size: 16px; color: #111; text-transform: uppercase; }
+    .input-box input { padding: 12px 18px; border: 2px solid #cbd5e1; border-radius: 30px; font-size: 14px; font-weight: 600; width: 100%; max-width: 500px; box-sizing: border-box; text-align: center; }
+    .input-box input:focus { outline: none; border-color: #ff5722; box-shadow: 0 0 8px rgba(255,87,34,0.3); }
 
-    /* 🤖 WIDGET FLOTANTE: EVA */
-    .widget-ia-boton { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.2s ease; }
-    .widget-ia-boton:hover { background: #0f172a; transform: translateY(-2px); }
+    /* CONTENEDOR DE TARJETAS (GRID) */
+    #card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 10px; }
     
-    .widget-ia-ventana { position: fixed; bottom: 85px; right: 20px; width: 390px; max-height: 500px; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #38bdf8; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+    /* ESTILOS BASE DE LA TARJETA AGENCIA */
+    .agency-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 2px solid #e1e4e8; cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+    .agency-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: #ff5722; }
+    
+    /* HEADER DE LA TARJETA (Nº EN GRANDE) */
+    .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+    .card-number { font-size: 32px; font-weight: 800; color: #ff5722; line-height: 1; opacity: 0.8; }
+    .card-id-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
+    
+    /* CUERPO DE LA TARJETA */
+    .card-title { font-size: 15px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 15px; flex-grow: 1; }
+    .card-info { font-size: 12px; color: #555; margin-top: 5px; }
+    .card-status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+
+    /* ESTILOS SEMÁNTICOS (DE COLUMNA N) */
+    .alerta-garantia { border-color: #a7f3d0; background-color: #f0fdf4; }
+    .alerta-garantia .card-number { color: #059669; }
+    .alerta-garantia .card-status-dot { background-color: #059669; }
+
+    .alerta-roja { border-color: #fecaca; background-color: #fef2f2; }
+    .alerta-roja .card-number { color: #dc2626; }
+    .alerta-roja .card-status-dot { background-color: #dc2626; }
+
+    /* FOOTER DE LA TARJETA CON BOTÓN */
+    .card-footer { border-top: 1px solid #e1e4e8; padding-top: 10px; margin-top: 5px; text-align: center; }
+    .btn-abrir-eva { background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 11px; cursor: pointer; transition: all 0.2s ease; }
+    .btn-abrir-eva:hover { background: #0f172a; border-color: #ff5722; color: #ff5722; }
+
+    /* FILA COMODIN CUANDO NO HAY COINCIDENCIAS */
+    #comodin-no-encontrado { background-color: #eff6ff; border-color: #38bdf8; border-style: dashed; color: #1e40af; grid-column: 1 / -1; text-align: center; padding: 40px; border-radius: 12px; cursor: pointer; display: none; }
+    #comodin-no-encontrado:hover { background-color: #dbeafe; border-color: #ff5722; }
+
+    /* 🤖 INTERFAZ DE EVA */
+    .widget-ia-ventana { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; max-height: 80vh; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
     .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
     .widget-header-titulo { font-weight: bold; font-size: 12px; color: #38bdf8; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
     .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
@@ -45,7 +59,7 @@
     
     .widget-body { padding: 15px; overflow-y: auto; flex: 1; font-size: 13px; }
     
-    /* CONTENIDO INTERNO DEL ÁRBOL LÓGICO */
+    /* PASOS DEL WIZARD DE EVA */
     .wiz-card { background: #2d3748; padding: 12px; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #ff5722; }
     .wiz-card h4 { margin: 0 0 8px 0; color: #ff5722; font-size: 12px; text-transform: uppercase; }
     .wiz-step { display: none; margin-bottom: 12px; }
@@ -54,102 +68,56 @@
     .btn-opcion-wiz { background: #334155; border: 1px solid #475569; color: #f8fafc; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
     .btn-opcion-wiz:hover { background: #475569; border-color: #38bdf8; }
     
-    /* DICTAMENES DE CONTROL */
+    /* ALERTAS DE SALIDA */
     .ia-analisis-alerta { background: #0f172a; padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; border-left: 4px solid #38bdf8; margin-top: 15px; display: none; }
-
     .resultado-widget-box { padding: 12px; border-radius: 5px; font-weight: bold; margin-top: 12px; font-size: 12px; line-height: 1.4; display: none; }
     .wres-garantia { background-color: #14532d; color: #bbf7d0; border-left: 4px solid #22c55e; }
     .wres-cotizacion { background-color: #7f1d1d; color: #fecaca; border-left: 4px solid #ef4444; }
     .wres-series { background-color: #78350f; color: #fef3c7; border-left: 4px solid #f59e0b; }
     .wres-checklist { background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6; }
+
+    /* OVERLAY BACKDROP PARA BLOQUEAR FONDO */
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
+    
+    .status-msg { padding: 20px; text-align: center; color: #94a3b8; font-weight: 600; grid-column: 1 / -1; }
   </style>
 </head>
 <body>
 
   <div class="hub-header">
     <div class="brand-title">VENTO MOTORCYCLES U.S.A.</div>
-    <div class="hub-title">SISTEMA SEGMENTADOR DE CONTROL - ATC</div>
+    <div class="hub-title">CATÁLOGO SEGMENTADOR ATC (E.V.A.)</div>
   </div>
 
-  <div class="tabs-nav">
-    <button id="btn-tab-agencias" class="tab-button active" onclick="cambiarPestanaManual(event, 'modulo-agencias')">AGENCIAS</button>
-    <button id="btn-tab-series" class="tab-button" onclick="cambiarPestanaManual(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
+  <div class="search-container">
+    <h3>Buscar Agencia o Distribuidor</h3>
+    <div class="input-box">
+      <input type="text" id="input-agencia" placeholder="Escribe el nombre o número exacto de agencia..." onkeyup="buscarAgencias()">
+    </div>
   </div>
 
-  <div id="modulo-agencias" class="tab-content active">
-    <div class="search-container">
-      <h3>1. Buscar Agencia / Distribuidor</h3>
-      <div class="input-box">
-        <input type="text" id="input-agencia" placeholder="Escribe el nombre o número exacto de agencia..." onkeyup="buscarAgencias()">
-      </div>
+  <div id="card-container">
+    <div id="comodin-no-encontrado" class="agency-card alerta-comodin" onclick="abrirEVAConTienda('AGENCIA NUEVA / FORZADA', 'PASA POR GARANTIA', 'SI')">
+      <div class="card-title">📍 TIENDA NO ENCONTRADA<br><small>(¿Es una agencia nueva?)</small></div>
+      <button class="btn-abrir-eva">⚡ Forzar EVA con Garantía Directa</button>
     </div>
     
-    <div class="table-scroll">
-      <table id="tabla-agencias">
-        <thead>
-          <tr>
-            <th>Nº</th>
-            <th>Agencia</th>
-            <th>Acción Base (Col N)</th>
-            <th>¿Puede Reportar Rev. Gral? (Col O)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="fila-nueva-agencia" class="fila-comodin" style="display: none;" onclick="abrirWidgetConAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">
-            <td>N/A</td>
-            <td style="color:#2563eb;"><strong>📍 TIENDA NO ENCONTRADA (¿Es una agencia nueva?) → Hacer clic aquí para forzar EVA</strong></td>
-            <td>PASA POR GARANTIA (POR DEFECTO)</td>
-            <td><strong>SI</strong></td>
-          </tr>
-          <tr><td colspan="4" class="status-msg">Cargando catálogo...</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="status-msg">Cargando catálogo de agencias...</div>
   </div>
 
-  <div id="modulo-series" class="tab-content">
-    <div class="search-container" id="contenedor-buscador-series">
-      <h3>Buscador de Números de Serie</h3>
-      <div class="input-box">
-        <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
-      </div>
-    </div>
-    <div class="table-scroll black-theme">
-      <table id="tabla-series">
-        <thead>
-          <tr>
-            <th>Número de Serie</th>
-            <th>Artículo / Modelo</th>
-            <th>Fecha Recepción</th>
-            <th>Acción Dictaminada</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="4" class="status-msg">Cargando base de datos de Proyecto S...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <button class="widget-ia-boton" onclick="toggleWidgetIA()">
-    <span>🤖</span> Consultar a EVA (Asistente ATC)
-  </button>
+  <div class="modal-backdrop" id="backdrop-eva" onclick="toggleWidgetIA()"></div>
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div class="widget-header-titulo"><span>🤖</span> EVA - ESPECIALISTA EN VALIDACIÓN DE ATENCIÓN A CLIENTES</div>
+      <div class="widget-header-titulo"><span>🤖</span> EVA - ESPECIALISTA EN VALIDACIÓN ATC</div>
       <button class="widget-btn-cerrar" onclick="toggleWidgetIA()">×</button>
     </div>
     <div class="widget-body">
       
-      <div id="widget-tienda-activa" style="font-weight: bold; font-size: 11px; margin-bottom: 10px; color: #38bdf8; text-transform: uppercase;">
-        ⚠️ Selecciona una agencia en la tabla para que EVA inicie el análisis de validación.
-      </div>
-      
       <div class="wiz-card" id="widget-presentacion-eva" style="display:none;">
         <h4 id="lbl-saludo-tienda">¡Hola Asesor! 🤖</h4>
         <p style="margin: 5px 0 12px 0; font-size: 12.5px; line-height: 1.4; color: #e2e8f0;">
-          Soy <b>EVA</b>. Detecté que seleccionaste esta sucursal. ¿Requieres que te guíe con el árbol de decisiones para formular el dictamen técnico del caso?
+          Soy <b>EVA</b>. ¿Requieres que te guíe con el árbol de decisiones para formular el dictamen técnico de este caso?
         </p>
         <div class="btn-group-wiz">
           <button class="btn-opcion-wiz" style="background:#22c55e; border-color:#22c55e;" onclick="wAceptarAyudaEVA(true)">SÍ, AYÚDAME</button>
@@ -210,25 +178,21 @@
         
         <div id="wres-pasa-cotizacion" class="resultado-widget-box wres-cotizacion">
           🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Aplicar Macro de Rechazo / Envío de Presupuesto.</small>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Aplicar Macro de Rechazo en Freshdesk.</small>
         </div>
         
-        <div id="wres-ir-series" class="resultado-widget-box wres-series">
-          🔄 REDIRECCIONANDO A VALIDACIÓN DE SERIES...
-        </div>
-        
-        <div id="wres-solicitar-evidencia" class="resultado-widget-box wres-checklist">
-          🔵 DICTAMEN: SE REQUIERE CHECK LIST Y EVIDENCIA MANDATORIA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
+        <div id="wres-checklist" class="resultado-widget-box wres-checklist">
+          🔵 DICTAMEN: REQUIERE CHECK LIST Y EVIDENCIA MANDATORIA<br>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente de arribo a la sucursal.</small>
         </div>
       </div>
 
-      <div id="wres-recordatorio-experto" class="resultado-widget-box wres-checklist" style="background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6;">
+      <div id="wres-recordatorio-experto" class="resultado-widget-box wres-checklist" style="background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6; display: none;">
         🔵 ENTENDIDO, PROCESO ASIGNADO A EXPERTO<br>
         <small style="font-weight: bold; font-size: 12px; display:block; margin-top:5px;">⚠️ RECORDATORIO: No olvides colocar la captura de la tabla normal en el ticket de Freshdesk antes de cerrar.</small>
       </div>
 
-      <button id="btn-reset-eva-global" class="btn-opcion-wiz" style="margin-top:15px; background:#475569; width:100%; display:none;" onclick="wReiniciarFlujo(true)">🔄 Resetear Análisis EVA</button>
+      <button id="btn-reset-eva-global" class="btn-opcion-wiz" style="margin-top:15px; background:#475569; width:100%; border:none; display:none;" onclick="wReiniciarFlujo(true)">🔄 Resetear Análisis EVA</button>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
 
@@ -238,35 +202,20 @@
   <script>
     const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
-    const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
 
+    let baseAgencias = [];
     let agenciaSeleccionada = null;
 
     window.onload = function() {
       fetch(urlAgencias).then(r => r.text()).then(data => procesarAgenciasCSV(data));
-      fetch(urlSeries).then(r => r.text()).then(data => procesarSeriesCSV(data));
     };
 
     function toggleWidgetIA() {
       const win = document.getElementById('ventana-ia');
-      win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
-    }
-
-    function cambiarPestanaManual(evt, idModulo, esNegro = false) {
-      ejecutarCambioPestana(idModulo, esNegro);
-    }
-
-    function ejecutarCambioPestana(idModulo, esNegro = false) {
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
-      document.getElementById(idModulo).classList.add('active');
-      if(idModulo === 'modulo-agencias') {
-        document.getElementById('btn-tab-agencias').classList.add('active');
-      } else {
-        const btnSeries = document.getElementById('btn-tab-series');
-        btnSeries.classList.add('active');
-        if(esNegro) btnSeries.classList.add('black-tab');
-      }
+      const backdrop = document.getElementById('backdrop-eva');
+      const esVis = (win.style.display === 'none' || win.style.display === '');
+      win.style.display = esVis ? 'flex' : 'none';
+      backdrop.style.display = esVis ? 'block' : 'none';
     }
 
     function parsearCSVLineas(texto) {
@@ -290,83 +239,95 @@
 
     function procesarAgenciasCSV(texto) {
       const filas = parsearCSVLineas(texto);
-      const tbody = document.querySelector('#tabla-agencias tbody');
-      const filaComodin = document.getElementById('fila-nueva-agencia');
-      tbody.innerHTML = '';
-      tbody.appendChild(filaComodin);
-      
+      const contenedor = document.getElementById('card-container');
+      const comodin = document.getElementById('comodin-no-encontrado');
+      contenedor.innerHTML = '';
+      contenedor.appendChild(comodin);
+      baseAgencias = [];
+
       for(let i = 1; i < filas.length; i++) {
         const columnas = filas[i];
         if(columnas.length < 2 || !columnas[1]) continue;
         
-        const tr = document.createElement('tr');
-        tr.className = 'fila-datos';
-        // Agregamos data-id (Columna A) y data-search (Nombre) por separado para búsquedas precisas
-        tr.setAttribute('data-id', columnas[0].trim());
-        tr.setAttribute('data-search', columnas[1].toLowerCase());
-        tr.setAttribute('onclick', `abrirWidgetConAgencia('${columnas[1].replace(/'/g, "\\'")}', '${columnas[13].replace(/'/g, "\\'")}', '${columnas[14].replace(/'/g, "\\'")}')`);
+        const cardId = columnas[0].trim();
+        const cardNombre = columnas[1];
+        const colN = columnas[13];
+        const colO = columnas[14];
         
-        let claseColor = '';
-        if(columnas[13].toUpperCase().includes("GARANTIA")) claseColor = 'alerta-garantia';
-        if(columnas[13].toUpperCase().includes("CHECK LIST")) claseColor = 'alerta-roja';
+        // Guardamos en memoria para búsqueda inteligente
+        baseAgencias.push({ id: cardId, nombre: cardNombre.toLowerCase(), data: { nombre: cardNombre, accionBase: colN, puedeReportar: colO } });
+
+        const card = document.createElement('div');
+        card.className = 'agency-card fila-datos';
         
-        tr.innerHTML = `
-          <td>${columnas[0]}</td>
-          <td class="${claseColor}"><strong>${columnas[1]}</strong></td>
-          <td>${columnas[13]}</td>
-          <td><strong>${columnas[14]}</strong></td>
+        // Aplicamos estilos semánticos automáticos (Columna N)
+        if(colN.toUpperCase().includes("GARANTIA")) card.classList.add('alerta-garantia');
+        if(colN.toUpperCase().includes("CHECK LIST")) card.classList.add('alerta-roja');
+        
+        card.setAttribute('data-id', cardId);
+        card.setAttribute('data-search', cardNombre.toLowerCase());
+        card.setAttribute('onclick', `abrirEVAConTienda('${cardNombre.replace(/'/g, "\\'")}', '${colN.replace(/'/g, "\\'")}', '${colO.replace(/'/g, "\\'")}')`);
+        
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="card-number">${cardId}</div>
+            <div class="card-id-label">Nº AGENCIA</div>
+          </div>
+          <div class="card-title">${cardNombre}</div>
+          <div class="card-footer">
+            <button class="btn-abrir-eva">🤖 Abrir EVA</button>
+          </div>
         `;
-        tbody.appendChild(tr);
+        contenedor.appendChild(card);
       }
     }
 
-    /* MODIFICADO: FUNCIÓN DE BÚSQUEDA CON CAMBIO OPERACIONAL NUMÉRICO EXACTO */
+    /* MODIFICADO: BÚSQUEDA INTELIGENTE FOCALIZADA EN NÚMERO EXACTO */
     function buscarAgencias() {
       const val = document.getElementById('input-agencia').value.trim();
       const valMinuscula = val.toLowerCase();
       let coincidencias = 0;
       
-      // Determinamos si lo ingresado es puramente numérico
-      const esNumero = /^\d+$/.test(val);
+      const esNumero = /^\d+$/.test(val); // Booleano: ¿Son solo dígitos?
 
-      document.querySelectorAll('#tabla-agencias tbody tr.fila-datos').forEach(tr => {
+      document.querySelectorAll('#card-container div.fila-datos').forEach(card => {
         let pertenece = false;
         
         if (val === '') {
-          pertenece = true; // Mostrar todo si está vacío
+          pertenece = true;
         } else if (esNumero) {
-          // Si el usuario digita un número, buscamos coincidencia exacta en Columna A (data-id)
-          pertenece = (tr.getAttribute('data-id') === val);
+          pertenece = (card.getAttribute('data-id') === val); // Match numérico exacto
         } else {
-          // Si introduce letras, busca de manera normal por semejanzas en el nombre
-          pertenece = tr.getAttribute('data-search').includes(valMinuscula);
+          pertenece = card.getAttribute('data-search').includes(valMinuscula); // Match textual parcial
         }
 
-        tr.style.display = pertenece ? '' : 'none';
+        card.style.display = pertenece ? 'flex' : 'none';
         if (pertenece) coincidencias++;
       });
 
-      const filaComodin = document.getElementById('fila-nueva-agencia');
+      const comodin = document.getElementById('comodin-no-encontrado');
       if (val.length > 0 && coincidencias === 0) {
-        filaComodin.style.setProperty('display', 'table-row', 'important'); 
+        comodin.style.setProperty('display', 'flex', 'important'); 
       } else {
-        filaComodin.style.setProperty('display', 'none', 'important');
+        comodin.style.setProperty('display', 'none', 'important');
       }
     }
 
-    function abrirWidgetConAgencia(nombre, accionBase, puedeReportar) {
+    function abrirEVAConTienda(nombre, accionBase, puedeReportar) {
       agenciaSeleccionada = { nombre: nombre, accionBase: accionBase.toUpperCase().trim(), puedeReportar: puedeReportar.toUpperCase().trim() };
       
+      // Reset total antes de abrir
+      wReiniciarFlujo(false);
+      
+      // Ocultar capas internas y mostrar bienvenida
+      document.getElementById('lbl-saludo-tienda').innerText = `🤖 EVA: ${nombre}`;
       document.getElementById('widget-tienda-activa').style.display = 'none';
-      document.getElementById('widget-wizard-flujo').style.display = 'none';
-      document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
-      document.getElementById('w-ia-analisis').style.display = 'none';
+      document.getElementById('wres-recordatorio-experto').style.display = 'none';
       
       document.getElementById('widget-presentacion-eva').style.display = 'block';
-      document.getElementById('lbl-saludo-tienda').innerText = `🤖 EVA: ${nombre}`;
       document.getElementById('btn-reset-eva-global').style.display = 'block';
       
-      document.getElementById('ventana-ia').style.display = 'flex';
+      toggleWidgetIA(); // Abre el modal central
     }
 
     function wAceptarAyudaEVA(quiereAyuda) {
@@ -376,6 +337,7 @@
         document.getElementById('widget-wizard-flujo').style.display = 'block';
         document.getElementById('lbl-widget-agencia-nombre').innerText = `Matriz de Criterios`;
         
+        // Flujo tradicional: Si Acción Base es Garantía, salta al dictamen
         if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
           wOcultarPasos();
           wMostrarResultado('wres-pasa-garantia');
@@ -405,48 +367,35 @@
         document.getElementById('widget-presentacion-eva').style.display = 'none';
         document.getElementById('btn-reset-eva-global').style.display = 'none';
         document.getElementById('widget-tienda-activa').style.display = 'block';
+        document.getElementById('wres-recordatorio-experto').style.display = 'none';
       } else {
         document.getElementById('wstep-activacion').classList.add('active');
       }
     }
 
+    // Funciones estándar del árbol lógico (CEDIS/Armado/Reporte/Falla)
     function wEvaluarActivacion(tipo) {
       if (!agenciaSeleccionada) return;
       wOcultarPasos();
-      if (tipo === 'CESVE') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('CESVE');
-      } else if (tipo === 'SIN_REGISTRO') {
-        wMostrarResultado('wres-solicitar-evidencia');
-        wEjecutarIA('SIN_REGISTRO');
-      } else {
-        document.getElementById('wstep-armado').classList.add('active');
-      }
+      if (tipo === 'CESVE') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA('CESVE'); } 
+      else if (tipo === 'SIN_REGISTRO') { wMostrarResultado('wres-checklist'); wEjecutarIA('SIN_REGISTRO'); } 
+      else { document.getElementById('wstep-armado').classList.add('active'); }
     }
 
     function wEvaluarArmado(resp) {
       if (!agenciaSeleccionada) return;
       wOcultarPasos();
-      if (resp === 'SI') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('ARMADO_SI');
-      } else {
-        document.getElementById('wstep-reporte').classList.add('active');
-      }
+      if (resp === 'SI') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA('ARMADO_SI'); } 
+      else { document.getElementById('wstep-reporte').classList.add('active'); }
     }
 
     function wEvaluarReporte(tipo) {
       if (!agenciaSeleccionada) return;
       wOcultarPasos();
-      if (tipo === 'FALLA') {
-        document.getElementById('wstep-variante').classList.add('active');
-      } else {
-        if (agenciaSeleccionada.puedeReportar === 'NO') {
-          wMostrarResultado('wres-pasa-cotizacion');
-          wEjecutarIA('REVISION_PROHIBIDA');
-        } else {
-          document.getElementById('wstep-revisiones').classList.add('active');
-        }
+      if (tipo === 'FALLA') { document.getElementById('wstep-variante').classList.add('active'); } 
+      else {
+        if (agenciaSeleccionada.puedeReportar === 'NO') { wMostrarResultado('wres-pasa-cotizacion'); wEjecutarIA('REVISION_PROHIBIDA'); } 
+        else { document.getElementById('wstep-revisiones').classList.add('active'); }
       }
     }
 
@@ -457,30 +406,16 @@
         wMostrarResultado('wres-pasa-garantia');
         wEjecutarIA(varn);
       } else {
-        wMostrarResultado('wres-ir-series');
-        wEjecutarIA('OTRA_FALLA_PROYECTOS');
-        
-        setTimeout(() => {
-          ejecutarCambioPestana('modulo-series', true);
-          const inputS = document.getElementById('input-serie');
-          inputS.focus();
-          document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
-          wReiniciarFlujo(true);
-          toggleWidgetIA(); 
-        }, 500);
+        alert("Dictamen de Falla General: Revisa Fecha de Recepción en 'PROYECTO S'");
+        wReiniciarFlujo(true); toggleWidgetIA();
       }
     }
 
     function wEvaluarRevision(tipo) {
       if (!agenciaSeleccionada) return;
       wOcultarPasos();
-      if (tipo === 'PRIMERA') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('PRIMERA_REVISION');
-      } else {
-        wMostrarResultado('wres-pasa-cotizacion');
-        wEjecutarIA('VARIAS_REVISIONES');
-      }
+      if (tipo === 'PRIMERA') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA('PRIMERA_REVISION'); } 
+      else { wMostrarResultado('wres-pasa-cotizacion'); wEjecutarIA('VARIAS_REVISIONES'); }
     }
 
     function wEjecutarIA(escenario) {
@@ -489,62 +424,18 @@
       let analisis = ""; 
 
       switch(escenario) {
-        case 'GARANTIA_BASE':
-          analisis = `📋 <b>Análisis de EVA:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
-          break;
-        case 'CESVE':
-          analisis = `📋 <b>Análisis de EVA:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
-          break;
-        case 'SIN_REGISTRO':
-          analisis = `📋 <b>Análisis de EVA:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro histórico de Armado/Activación. No se autorizan movimientos sin evidencia física documentada.`;
-          break;
-        case 'ARMADO_SI':
-          analisis = `📋 <b>Análisis de EVA:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado exitosamente in situ.`;
-          break;
-        case 'REVISION_PROHIBIDA':
-          analisis = `📋 <b>Análisis de EVA:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado.`;
-          break;
-        case 'BATERIA':
-          analisis = `📋 <b>Análisis de EVA:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente de soporte.`;
-          break;
-        case 'VICIO_OCULTO':
-          analisis = `📋 <b>Análisis de EVA:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa para el asesor.`;
-          break;
-        case 'ELEC_MEC':
-          analisis = `📋 <b>Análisis de EVA:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones del perfil de tienda, la afectación compromete sistemas Eléctricos o Mecánicos esenciales. El contra-candado de supervisión aprueba el caso.`;
-          break;
-        case 'PRIMERA_REVISION':
-          analisis = `📋 <b>Análisis de EVA:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento en sistema.`;
-          break;
-        case 'VARIAS_REVISIONES':
-          analisis = `📋 <b>Análisis de EVA:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
-          break;
-        case 'OTRA_FALLA_PROYECTOS':
-          analisis = `🔄 Redireccionando automáticamente a matriz del "Proyecto S" para auditoría de fecha de recepción de la serie...`;
-          break;
+        case 'GARANTIA_BASE': analisis = `📋 <b>Análisis de EVA:</b> Estatus Base es Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`; break;
+        case 'CESVE': analisis = `📋 <b>Análisis de EVA:</b> Activación CESVE validada. Los centros certificados cuentan con aprobación automática.`; break;
+        case 'SIN_REGISTRO': analisis = `📋 <b>Análisis de EVA:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro histórico de Armado/Activación. No procede el seguimiento sin evidencia.`; break;
+        case 'ARMADO_SI': analisis = `📋 <b>Análisis de EVA:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado in situ.`; break;
+        case 'REVISION_PROHIBIDA': analisis = `📋 <b>Análisis de EVA:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O).`; break;
+        case 'BATERIA': analisis = `📋 <b>Análisis de EVA:</b> Incidencia en Refacción Prioritaria (Batería). Cobertura directa autorizada conforme a la norma.`; break;
+        case 'VICIO_OCULTO': analisis = `📋 <b>Análisis de EVA:</b> Evidencia técnica apunta a defecto de origen. Validación procedente de forma directa para el asesor.`; break;
+        case 'ELEC_MEC': analisis = `📋 <b>Análisis de EVA:</b> 🌟 Excepción por Naturaleza del Reporte: Compromiso de sistema Eléctrico/Mecánico vital. El contra-candado aprueba el caso.`; break;
+        case 'PRIMERA_REVISION': analisis = `📋 <b>Análisis de EVA:</b> Primera revisión técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento.`; break;
+        case 'VARIAS_REVISIONES': analisis = `📋 <b>Análisis de EVA:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo la póliza básica.`; break;
       }
       boxAnalisis.innerHTML = analisis;
-    }
-
-    function procesarSeriesCSV(texto) {
-      const filas = parsearCSVLineas(texto);
-      const tbody = document.querySelector('#tabla-series tbody');
-      tbody.innerHTML = '';
-      for(let i = 1; i < filas.length; i++) {
-        const columnas = filas[i];
-        if(!columnas[0]) continue;
-        const tr = document.createElement('tr');
-        tr.setAttribute('data-search', columnas[0].toLowerCase());
-        tr.innerHTML = `<td><strong>${columnas[0]}</strong></td><td>${columnas[1]||''}</td><td>${columnas[2]||''}</td><td>${columnas[3]||''}</td>`;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function buscarSeries() {
-      const val = document.getElementById('input-serie').value.toLowerCase();
-      document.querySelectorAll('#tabla-series tbody tr').forEach(tr => {
-        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
-      });
     }
   </script>
 </body>
