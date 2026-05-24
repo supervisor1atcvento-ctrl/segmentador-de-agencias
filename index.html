@@ -146,6 +146,17 @@
         ⚠️ Selecciona una agencia en la tabla para que EVA inicie el análisis de validación.
       </div>
       
+      <div class="wiz-card" id="widget-presentacion-eva" style="display:none;">
+        <h4 id="lbl-saludo-tienda">¡Hola Asesor! 🤖</h4>
+        <p style="margin: 5px 0 12px 0; font-size: 12.5px; line-height: 1.4; color: #e2e8f0;">
+          Soy <b>EVA</b>. Detecté que seleccionaste esta sucursal. ¿Requieres que te guíe con el árbol de decisiones para formular el dictamen técnico del caso?
+        </p>
+        <div class="btn-group-wiz">
+          <button class="btn-opcion-wiz" style="background:#22c55e; border-color:#22c55e;" onclick="wAceptarAyudaEVA(true)">SÍ, AYÚDAME</button>
+          <button class="btn-opcion-wiz" style="background:#ef4444; border-color:#ef4444;" onclick="wAceptarAyudaEVA(false)">NO, GRACIAS</button>
+        </div>
+      </div>
+
       <div class="wiz-card" id="widget-wizard-flujo" style="display:none;">
         <h4 id="lbl-widget-agencia-nombre">Matriz de Criterios</h4>
         
@@ -211,8 +222,14 @@
           <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(true)">🔄 Resetear Análisis EVA</button>
       </div>
+
+      <div id="wres-recordatorio-experto" class="resultado-widget-box wres-checklist" style="background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6;">
+        🔵 ENTENDIDO, PROCESO ASIGNADO A EXPERTO<br>
+        <small style="font-weight: bold; font-size: 12px; display:block; margin-top:5px;">⚠️ RECORDATORIO: No olvides colocar la captura de la tabla normal en el ticket de Freshdesk antes de cerrar.</small>
+      </div>
+
+      <button id="btn-reset-eva-global" class="btn-opcion-wiz" style="margin-top:15px; background:#475569; width:100%; display:none;" onclick="wReiniciarFlujo(true)">🔄 Resetear Análisis EVA</button>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
 
@@ -305,18 +322,39 @@
     function abrirWidgetConAgencia(nombre, accionBase, puedeReportar) {
       agenciaSeleccionada = { nombre: nombre, accionBase: accionBase.toUpperCase().trim(), puedeReportar: puedeReportar.toUpperCase().trim() };
       
+      // Reset de vistas previas
       document.getElementById('widget-tienda-activa').style.display = 'none';
-      document.getElementById('widget-wizard-flujo').style.display = 'block';
-      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 ANÁLISIS DE EVA: ${nombre}`;
+      document.getElementById('widget-wizard-flujo').style.display = 'none';
+      document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
+      document.getElementById('w-ia-analisis').style.display = 'none';
+      
+      // Activar pantalla de saludo/presentación de EVA
+      document.getElementById('widget-presentacion-eva').style.display = 'block';
+      document.getElementById('lbl-saludo-tienda').innerText = `🤖 EVA: ${nombre}`;
+      document.getElementById('btn-reset-eva-global').style.display = 'block';
       
       document.getElementById('ventana-ia').style.display = 'flex';
+    }
+
+    /* EVALUACIÓN DE LA RESPUESTA DE AYUDA DE EVA */
+    function wAceptarAyudaEVA(quiereAyuda) {
+      document.getElementById('widget-presentacion-eva').style.display = 'none';
       
-      if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
-        wOcultarPasos();
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('GARANTIA_BASE');
+      if (quiereAyuda) {
+        // Flujo tradicional: Si es garantía directa base salta al dictamen final, si no, abre árbol
+        document.getElementById('widget-wizard-flujo').style.display = 'block';
+        document.getElementById('lbl-widget-agencia-nombre').innerText = `Matriz de Criterios`;
+        
+        if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
+          wOcultarPasos();
+          wMostrarResultado('wres-pasa-garantia');
+          wEjecutarIA('GARANTIA_BASE');
+        } else {
+          wReiniciarFlujo(false);
+        }
       } else {
-        wReiniciarFlujo(false);
+        // Al elegir "NO": Desplegar aviso mandatorio de captura de pantalla
+        wMostrarResultado('wres-recordatorio-experto');
       }
     }
 
@@ -326,23 +364,24 @@
       document.getElementById(id).style.display = 'block';
     }
 
-    /* MODIFICADO: Ahora vacía el objeto de memoria si es un reset total */
     function wReiniciarFlujo(completo = false) {
       wOcultarPasos();
       document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
       document.getElementById('w-ia-analisis').style.display = 'none';
       
       if (completo) {
-        agenciaSeleccionada = null; // Se borra la tienda de la memoria interna
-        document.getElementById('widget-wizard-flujo').style.display = 'none'; // Escondemos el árbol
-        document.getElementById('widget-tienda-activa').style.display = 'block'; // Volvemos al estado inicial
+        agenciaSeleccionada = null;
+        document.getElementById('widget-wizard-flujo').style.display = 'none';
+        document.getElementById('widget-presentacion-eva').style.display = 'none';
+        document.getElementById('btn-reset-eva-global').style.display = 'none';
+        document.getElementById('widget-tienda-activa').style.display = 'block';
       } else {
         document.getElementById('wstep-activacion').classList.add('active');
       }
     }
 
     function wEvaluarActivacion(tipo) {
-      if (!agenciaSeleccionada) return; // Candado de seguridad
+      if (!agenciaSeleccionada) return;
       wOcultarPasos();
       if (tipo === 'CESVE') {
         wMostrarResultado('wres-pasa-garantia');
@@ -396,7 +435,7 @@
           const inputS = document.getElementById('input-serie');
           inputS.focus();
           document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
-          wReiniciarFlujo(true); // Resetea completo al saltar a series
+          wReiniciarFlujo(true);
           toggleWidgetIA(); 
         }, 500);
       }
@@ -414,11 +453,9 @@
       }
     }
 
-    /* MATRIZ DE FUNDAMENTOS EVA */
     function wEjecutarIA(escenario) {
       const boxAnalisis = document.getElementById('w-ia-analisis');
       boxAnalisis.style.display = 'block';
-      
       let analisis = ""; 
 
       switch(escenario) {
