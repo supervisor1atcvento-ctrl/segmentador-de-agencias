@@ -55,8 +55,8 @@
   </div>
 
   <div class="tabs-nav">
-    <button class="tab-button active" onclick="cambiarPestana(event, 'modulo-agencias')">AGENCIAS</button>
-    <button class="tab-button" onclick="cambiarPestana(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
+    <button id="btn-tab-agencias" class="tab-button active" onclick="cambiarPestanaManual(event, 'modulo-agencias')">AGENCIAS</button>
+    <button id="btn-tab-series" class="tab-button" onclick="cambiarPestanaManual(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
   </div>
 
   <div id="modulo-agencias" class="tab-content active">
@@ -117,8 +117,8 @@
       </div>
       
       <div id="res-ir-series" class="resultado-box res-series">
-        🔍 DICTAMEN: REQUERIDAS VALIDACIONES COMPLEMENTARIAS.<br>
-        <span style="font-weight:normal; font-size:11px;">👉 Acción: Cambia a la pestaña de "PROYECTO S" arriba. Busca el número de serie para validar si llegó antes del 1 de febrero o si pertenece al Proyecto S. De lo contrario, procede como Cotización.</span>
+        🔄 REDIRECCIONANDO A VALIDACIÓN DE SERIES...<br>
+        <span style="font-weight:normal; font-size:11px;">👉 Un momento por favor...</span>
       </div>
 
       <div id="res-solicitar-evidencia" class="resultado-box res-checklist">
@@ -162,7 +162,7 @@
   </div>
 
   <div id="modulo-series" class="tab-content">
-    <div class="search-container" style="border-color: #222;">
+    <div class="search-container" id="contenedor-buscador-series" style="border-color: #222;">
       <h3>Segmentador de Números de Serie</h3>
       <p>Escribe el número de serie para comprobar detalles de recepción.</p>
       <div class="input-box">
@@ -198,12 +198,24 @@
       fetch(urlSeries).then(r => r.text()).then(data => procesarSeriesCSV(data));
     };
 
-    function cambiarPestana(evt, idModulo, esNegro = false) {
+    function cambiarPestanaManual(evt, idModulo, esNegro = false) {
+      ejecutarCambioPestana(idModulo, esNegro);
+    }
+
+    // Función núcleo para switchear pestañas programáticamente
+    function ejecutarCambioPestana(idModulo, esNegro = false) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
+      
       document.getElementById(idModulo).classList.add('active');
-      evt.currentTarget.classList.add('active');
-      if(esNegro) evt.currentTarget.classList.add('black-tab');
+      
+      if(idModulo === 'modulo-agencias') {
+        document.getElementById('btn-tab-agencias').classList.add('active');
+      } else {
+        const btnSeries = document.getElementById('btn-tab-series');
+        btnSeries.classList.add('active');
+        if(esNegro) btnSeries.classList.add('black-tab');
+      }
     }
 
     function parsearCSVLineas(texto) {
@@ -287,7 +299,6 @@
       if (tipo === 'CESVE') {
         mostrarResultado('res-pasa-garantia');
       } else if (tipo === 'SIN_REGISTRO') {
-        // 🛠️ ESCENARIO SOLICITADO: SIN REGISTRO DE ARMA/ACTIVA
         mostrarResultado('res-solicitar-evidencia');
       } else {
         document.getElementById('step-armado').classList.add('active');
@@ -306,7 +317,6 @@
     function evaluarReporte(tipo) {
       ocultarPasos();
       if (tipo === 'FALLA') {
-        // 🛠️ MUESTRA EL SUB-PASO DE VARIANTES DE FALLA ESPECÍFICA
         document.getElementById('step-variante-falla').classList.add('active');
       } else {
         if (agenciaSeleccionada.puedeReportar === 'NO') {
@@ -317,13 +327,29 @@
       }
     }
 
-    // 🛠️ NUEVA FUNCIÓN: EVALUACIÓN DE LAS 3 VARIANTES DE FALLA ESPECÍFICA
+    // 🚀 REDIRECCIÓN AUTOMÁTICA INTEGRADA AQUÍ
     function evaluarVarianteFalla(variante) {
       ocultarPasos();
       if (variante === 'BATERIA' || variante === 'VICIO_OCULTO') {
         mostrarResultado('res-pasa-garantia');
       } else {
-        mostrarResultado('res-ir-series'); // Redirige a validar Proyecto S o Fecha límite
+        mostrarResultado('res-ir-series');
+        
+        // Retraso mínimo de 400 milisegundos para que el asesor note visualmente que el sistema decidió enviarlo a Series
+        setTimeout(() => {
+          // 1. Cambiar a pestaña Proyecto S con estilo negro
+          ejecutarCambioPestana('modulo-series', true);
+          
+          // 2. Enfocar de inmediato la caja de texto para que solo empiece a escribir
+          const inputS = document.getElementById('input-serie');
+          inputS.focus();
+          
+          // 3. Auto-scroll suave hasta el buscador
+          document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
+          
+          // 4. Limpiar el asistente de agencias en background para cuando regrese
+          reiniciarWizard(true);
+        }, 400);
       }
     }
 
