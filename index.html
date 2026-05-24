@@ -34,19 +34,19 @@
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
     .fila-comodin { background-color: #eff6ff !important; display: none; }
 
-    /* 🤖 WIDGET FLOTANTE DE IA / ASISTENTE ATC */
+    /* 🛡️ WIDGET FLOTANTE: SOPORTE DE VALIDACIÓN ESPECIALIZADA (SVE-ATC) */
     .widget-ia-boton { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.2s ease; }
     .widget-ia-boton:hover { background: #0f172a; transform: translateY(-2px); }
     
-    .widget-ia-ventana { position: fixed; bottom: 85px; right: 20px; width: 380px; max-height: 500px; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #38bdf8; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+    .widget-ia-ventana { position: fixed; bottom: 85px; right: 20px; width: 390px; max-height: 500px; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #38bdf8; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
     .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-    .widget-header-titulo { font-weight: bold; font-size: 13px; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
+    .widget-header-titulo { font-weight: bold; font-size: 12px; color: #38bdf8; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
     .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
     .widget-btn-cerrar:hover { color: #f1f5f9; }
     
     .widget-body { padding: 15px; overflow-y: auto; flex: 1; font-size: 13px; }
     
-    /* CONTENIDO INTERNO DEL WIDGET (ÁRBOL LÓGICO) */
+    /* CONTENIDO INTERNO DEL ÁRBOL LÓGICO */
     .wiz-card { background: #2d3748; padding: 12px; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #ff5722; }
     .wiz-card h4 { margin: 0 0 8px 0; color: #ff5722; font-size: 12px; text-transform: uppercase; }
     .wiz-step { display: none; margin-bottom: 12px; }
@@ -55,7 +55,7 @@
     .btn-opcion-wiz { background: #334155; border: 1px solid #475569; color: #f8fafc; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
     .btn-opcion-wiz:hover { background: #475569; border-color: #38bdf8; }
     
-    /* DICTAMEN FINAL EN EL WIDGET */
+    /* DICTAMENES DE CONTROL */
     .ia-analisis-alerta { background: #0f172a; padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; border-left: 4px solid #38bdf8; margin-top: 15px; display: none; }
 
     .resultado-widget-box { padding: 12px; border-radius: 5px; font-weight: bold; margin-top: 12px; font-size: 12px; line-height: 1.4; display: none; }
@@ -89,7 +89,7 @@
       <table id="tabla-agencias">
         <thead>
           <tr>
-            <th>Asistente</th>
+            <th>Validación</th>
             <th>Nº</th>
             <th>Agencia</th>
             <th>Acción Base (Col N)</th>
@@ -98,7 +98,7 @@
         </thead>
         <tbody>
           <tr id="fila-nueva-agencia" class="fila-comodin" style="display: none;">
-            <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">🧠 Forzar</button></td>
+            <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">🛡️ Forzar</button></td>
             <td>N/A</td>
             <td style="color:#2563eb;"><strong>📍 TIENDA NO ENCONTRADA (¿Es una agencia nueva?)</strong></td>
             <td>PASA POR GARANTIA (POR DEFECTO)</td>
@@ -135,22 +135,22 @@
   </div>
 
   <button class="widget-ia-boton" onclick="toggleWidgetIA()">
-    <span>🤖</span> ¿Dudas con el Dictamen? Iniciar Asistente ATC
+    <span>🛡️</span> SVE-ATC: Soporte de Validación Especializada
   </button>
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div class="widget-header-titulo"><span>🤖</span> ASISTENTE DE TOMA DE DECISIONES</div>
+      <div class="widget-header-titulo"><span>🛡️</span> SVE-ATC: CONTROL DE VALIDACIÓN</div>
       <button class="widget-btn-cerrar" onclick="toggleWidgetIA()">×</button>
     </div>
     <div class="widget-body">
       
-      <div id="widget-tienda-activa" style="font-weight: bold; font-size: 12px; margin-bottom: 10px; color: #38bdf8;">
-        ⚠️ Selecciona una agencia en la tabla haciendo clic en "🧠 Diagnosticar" para iniciar el árbol interactivo.
+      <div id="widget-tienda-activa" style="font-weight: bold; font-size: 11px; margin-bottom: 10px; color: #38bdf8; text-transform: uppercase;">
+        ⚠️ Selecciona una agencia en la tabla para activar el Soporte de Validación Especializada (SVE-ATC).
       </div>
       
       <div class="wiz-card" id="widget-wizard-flujo" style="display:none;">
-        <h4 id="lbl-widget-agencia-nombre">Flujo Metódico</h4>
+        <h4 id="lbl-widget-agencia-nombre">Matriz de Criterios</h4>
         
         <div id="wstep-activacion" class="wiz-step active">
           <label><strong>1. ¿Quién activó la unidad?</strong></label>
@@ -197,12 +197,12 @@
 
         <div id="wres-pasa-garantia" class="resultado-widget-box wres-garantia">
           🟢 DICTAMEN: GARANTÍA DIRECTA AUTORIZADA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Acción: Usa la macro de Autorización en Freshdesk.</small>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Aplicar Macro de Aprobación en Freshdesk.</small>
         </div>
         
         <div id="wres-pasa-cotizacion" class="resultado-widget-box wres-cotizacion">
           🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Acción: Usa la macro de Rechazo por Incumplimiento.</small>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Aplicar Macro de Rechazo / Envío de Presupuesto.</small>
         </div>
         
         <div id="wres-ir-series" class="resultado-widget-box wres-series">
@@ -210,11 +210,11 @@
         </div>
         
         <div id="wres-solicitar-evidencia" class="resultado-widget-box wres-checklist">
-          🔵 DICTAMEN: SE REQUIERE CHECK LIST Y EVIDENCIA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Acción: Solicita de forma obligatoria las pruebas de arribo.</small>
+          🔵 DICTAMEN: SE REQUIERE CHECK LIST Y EVIDENCIA MANDATORIA<br>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Diagnóstico</button>
+        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Análisis SVE</button>
       </div>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
@@ -222,7 +222,7 @@
     </div>
   </div>
 
-  <script {id="segmentador-logica"}>
+  <script>
     const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
@@ -295,7 +295,7 @@
         if(columnas[13].toUpperCase().includes("CHECK LIST")) claseColor = 'alerta-roja';
         
         tr.innerHTML = `
-          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🧠 Diagnosticar</button></td>
+          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🛡️ Validar</button></td>
           <td>${columnas[0]}</td>
           <td class="${claseColor}"><strong>${columnas[1]}</strong></td>
           <td>${columnas[13]}</td>
@@ -310,7 +310,7 @@
       
       document.getElementById('widget-tienda-activa').style.display = 'none';
       document.getElementById('widget-wizard-flujo').style.display = 'block';
-      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 Tienda: ${nombre}`;
+      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 UNIDAD DE DISTRIBUCIÓN: ${nombre}`;
       
       document.getElementById('ventana-ia').style.display = 'flex';
       
@@ -404,7 +404,7 @@
       }
     }
 
-    // CRITERIOS DE CONTEXTO TÉCNICO (EL "POR QUÉ")
+    /* MATRIZ DE FUNDAMENTOS SVE-ATC */
     function wEjecutarIA(escenario) {
       const boxAnalisis = document.getElementById('w-ia-analisis');
       boxAnalisis.style.display = 'block';
@@ -413,37 +413,37 @@
 
       switch(escenario) {
         case 'GARANTIA_BASE':
-          analisis = `💡 <b>Criterio Técnico:</b> Acción Base es Garantía Directa (Columna N). No se requiere diagnóstico adicional, la cuenta está libre de candados.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
           break;
         case 'CESVE':
-          analisis = `💡 <b>Criterio Técnico:</b> Activado por CESVE. Las activaciones directas por centro de servicio validado cuentan con respaldo total e inmediato.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
           break;
         case 'SIN_REGISTRO':
-          analisis = `💡 <b>Criterio Técnico:</b> ⚠️ Unidad sin registro de Armado/Activación previo. Bloqueo obligatorio por control técnico hasta recibir evidencias físicas de arribo.`;
+          analisis = `📋 <b>Fundamento SVE:</b> ⚠️ Bloqueo por Control de Calidad. Unidad sin registro histórico de Armado/Activación. No se autorizan movimientos sin evidencia física documentada.`;
           break;
         case 'ARMADO_SI':
-          analisis = `💡 <b>Criterio Técnico:</b> Historial de control correcto. Cuenta con Ticket de Armado registrado con anterioridad.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Trazabilidad correcta. Registro de Ticket de Armado validado exitosamente en la base de datos de control.`;
           break;
         case 'REVISION_PROHIBIDA':
-          analisis = `💡 <b>Criterio Técnico:</b> Candado de perfil aplicado. Esta sucursal tiene restringidas las revisiones generales (Columna O = NO) y procedió a levantar una. Derivar a cotización de pago.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado de inmediato.`;
           break;
         case 'BATERIA':
-          analisis = `💡 <b>Criterio Técnico:</b> Componente clasificado como Refacción Prioritaria con cobertura total de garantía directa.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente.`;
           break;
         case 'VICIO_OCULTO':
-          analisis = `💡 <b>Criterio Técnico:</b> Diagnóstico amparado bajo concepto de vicio de origen/fábrica. Cobertura directa autorizada.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa.`;
           break;
         case 'ELEC_MEC':
-          analisis = `💡 <b>Criterio Técnico:</b> 🌟 Excepción Operativa: Aunque la tienda tiene restricciones para revisiones ordinarias, el reporte es de carácter Mecánico/Eléctrico explícito. El contra-candado de supervisión salva el caso y autoriza la garantía.`;
+          analisis = `📋 <b>Fundamento SVE:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones ordinarias del perfil, la afectación compromete sistemas Eléctricos/Mecánicos esenciales. El contra-candado normativo de supervisión aprueba el caso.`;
           break;
         case 'PRIMERA_REVISION':
-          analisis = `💡 <b>Criterio Técnico:</b> Primera revisión general ingresada bajo un perfil de distribuidor con permisos habilitados.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento.`;
           break;
         case 'VARIAS_REVISIONES':
-          analisis = `💡 <b>Criterio Técnico:</b> Reincidencia detectada. Es la segunda revisión general o posterior de la unidad, lo cual invalida los términos de la póliza básica. Enviar a cotización.`;
+          analisis = `📋 <b>Fundamento SVE:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
           break;
         case 'OTRA_FALLA_PROYECTOS':
-          analisis = `🤖 Redireccionando a la pestaña "Proyecto S" para evaluar el número de serie en la base de datos...`;
+          analisis = `🔄 Redireccionando automáticamente a matriz del "Proyecto S" para auditoría de fecha de recepción de la serie...`;
           break;
       }
       boxAnalisis.innerHTML = analisis;
