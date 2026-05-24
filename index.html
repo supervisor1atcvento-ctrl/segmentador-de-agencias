@@ -19,16 +19,17 @@
     /* MODULO DIAGNÓSTICO INTERACTIVO */
     .wizard-card { background: #ffffff; border: 2px solid #ff5722; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     .wizard-card h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff5722; text-transform: uppercase; }
-    .wizard-step { display: none; }
+    .wizard-step { display: none; margin-bottom: 15px; }
     .wizard-step.active { display: block; }
-    .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-    .btn-wizard { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 16px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 12px; color: #334155; }
+    .btn-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .btn-wizard { background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 16px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 12px; color: #334155; transition: all 0.2s; }
     .btn-wizard:hover { background-color: #e2e8f0; }
     
     .resultado-box { padding: 12px; border-radius: 6px; font-weight: bold; margin-top: 10px; font-size: 13px; line-height: 1.4; display: none; }
     .res-garantia { background-color: #e8f5e9; color: #1b5e20; border-left: 5px solid #2e7d32; }
     .res-cotizacion { background-color: #ffebee; color: #c62828; border-left: 5px solid #d32f2f; }
     .res-series { background-color: #fff8e1; color: #b78103; border-left: 5px solid #ffb300; }
+    .res-checklist { background-color: #f0f5ff; color: #1e3a8a; border-left: 5px solid #3b82f6; }
 
     .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
     .search-container h3 { margin: 0 0 5px 0; font-size: 15px; color: #111; text-transform: uppercase; }
@@ -43,8 +44,6 @@
     
     .alerta-roja { background-color: #ffebee !important; color: #c62828; }
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
-    
-    /* Corrección de visualización para la fila comodín */
     .fila-comodin { background-color: #eff6ff !important; display: none; }
   </style>
 </head>
@@ -70,6 +69,7 @@
         <div class="btn-group">
           <button class="btn-wizard" onclick="evaluarActivacion('CESVE')">CESVE</button>
           <button class="btn-wizard" onclick="evaluarActivacion('CEDIS')">CEDIS</button>
+          <button class="btn-wizard" style="border-color: #ef4444;" onclick="evaluarActivacion('SIN_REGISTRO')">⚠️ SIN REGISTRO DE ARMADO</button>
         </div>
       </div>
 
@@ -89,6 +89,15 @@
         </div>
       </div>
 
+      <div id="step-variante-falla" class="wizard-step">
+        <label><strong>3.5. Selecciona el tipo de Falla Específica reportada:</strong></label>
+        <div class="btn-group">
+          <button class="btn-wizard" onclick="evaluarVarianteFalla('BATERIA')">🔋 BATERÍA</button>
+          <button class="btn-wizard" onclick="evaluarVarianteFalla('VICIO_OCULTO')">🔍 VICIO OCULTO</button>
+          <button class="btn-wizard" onclick="evaluarVarianteFalla('OTRA')">⚙️ CUALQUIER OTRA FALLA</button>
+        </div>
+      </div>
+
       <div id="step-revisiones" class="wizard-step">
         <label><strong>4. ¿Es la primera revisión general de esta motocicleta?</strong></label>
         <div class="btn-group">
@@ -101,13 +110,20 @@
         🟢 DICTAMEN: PASA POR GARANTÍA DIRECTA.<br>
         <span style="font-weight:normal; font-size:11px;">👉 Acción: Solicita y agrega la captura de pantalla en el ticket de Freshdesk y autoriza el proceso.</span>
       </div>
+      
       <div id="res-pasa-cotizacion" class="resultado-box res-cotizacion">
         🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA.<br>
         <span style="font-weight:normal; font-size:11px;">👉 Acción: Rechaza la garantía por incumplimiento. Solicita obligatoriamente el CHECK LIST a la agencia.</span>
       </div>
+      
       <div id="res-ir-series" class="resultado-box res-series">
-        🔍 DICTAMEN: REVISIÓN DE UNIDAD REQUERIDA.<br>
-        <span style="font-weight:normal; font-size:11px;">👉 Acción: Cambia a la pestaña de "PROYECTO S" arriba y busca el estatus detallado usando el número de serie.</span>
+        🔍 DICTAMEN: REQUERIDAS VALIDACIONES COMPLEMENTARIAS.<br>
+        <span style="font-weight:normal; font-size:11px;">👉 Acción: Cambia a la pestaña de "PROYECTO S" arriba. Busca el número de serie para validar si llegó antes del 1 de febrero o si pertenece al Proyecto S. De lo contrario, procede como Cotización.</span>
+      </div>
+
+      <div id="res-solicitar-evidencia" class="resultado-box res-checklist">
+        🔵 DICTAMEN: SE REQUIERE DOCUMENTACIÓN DE CONTROL.<br>
+        <span style="font-weight:normal; font-size:11px;">👉 Acción: Al no existir registro de Armado/Activado, se debe realizar obligatoriamente la solicitud del CHECK LIST y la evidencia fotográfica/video de cómo llegó la unidad.</span>
       </div>
       
       <button class="btn-wizard" style="margin-top:12px; background:#64748b; color:#fff;" onclick="reiniciarWizard(true)">🔄 Diagnosticar otra tienda</button>
@@ -270,6 +286,9 @@
       ocultarPasos();
       if (tipo === 'CESVE') {
         mostrarResultado('res-pasa-garantia');
+      } else if (tipo === 'SIN_REGISTRO') {
+        // 🛠️ ESCENARIO SOLICITADO: SIN REGISTRO DE ARMA/ACTIVA
+        mostrarResultado('res-solicitar-evidencia');
       } else {
         document.getElementById('step-armado').classList.add('active');
       }
@@ -287,13 +306,24 @@
     function evaluarReporte(tipo) {
       ocultarPasos();
       if (tipo === 'FALLA') {
-        mostrarResultado('res-ir-series');
+        // 🛠️ MUESTRA EL SUB-PASO DE VARIANTES DE FALLA ESPECÍFICA
+        document.getElementById('step-variante-falla').classList.add('active');
       } else {
         if (agenciaSeleccionada.puedeReportar === 'NO') {
           mostrarResultado('res-pasa-cotizacion'); 
         } else {
           document.getElementById('step-revisiones').classList.add('active'); 
         }
+      }
+    }
+
+    // 🛠️ NUEVA FUNCIÓN: EVALUACIÓN DE LAS 3 VARIANTES DE FALLA ESPECÍFICA
+    function evaluarVarianteFalla(variante) {
+      ocultarPasos();
+      if (variante === 'BATERIA' || variante === 'VICIO_OCULTO') {
+        mostrarResultado('res-pasa-garantia');
+      } else {
+        mostrarResultado('res-ir-series'); // Redirige a validar Proyecto S o Fecha límite
       }
     }
 
@@ -351,7 +381,6 @@
         if (pertenece) coincidencias++;
       });
       
-      // 🛠️ CORRECCIÓN DE VISIBILIDAD FORZADA PARA EL COMODÍN
       const filaComodin = document.getElementById('fila-nueva-agencia');
       if (val.trim().length > 0 && coincidencias === 0) {
         filaComodin.style.setProperty('display', 'table-row', 'important'); 
