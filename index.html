@@ -2,141 +2,106 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento (EVA)</title>
+  <title>Segmentador ATC - Vento (EVA Slim)</title>
   <style>
-    body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #222; }
-    .hub-header { background-color: #0d0d0d; color: #ffffff; padding: 15px; border-radius: 6px; margin-bottom: 25px; border-left: 6px solid #ff5722; }
-    .brand-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
-    .hub-title { font-size: 18px; font-weight: 800; margin-top: 3px; }
+    body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #0f172a; margin: 0; padding: 40px 20px; color: #f8fafc; display: flex; flex-direction: column; align-items: center; }
     
-    /* PESTAÑAS PRINCIPALES */
-    .tabs-nav { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #e1e4e8; padding-bottom: 2px; }
-    .tab-button { background-color: #e1e4e8; border: none; padding: 12px 24px; font-size: 13px; font-weight: 700; border-radius: 6px 6px 0 0; cursor: pointer; color: #555; transition: all 0.2s; }
-    .tab-button:hover { background-color: #d1d5db; color: #111; }
-    .tab-button.active { background-color: #ff5722; color: #ffffff; }
-    .tab-button.active.black-tab { background-color: #222222; color: #ffffff; }
-    .tab-content { display: none; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-top: -17px; }
+    /* INTERFAZ ULTRA LIMPIA */
+    .clean-container { width: 100%; max-width: 550px; text-align: center; margin-top: 5vh; }
+    .brand-title { font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #ff5722; margin-bottom: 5px; }
+    .hub-title { font-size: 24px; font-weight: 800; margin-bottom: 30px; color: #ffffff; }
+    
+    /* PESTAÑAS MINIMALISTAS */
+    .tabs-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+    .tab-button { background-color: #1e293b; border: 1px solid #334155; padding: 10px 20px; font-size: 12px; font-weight: 700; border-radius: 20px; cursor: pointer; color: #94a3b8; transition: all 0.2s; }
+    .tab-button:hover { background-color: #334155; color: #fff; }
+    .tab-button.active { background-color: #ff5722; color: #ffffff; border-color: #ff5722; }
+    .tab-button.active.black-tab { background-color: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+    
+    .tab-content { display: none; width: 100%; }
     .tab-content.active { display: block; }
     
-    /* BUSCADORES Y TABLAS */
-    .search-container { background: #f8fafc; border: 1px dashed #cccccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-    .search-container h3 { margin: 0 0 5px 0; font-size: 15px; color: #111; text-transform: uppercase; }
-    .input-box input { padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; max-width: 400px; box-sizing: border-box; }
-    .table-scroll { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-top: 10px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background-color: #ff5722; color: #ffffff; padding: 12px 10px; font-weight: 600; position: sticky; top: 0; z-index: 5; text-align: left; }
-    .black-theme th { background-color: #222222; }
-    td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; }
-    tr:hover td { background-color: #f1f3f5; cursor: pointer; }
-    .btn-seleccionar { background: #2563eb; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 11px; cursor: pointer; }
+    /* BUSCADOR ESTILO PREMIUM */
+    .search-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
+    .search-input { width: 100%; padding: 16px 20px; background: #1e293b; border: 2px solid #334155; border-radius: 12px; font-size: 16px; font-weight: 600; color: #ffffff; box-sizing: border-box; transition: all 0.2s; }
+    .search-input:focus { outline: none; border-color: #ff5722; box-shadow: 0 0 15px rgba(255, 87, 34, 0.2); }
+    #modulo-series .search-input:focus { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
     
-    .alerta-roja { background-color: #ffebee !important; color: #c62828; }
-    .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
-    .fila-comodin { background-color: #eff6ff !important; display: none; }
+    /* LISTA DE RESULTADOS EN LUGAR DE TABLA COMPLEJA */
+    .results-list { background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; max-height: 280px; overflow-y: auto; text-align: left; display: none; }
+    .result-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #334155; transition: background 0.2s; }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover { background: #2d3748; }
+    .agency-name { font-weight: 700; font-size: 14px; color: #ffffff; }
+    
+    .btn-analizar { background: #ff5722; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+    .btn-analizar:hover { background: #f4511e; }
+    
+    /* ESTILOS DE PROYECTO S */
+    .serie-item { padding: 14px 20px; border-bottom: 1px solid #334155; }
+    .serie-meta { font-size: 11px; color: #94a3b8; margin-top: 4px; display: flex; gap: 15px; }
+    .badge-dictamen { background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
 
-    /* 🤖 WIDGET FLOTANTE: EVA */
-    .widget-ia-boton { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.2s ease; }
-    .widget-ia-boton:hover { background: #0f172a; transform: translateY(-2px); }
-    
-    .widget-ia-ventana { position: fixed; bottom: 85px; right: 20px; width: 390px; max-height: 500px; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 4px solid #38bdf8; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
-    .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-    .widget-header-titulo { font-weight: bold; font-size: 12px; color: #38bdf8; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
-    .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
+    /* 🤖 INTERFAZ DE EVA */
+    .widget-ia-ventana { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 420px; max-height: 85vh; background: #1e293b; color: #f8fafc; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #334155; border-top: 5px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+    .widget-header { background: #0f172a; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .widget-header-titulo { font-weight: bold; font-size: 12px; color: #ff5722; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
+    .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; }
     .widget-btn-cerrar:hover { color: #f1f5f9; }
     
-    .widget-body { padding: 15px; overflow-y: auto; flex: 1; font-size: 13px; }
+    .widget-body { padding: 20px; overflow-y: auto; flex: 1; font-size: 13px; }
     
-    /* CONTENIDO INTERNO DEL ÁRBOL LÓGICO */
-    .wiz-card { background: #2d3748; padding: 12px; border-radius: 6px; margin-bottom: 12px; border-left: 3px solid #ff5722; }
-    .wiz-card h4 { margin: 0 0 8px 0; color: #ff5722; font-size: 12px; text-transform: uppercase; }
+    /* PASOS DEL WIZARD */
+    .wiz-card { background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #ff5722; }
+    .wiz-card h4 { margin: 0 0 10px 0; color: #ff5722; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
     .wiz-step { display: none; margin-bottom: 12px; }
     .wiz-step.active { display: block; }
-    .btn-group-wiz { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-    .btn-opcion-wiz { background: #334155; border: 1px solid #475569; color: #f8fafc; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
-    .btn-opcion-wiz:hover { background: #475569; border-color: #38bdf8; }
+    .btn-group-wiz { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .btn-opcion-wiz { background: #1e293b; border: 1px solid #334155; color: #f8fafc; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .btn-opcion-wiz:hover { background: #334155; border-color: #ff5722; }
     
-    /* DICTAMENES DE CONTROL */
-    .ia-analisis-alerta { background: #0f172a; padding: 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; border-left: 4px solid #38bdf8; margin-top: 15px; display: none; }
-
-    .resultado-widget-box { padding: 12px; border-radius: 5px; font-weight: bold; margin-top: 12px; font-size: 12px; line-height: 1.4; display: none; }
+    /* ALERTAS DE SALIDA */
+    .ia-analisis-alerta { background: #0f172a; padding: 14px; border-radius: 8px; font-size: 12px; line-height: 1.6; border-left: 4px solid #38bdf8; margin-top: 15px; display: none; }
+    .resultado-widget-box { padding: 14px; border-radius: 8px; font-weight: bold; margin-top: 15px; font-size: 13px; line-height: 1.5; display: none; }
     .wres-garantia { background-color: #14532d; color: #bbf7d0; border-left: 4px solid #22c55e; }
     .wres-cotizacion { background-color: #7f1d1d; color: #fecaca; border-left: 4px solid #ef4444; }
     .wres-series { background-color: #78350f; color: #fef3c7; border-left: 4px solid #f59e0b; }
     .wres-checklist { background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6; }
+
+    /* OVERLAY BACKDROP BACKGROUND */
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; z-index: 999; }
+    .status-msg { padding: 20px; text-align: center; color: #94a3b8; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <div class="hub-header">
+  <div class="clean-container">
     <div class="brand-title">VENTO MOTORCYCLES U.S.A.</div>
-    <div class="hub-title">SISTEMA SEGMENTADOR DE CONTROL - ATC</div>
-  </div>
+    <div class="hub-title">MÓDULO DE SEGMENTACIÓN ATC</div>
 
-  <div class="tabs-nav">
-    <button id="btn-tab-agencias" class="tab-button active" onclick="cambiarPestanaManual(event, 'modulo-agencias')">AGENCIAS</button>
-    <button id="btn-tab-series" class="tab-button" onclick="cambiarPestanaManual(event, 'modulo-series', true)">PROYECTO S (SERIES)</button>
-  </div>
+    <div class="tabs-nav">
+      <button id="btn-tab-agencias" class="tab-button active" onclick="cambiarPestanaManual('modulo-agencias')">BUSCAR TIENDA</button>
+      <button id="btn-tab-series" class="tab-button" onclick="cambiarPestanaManual('modulo-series', true)">PROYECTO S</button>
+    </div>
 
-  <div id="modulo-agencias" class="tab-content active">
-    <div class="search-container">
-      <h3>1. Buscar Agencia / Distribuidor</h3>
-      <div class="input-box">
-        <input type="text" id="input-agencia" placeholder="Escribe el nombre de la agencia..." onkeyup="buscarAgencias()">
+    <div id="modulo-agencias" class="tab-content active">
+      <div class="search-wrapper">
+        <input type="text" id="input-agencia" class="search-input" placeholder="Escribe el nombre de la agencia..." onkeyup="buscarAgencias()" autocomplete="off">
       </div>
+      <div id="lista-agencias" class="results-list">
+        </div>
     </div>
-    
-    <div class="table-scroll">
-      <table id="tabla-agencias">
-        <thead>
-          <tr>
-            <th>Validación</th>
-            <th>Nº</th>
-            <th>Agencia</th>
-            <th>Acción Base (Col N)</th>
-            <th>¿Puede Reportar Rev. Gral? (Col O)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="fila-nueva-agencia" class="fila-comodin" style="display: none;">
-            <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('AGENCIA NUEVA / NO REGISTRADA', 'PASA POR GARANTIA', 'SI')">🛡️ Forzar</button></td>
-            <td>N/A</td>
-            <td style="color:#2563eb;"><strong>📍 TIENDA NO ENCONTRADA (¿Es una agencia nueva?)</strong></td>
-            <td>PASA POR GARANTIA (POR DEFECTO)</td>
-            <td><strong>SI</strong></td>
-          </tr>
-          <tr><td colspan="5" class="status-msg">Cargando catálogo...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-  <div id="modulo-series" class="tab-content">
-    <div class="search-container" id="contenedor-buscador-series">
-      <h3>Buscador de Números de Serie</h3>
-      <div class="input-box">
-        <input type="text" id="input-serie" placeholder="Ej. 3V1FCE..." onkeyup="buscarSeries()">
+    <div id="modulo-series" class="tab-content">
+      <div class="search-wrapper">
+        <input type="text" id="input-serie" class="search-input" placeholder="Ingresa número de serie..." onkeyup="buscarSeries()" autocomplete="off">
       </div>
-    </div>
-    <div class="table-scroll black-theme">
-      <table id="tabla-series">
-        <thead>
-          <tr>
-            <th>Número de Serie</th>
-            <th>Artículo / Modelo</th>
-            <th>Fecha Recepción</th>
-            <th>Acción Dictaminada</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="4" class="status-msg">Cargando base de datos de Proyecto S...</td></tr>
-        </tbody>
-      </table>
+      <div id="lista-series" class="results-list">
+        </div>
     </div>
   </div>
 
-  <button class="widget-ia-boton" onclick="toggleWidgetIA()">
-    <span>🤖</span> Consultar a EVA (Asistente ATC)
-  </button>
+  <div class="modal-backdrop" id="backdrop-eva" onclick="toggleWidgetIA()"></div>
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
@@ -145,11 +110,7 @@
     </div>
     <div class="widget-body">
       
-      <div id="widget-tienda-activa" style="font-weight: bold; font-size: 11px; margin-bottom: 10px; color: #38bdf8; text-transform: uppercase;">
-        ⚠️ Selecciona una agencia en la tabla para que EVA inicie el análisis de validación.
-      </div>
-      
-      <div class="wiz-card" id="widget-wizard-flujo" style="display:none;">
+      <div class="wiz-card" id="widget-wizard-flujo">
         <h4 id="lbl-widget-agencia-nombre">Matriz de Criterios</h4>
         
         <div id="wstep-activacion" class="wiz-step active">
@@ -197,12 +158,12 @@
 
         <div id="wres-pasa-garantia" class="resultado-widget-box wres-garantia">
           🟢 DICTAMEN: GARANTÍA DIRECTA AUTORIZADA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Aplicar Macro de Aprobación en Freshdesk.</small>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:4px;">👉 Ejecución: Aplicar Macro de Aprobación en Freshdesk.</small>
         </div>
         
         <div id="wres-pasa-cotizacion" class="resultado-widget-box wres-cotizacion">
           🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN DIRECTA<br>
-          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Aplicar Macro de Rechazo / Envío de Presupuesto.</small>
+          <small style="font-weight: normal; font-size: 11px; display:block; margin-top:4px;">👉 Ejecución: Aplicar Macro de Rechazo / Envío de Presupuesto.</small>
         </div>
         
         <div id="wres-ir-series" class="resultado-widget-box wres-series">
@@ -214,7 +175,7 @@
           <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Análisis EVA</button>
+        <button class="btn-opcion-wiz" style="margin-top:18px; background:#334155; width:100%; border:none;" onclick="wReiniciarFlujo()">🔄 Resetear Análisis de EVA</button>
       </div>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
@@ -227,99 +188,155 @@
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
 
+    let baseAgencias = [];
+    let baseSeries = [];
     let agenciaSeleccionada = null;
 
     window.onload = function() {
-      fetch(urlAgencias).then(r => r.text()).then(data => procesarAgenciasCSV(data));
-      fetch(urlSeries).then(r => r.text()).then(data => procesarSeriesCSV(data));
+      fetch(urlAgencias).then(r => r.text()).then(data => parsearAgencias(data));
+      fetch(urlSeries).then(r => r.text()).then(data => parsearSeries(data));
     };
 
     function toggleWidgetIA() {
       const win = document.getElementById('ventana-ia');
-      win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
+      const backdrop = document.getElementById('backdrop-eva');
+      const vis = (win.style.display === 'none' || win.style.display === '');
+      win.style.display = vis ? 'flex' : 'none';
+      backdrop.style.display = vis ? 'block' : 'none';
     }
 
-    function cambiarPestanaManual(evt, idModulo, esNegro = false) {
-      ejecutarCambioPestana(idModulo, esNegro);
-    }
-
-    function ejecutarCambioPestana(idModulo, esNegro = false) {
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
+    function cambiarPestanaManual(idModulo, esNegro = false) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active', 'black-tab'));
+      
       document.getElementById(idModulo).classList.add('active');
       if(idModulo === 'modulo-agencias') {
         document.getElementById('btn-tab-agencias').classList.add('active');
       } else {
-        const btnSeries = document.getElementById('btn-tab-series');
-        btnSeries.classList.add('active');
-        if(esNegro) btnSeries.classList.add('black-tab');
+        const btnS = document.getElementById('btn-tab-series');
+        btnS.classList.add('active');
+        if(esNegro) btnS.classList.add('black-tab');
       }
     }
 
     function parsearCSVLineas(texto) {
-      const lineas = texto.split(/\r?\n/);
-      return lineas.map(linea => {
+      return texto.split(/\r?\n/).map(linea => {
         const resultado = [];
-        let dentroDeComillas = false;
-        let celdaActual = '';
+        let dentroDeComillas = false; let celdaActual = '';
         for (let i = 0; i < linea.length; i++) {
           let char = linea[i];
-          if (char === '"') dentroDeComillas = !dentroDeComillas;
-          else if (char === ',' && !dentroDeComillas) {
-            resultado.push(celdaActual.trim());
-            celdaActual = '';
-          } else celdaActual += char;
+          if (char === '"') dentroDeComillas = !withinComillas; 
+          else if (char === ',' && !dentroDeComillas) { resultado.push(celdaActual.trim()); celdaActual = ''; }
+          else celdaActual += char;
         }
         resultado.push(celdaActual.trim());
         return resultado;
       });
     }
 
-    function procesarAgenciasCSV(texto) {
+    function parsearAgencias(texto) {
       const filas = parsearCSVLineas(texto);
-      const tbody = document.querySelector('#tabla-agencias tbody');
-      const filaComodin = document.getElementById('fila-nueva-agencia');
-      tbody.innerHTML = '';
-      tbody.appendChild(filaComodin);
-      
+      baseAgencias = [];
       for(let i = 1; i < filas.length; i++) {
-        const columnas = filas[i];
-        if(columnas.length < 2 || !columnas[1]) continue;
-        
-        const tr = document.createElement('tr');
-        tr.className = 'fila-datos';
-        tr.setAttribute('data-search', columnas[1].toLowerCase());
-        
-        let claseColor = '';
-        if(columnas[13].toUpperCase().includes("GARANTIA")) claseColor = 'alerta-garantia';
-        if(columnas[13].toUpperCase().includes("CHECK LIST")) claseColor = 'alerta-roja';
-        
-        tr.innerHTML = `
-          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🤖 Analizar</button></td>
-          <td>${columnas[0]}</td>
-          <td class="${claseColor}"><strong>${columnas[1]}</strong></td>
-          <td>${columnas[13]}</td>
-          <td><strong>${columnas[14]}</strong></td>
-        `;
-        tbody.appendChild(tr);
+        const col = filas[i];
+        if(col.length < 2 || !col[1]) continue;
+        baseAgencias.push({
+          nombre: col[1],
+          accionBase: col[13] || '',
+          puedeReportar: col[14] || ''
+        });
+      }
+      document.getElementById('lista-agencias').innerHTML = '<div class="status-msg">Escribe arriba para buscar tiendas...</div>';
+      document.getElementById('lista-agencias').style.display = 'block';
+    }
+
+    function parsearSeries(texto) {
+      const filas = parsearCSVLineas(texto);
+      baseSeries = [];
+      for(let i = 1; i < filas.length; i++) {
+        const col = filas[i];
+        if(!col[0]) continue;
+        baseSeries.push({ serie: col[0], modelo: col[1]||'', fecha: col[2]||'', dictamen: col[3]||'' });
       }
     }
 
-    function abrirWidgetConAgencia(nombre, accionBase, puedeReportar) {
+    function buscarAgencias() {
+      const val = document.getElementById('input-agencia').value.toLowerCase().trim();
+      const contenedor = document.getElementById('lista-agencias');
+      
+      if(val.length === 0) {
+        contenedor.innerHTML = '<div class="status-msg">Escribe arriba para buscar tiendas...</div>';
+        return;
+      }
+
+      const filtradas = baseAgencias.filter(a => a.nombre.toLowerCase().includes(val));
+      contenedor.innerHTML = '';
+      
+      if(filtradas.length === 0) {
+        contenedor.innerHTML = `
+          <div class="result-item">
+            <span class="agency-name" style="color:#38bdf8;">📍 TIENDA NUEVA (No registrada)</span>
+            <button class="btn-analizar" onclick="abrirEVA('AGENCIA NUEVA/FORZADA', 'PASA POR GARANTIA', 'SI')">⚡ Forzar EVA</button>
+          </div>`;
+        return;
+      }
+
+      filtradas.forEach(a => {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <span class="agency-name">📍 ${a.nombre}</span>
+          <button class="btn-analizar" onclick="abrirEVA('${a.nombre}', '${a.accionBase}', '${a.puedeReportar}')">🤖 Abrir EVA</button>
+        `;
+        contenedor.appendChild(item);
+      });
+    }
+
+    function buscarSeries() {
+      const val = document.getElementById('input-serie').value.toLowerCase().trim();
+      const contenedor = document.getElementById('lista-series');
+      
+      if(val.length === 0) {
+        contenedor.style.display = 'none';
+        return;
+      }
+
+      const filtradas = baseSeries.filter(s => s.serie.toLowerCase().includes(val));
+      contenedor.innerHTML = '';
+      contenedor.style.display = 'block';
+
+      if(filtradas.length === 0) {
+        contenedor.innerHTML = '<div class="status-msg">⚠️ Serie no encontrada en Proyecto S.</div>';
+        return;
+      }
+
+      filtradas.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'serie-item';
+        item.innerHTML = `
+          <div><strong>🔍 ${s.serie}</strong></div>
+          <div class="serie-meta">
+            <span>🏍️ ${s.modelo}</span>
+            <span>📅 Recibido: ${s.fecha}</span>
+            <span class="badge-dictamen">${s.dictamen}</span>
+          </div>
+        `;
+        contenedor.appendChild(item);
+      });
+    }
+
+    function abrirEVA(nombre, accionBase, puedeReportar) {
       agenciaSeleccionada = { nombre: nombre, accionBase: accionBase.toUpperCase().trim(), puedeReportar: puedeReportar.toUpperCase().trim() };
       
-      document.getElementById('widget-tienda-activa').style.display = 'none';
-      document.getElementById('widget-wizard-flujo').style.display = 'block';
-      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 ANÁLISIS DE EVA: ${nombre}`;
-      
-      document.getElementById('ventana-ia').style.display = 'flex';
+      document.getElementById('lbl-widget-agencia-nombre').innerText = `🤖 ANÁLISIS DE EVA: ${nombre}`;
+      toggleWidgetIA();
       
       if (agenciaSeleccionada.accionBase.includes("GARANTIA") || agenciaSeleccionada.accionBase.includes("GARANTÍA")) {
         wOcultarPasos();
         wMostrarResultado('wres-pasa-garantia');
         wEjecutarIA('GARANTIA_BASE');
       } else {
-        wReiniciarFlujo(false);
+        wReiniciarFlujo();
       }
     }
 
@@ -329,7 +346,7 @@
       document.getElementById(id).style.display = 'block';
     }
 
-    function wReiniciarFlujo(completo = false) {
+    function wReiniciarFlujo() {
       wOcultarPasos();
       document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
       document.getElementById('w-ia-analisis').style.display = 'none';
@@ -338,152 +355,66 @@
 
     function wEvaluarActivacion(tipo) {
       wOcultarPasos();
-      if (tipo === 'CESVE') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('CESVE');
-      } else if (tipo === 'SIN_REGISTRO') {
-        wMostrarResultado('wres-solicitar-evidencia');
-        wEjecutarIA('SIN_REGISTRO');
-      } else {
-        document.getElementById('wstep-armado').classList.add('active');
-      }
+      if (tipo === 'CESVE') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA('CESVE'); } 
+      else if (tipo === 'SIN_REGISTRO') { wMostrarResultado('wres-solicitar-evidencia'); wEjecutarIA('SIN_REGISTRO'); } 
+      else { document.getElementById('wstep-armado').classList.add('active'); }
     }
 
     function wEvaluarArmado(resp) {
       wOcultarPasos();
-      if (resp === 'SI') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('ARMADO_SI');
-      } else {
-        document.getElementById('wstep-reporte').classList.add('active');
-      }
+      if (resp === 'SI') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA('ARMADO_SI'); } 
+      else { document.getElementById('wstep-reporte').classList.add('active'); }
     }
 
     function wEvaluarReporte(tipo) {
       wOcultarPasos();
-      if (tipo === 'FALLA') {
-        document.getElementById('wstep-variante').classList.add('active');
-      } else {
-        if (agenciaSeleccionada.puedeReportar === 'NO') {
-          wMostrarResultado('wres-pasa-cotizacion');
-          wEjecutarIA('REVISION_PROHIBIDA');
-        } else {
-          document.getElementById('wstep-revisiones').classList.add('active');
-        }
+      if (tipo === 'FALLA') { document.getElementById('wstep-variante').classList.add('active'); } 
+      else {
+        if (agenciaSeleccionada.puedeReportar === 'NO') { wMostrarResultado('wres-pasa-cotizacion'); wEjecutarIA('REVISION_PROHIBIDA'); } 
+        else { document.getElementById('wstep-revisiones').classList.add('active'); }
       }
     }
 
     function wEvaluarVariante(varn) {
       wOcultarPasos();
-      if (varn === 'BATERIA' || varn === 'VICIO_OCULTO' || varn === 'ELEC_MEC') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA(varn);
-      } else {
-        wMostrarResultado('wres-ir-series');
-        wEjecutarIA('OTRA_FALLA_PROYECTOS');
-        
+      if (varn === 'BATERIA' || varn === 'VICIO_OCULTO' || varn === 'ELEC_MEC') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA(varn); } 
+      else {
+        wMostrarResultado('wres-ir-series'); wEjecutarIA('OTRA_FALLA_PROYECTOS');
         setTimeout(() => {
-          ejecutarCambioPestana('modulo-series', true);
+          cambiarPestanaManual('modulo-series', true);
           const inputS = document.getElementById('input-serie');
-          inputS.focus();
-          document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
-          wReiniciarFlujo(false);
+          inputS.value = ""; inputS.focus();
+          document.getElementById('lista-series').style.display = 'none';
           toggleWidgetIA(); 
-        }, 500);
+        }, 800);
       }
     }
 
     function wEvaluarRevision(tipo) {
       wOcultarPasos();
-      if (tipo === 'PRIMERA') {
-        wMostrarResultado('wres-pasa-garantia');
-        wEjecutarIA('PRIMERA_REVISION');
-      } else {
-        wMostrarResultado('wres-pasa-cotizacion');
-        wEjecutarIA('VARIAS_REVISIONES');
-      }
+      if (tipo === 'PRIMERA') { wMostrarResultado('wres-pasa-garantia'); wEjecutarIA('PRIMERA_REVISION'); } 
+      else { wMostrarResultado('wres-pasa-cotizacion'); wEjecutarIA('VARIAS_REVISIONES'); }
     }
 
-    /* MATRIZ DE FUNDAMENTOS EVA */
     function wEjecutarIA(escenario) {
       const boxAnalisis = document.getElementById('w-ia-analisis');
       boxAnalisis.style.display = 'block';
-      
       let analisis = ""; 
 
       switch(escenario) {
-        case 'GARANTIA_BASE':
-          analisis = `📋 <b>Análisis de EVA:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
-          break;
-        case 'CESVE':
-          analisis = `📋 <b>Análisis de EVA:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
-          break;
-        case 'SIN_REGISTRO':
-          analisis = `📋 <b>Análisis de EVA:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro histórico de Armado/Activación. No se autorizan movimientos sin evidencia física documentada.`;
-          break;
-        case 'ARMADO_SI':
-          analisis = `📋 <b>Análisis de EVA:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado exitosamente en la base de datos de control.`;
-          break;
-        case 'REVISION_PROHIBIDA':
-          analisis = `📋 <b>Análisis de EVA:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado.`;
-          break;
-        case 'BATERIA':
-          analisis = `📋 <b>Análisis de EVA:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente de soporte.`;
-          break;
-        case 'VICIO_OCULTO':
-          analisis = `📋 <b>Análisis de EVA:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa para el asesor.`;
-          break;
-        case 'ELEC_MEC':
-          analisis = `📋 <b>Análisis de EVA:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones del perfil de tienda, la afectación compromete sistemas Eléctricos o Mecánicos esenciales. El contra-candado de supervisión aprueba el caso.`;
-          break;
-        case 'PRIMERA_REVISION':
-          analisis = `📋 <b>Análisis de EVA:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento en sistema.`;
-          break;
-        case 'VARIAS_REVISIONES':
-          analisis = `📋 <b>Análisis de EVA:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
-          break;
-        case 'OTRA_FALLA_PROYECTOS':
-          analisis = `🔄 Redireccionando automáticamente a matriz del "Proyecto S" para auditoría de fecha de recepción de la serie...`;
-          break;
+        case 'GARANTIA_BASE': analisis = `📋 <b>Análisis de EVA:</b> Estatus base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`; break;
+        case 'CESVE': analisis = `📋 <b>Análisis de EVA:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`; break;
+        case 'SIN_REGISTRO': analisis = `📋 <b>Análisis de EVA:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro de Armado/Activación. Requiere expediente completo de arribo.`; break;
+        case 'ARMADO_SI': analisis = `📋 <b>Análisis de EVA:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado exitosamente en sistema de control.`; break;
+        case 'REVISION_PROHIBIDA': analisis = `📋 <b>Análisis de EVA:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO).`; break;
+        case 'BATERIA': analisis = `📋 <b>Análisis de EVA:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada.`; break;
+        case 'VICIO_OCULTO': analisis = `📋 <b>Análisis de EVA:</b> Evidencia apunta a defecto de origen de fábrica. Validación de garantía procedente de forma directa.`; break;
+        case 'ELEC_MEC': analisis = `📋 <b>Análisis de EVA:</b> 🌟 Excepción por Naturaleza del Reporte: Afectación compromete sistemas mecánicos o eléctricos vitales. Contra-candado aprueba el caso.`; break;
+        case 'PRIMERA_REVISION': analisis = `📋 <b>Análisis de EVA:</b> Primera revisión general técnica documentada. Cuenta con permisos vigentes para este procedimiento.`; break;
+        case 'VARIAS_REVISIONES': analisis = `📋 <b>Análisis de EVA:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas básicas.`; break;
+        case 'OTRA_FALLA_PROYECTOS': analisis = `🔄 Redireccionando automáticamente a Proyecto S para auditar el número de serie...`; break;
       }
       boxAnalisis.innerHTML = analisis;
-    }
-
-    function procesarSeriesCSV(texto) {
-      const filas = parsearCSVLineas(texto);
-      const tbody = document.querySelector('#tabla-series tbody');
-      tbody.innerHTML = '';
-      for(let i = 1; i < filas.length; i++) {
-        const columnas = filas[i];
-        if(!columnas[0]) continue;
-        const tr = document.createElement('tr');
-        tr.setAttribute('data-search', columnas[0].toLowerCase());
-        tr.innerHTML = `<td><strong>${columnas[0]}</strong></td><td>${columnas[1]||''}</td><td>${columnas[2]||''}</td><td>${columnas[3]||''}</td>`;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function buscarAgencias() {
-      const val = document.getElementById('input-agencia').value.toLowerCase();
-      let coincidencias = 0;
-      document.querySelectorAll('#tabla-agencias tbody tr.fila-datos').forEach(tr => {
-        const pertenece = tr.getAttribute('data-search').includes(val);
-        tr.style.display = pertenece ? '' : 'none';
-        if (pertenece) coincidencias++;
-      });
-      const filaComodin = document.getElementById('fila-nueva-agencia');
-      if (val.trim().length > 0 && coincidencias === 0) {
-        filaComodin.style.setProperty('display', 'table-row', 'important'); 
-      } else {
-        filaComodin.style.setProperty('display', 'none', 'important');
-      }
-    }
-
-    function buscarSeries() {
-      const val = document.getElementById('input-serie').value.toLowerCase();
-      document.querySelectorAll('#tabla-series tbody tr').forEach(tr => {
-        tr.style.display = tr.getAttribute('data-search').includes(val) ? '' : 'none';
-      });
     }
   </script>
 </body>
