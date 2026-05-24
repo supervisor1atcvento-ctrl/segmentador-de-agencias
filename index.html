@@ -211,7 +211,7 @@
           <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Análisis EVA</button>
+        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(true)">🔄 Resetear Análisis EVA</button>
       </div>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
@@ -286,7 +286,6 @@
         const tr = document.createElement('tr');
         tr.className = 'fila-datos';
         tr.setAttribute('data-search', columnas[1].toLowerCase());
-        // Se añade el evento click a toda la fila para disparar a EVA de forma directa y limpia
         tr.setAttribute('onclick', `abrirWidgetConAgencia('${columnas[1].replace(/'/g, "\\'")}', '${columnas[13].replace(/'/g, "\\'")}', '${columnas[14].replace(/'/g, "\\'")}')`);
         
         let claseColor = '';
@@ -327,14 +326,23 @@
       document.getElementById(id).style.display = 'block';
     }
 
+    /* MODIFICADO: Ahora vacía el objeto de memoria si es un reset total */
     function wReiniciarFlujo(completo = false) {
       wOcultarPasos();
       document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
       document.getElementById('w-ia-analisis').style.display = 'none';
-      document.getElementById('wstep-activacion').classList.add('active');
+      
+      if (completo) {
+        agenciaSeleccionada = null; // Se borra la tienda de la memoria interna
+        document.getElementById('widget-wizard-flujo').style.display = 'none'; // Escondemos el árbol
+        document.getElementById('widget-tienda-activa').style.display = 'block'; // Volvemos al estado inicial
+      } else {
+        document.getElementById('wstep-activacion').classList.add('active');
+      }
     }
 
     function wEvaluarActivacion(tipo) {
+      if (!agenciaSeleccionada) return; // Candado de seguridad
       wOcultarPasos();
       if (tipo === 'CESVE') {
         wMostrarResultado('wres-pasa-garantia');
@@ -348,6 +356,7 @@
     }
 
     function wEvaluarArmado(resp) {
+      if (!agenciaSeleccionada) return;
       wOcultarPasos();
       if (resp === 'SI') {
         wMostrarResultado('wres-pasa-garantia');
@@ -358,6 +367,7 @@
     }
 
     function wEvaluarReporte(tipo) {
+      if (!agenciaSeleccionada) return;
       wOcultarPasos();
       if (tipo === 'FALLA') {
         document.getElementById('wstep-variante').classList.add('active');
@@ -372,6 +382,7 @@
     }
 
     function wEvaluarVariante(varn) {
+      if (!agenciaSeleccionada) return;
       wOcultarPasos();
       if (varn === 'BATERIA' || varn === 'VICIO_OCULTO' || varn === 'ELEC_MEC') {
         wMostrarResultado('wres-pasa-garantia');
@@ -385,13 +396,14 @@
           const inputS = document.getElementById('input-serie');
           inputS.focus();
           document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
-          wReiniciarFlujo(false);
+          wReiniciarFlujo(true); // Resetea completo al saltar a series
           toggleWidgetIA(); 
         }, 500);
       }
     }
 
     function wEvaluarRevision(tipo) {
+      if (!agenciaSeleccionada) return;
       wOcultarPasos();
       if (tipo === 'PRIMERA') {
         wMostrarResultado('wres-pasa-garantia');
