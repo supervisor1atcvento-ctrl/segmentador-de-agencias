@@ -129,7 +129,7 @@
 
         <div id="step-busqueda-series" class="wiz-step">
           <label style="color: #38bdf8;"><b>🔍 Módulo Interno Proyecto S</b></label>
-          <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el Número de Serie (VIN) para cruzar datos con el archivo maestro:</p>
+          <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el Número de Serie (VIN) para auditar historial de recepción:</p>
           <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="Escribe el VIN completo..." onkeyup="auditarVinEnModal()">
           <div id="resultado-vin-box" style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; padding: 8px; border-radius: 4px; background: #0f172a; display: none;"></div>
         </div>
@@ -216,20 +216,19 @@
       }
     }
 
-    // MAPEO AJUSTADO A COLUMNA F (ÍNDICE 5)
     function procesarSeries(texto) {
       const lineas = texto.split(/\r?\n/);
       for(let i = 1; i < lineas.length; i++) {
         if(!lineas[i]) continue;
         const col = parsearLineaCSV(lineas[i]);
-        if(col.length <= 5 || !col[5]) continue; // Asegura que exista la Columna F
+        if(col.length <= 5 || !col[5]) continue; 
         
         cacheSeries.push({
-          vin: col[5].replace(/"/g, '').trim().toLowerCase(), // Columna F como identificador único
+          vin: col[5].replace(/"/g, '').trim().toLowerCase(), 
           originalVin: col[5].replace(/"/g, '').trim(),
-          modelo: (col[6] || '').replace(/"/g, '').trim(),     // Siguiente columna para el modelo
-          fecha: (col[7] || '').replace(/"/g, '').trim(),      // Siguiente columna para la fecha
-          dictamen: (col[8] || '').replace(/"/g, '').trim()    // Siguiente columna para el dictamen
+          modelo: (col[6] || '').replace(/"/g, '').trim(),     
+          dictamen: (col[7] || '').replace(/"/g, '').trim(),   
+          fechaRecepcion: (col[8] || '').replace(/"/g, '').trim() // Columna H (Índice 8) - Fecha de Recepción
         });
       }
     }
@@ -306,10 +305,16 @@
       else { document.getElementById('res-cotizacion').style.display = 'block'; imprimirIA('P2'); }
     }
 
+    /* 🧠 NUEVA LÓGICA DE AUDITORÍA CON FECHAS PARA PROYECTO S */
     function auditarVinEnModal() {
       const buscador = document.getElementById('input-vin-modal').value.trim().toLowerCase();
       const respuestaBox = document.getElementById('resultado-vin-box');
+      const boxFundamento = document.getElementById('ia-fundamento');
       
+      // Ocultar dictámenes previos en cada pulsación
+      document.querySelectorAll('.resultado-widget-box').forEach(el => el.style.display = 'none');
+      boxFundamento.style.display = 'none';
+
       if(buscador.length < 4) {
         respuestaBox.style.display = 'none';
         return;
@@ -319,19 +324,60 @@
       respuestaBox.style.display = 'block';
 
       if(registro) {
+        const celdaFecha = (registro.fechaRecepcion || '').trim();
+        let esGarantiaDirecta = false;
+        let motivoGarantia = "";
+
+        // Evaluar si es texto plano "Proyecto S"
+        if(celdaFecha.toLowerCase() === 'proyecto s' || celdaFecha.toLowerCase().includes('proyecto')) {
+          esGarantiaDirecta = true;
+          motivoGarantia = "La unidad pertenece explícitamente al plan 'Proyecto S'.";
+        } else {
+          // Intentar parsear fecha (asumiendo formatos comunes DD/MM/AAAA o MM/DD/AAAA)
+          const partes = celdaFecha.split('/');
+          if(partes.length === 3) {
+            // Reconstruir para comparar contra el 1 de Febrero del 2026
+            let dia = parseInt(partes[0], 10);
+            let mes = parseInt(partes[1], 10) - 1; // Ene es 0
+            let anio = parseInt(partes[2], 10);
+            
+            // Si el año viene en formato corto de 2 dígitos (ej. 26)
+            if(anio < 100) anio += 2000;
+
+            const fechaMoto = new Date(anio, mes, dia);
+            const fechaCorte = new Date(2026, 1, 1); // 1 de Febrero 2026
+
+            if (!isNaN(fechaMoto.getTime()) && fechaMoto < fechaCorte) {
+              esGarantiaDirecta = true;
+              motivoGarantia = `Fecha de recepción (${celdaFecha}) es anterior al 01/Feb/26 (Pre-cotizaciones).`;
+            }
+          }
+        }
+
+        // Mostrar datos en pantalla
         respuestaBox.innerHTML = `
-          <b style="color:#38bdf8;"> Unidad Localizada (Columna F):</b><br>
+          <b style="color:#38bdf8;"> Unidad Localizada:</b><br>
           🏍️ Modelo: ${registro.modelo || 'N/A'}<br>
-          📅 Ingreso: ${registro.fecha || 'N/A'}<br>
-          ⚠️ Dictamen Oficial: <span style="color:#ffb74d; font-weight:bold;">${registro.dictamen || 'Sin dictamen'}</span>
+          📅 Recepción (Col H): <b>${celdaFecha || 'N/A'}</b><br>
+          ⚠️ Estatus Base: ${registro.dictamen || 'Registrado'}
         `;
-        
-        document.getElementById('ia-fundamento').style.display = 'block';
-        document.getElementById('ia-fundamento').innerHTML = `📋 <b>Análisis EVA:</b> Cruce de VIN exitoso con el Proyecto S. Por favor acatar la resolución de planta mostrada arriba.`;
+
+        boxFundamento.style.display = 'block';
+
+        if(esGarantiaDirecta) {
+          document.getElementById('res-garantia').style.display = 'block';
+          boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> ${motivoGarantia} Pasa automático por Garantía.`;
+        } else {
+          document.getElementById('res-checklist').style.display = 'block';
+          boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Ingreso del 01/Feb/26 en adelante. Al ser proceso por cotización, se debe solicitar el Check List para armar expediente.`;
+        }
         
       } else {
-        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">No se encontró registro del VIN en la Columna F del Proyecto S.</span>`;
-        document.getElementById('ia-fundamento').style.display = 'none';
+        // Si la unidad no se detecta en la base
+        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">El VIN no se encuentra registrado en el listado maestro del Proyecto S.</span>`;
+        document.getElementById('res-checklist').style.display = 'block';
+        boxFundamento.style.display = 'block';
+        boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Unidad no localizada en base de datos. Al ser externa, el proceso corre por cotización y se requiere solicitar Check List obligatorio.`;
       }
     }
 
