@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento</title>
+  <title>Segmentador ATC - Vento (ADAS)</title>
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #222; }
     .hub-header { background-color: #0d0d0d; color: #ffffff; padding: 15px; border-radius: 6px; margin-bottom: 25px; border-left: 6px solid #ff5722; }
     .brand-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
     .hub-title { font-size: 18px; font-weight: 800; margin-top: 3px; }
     
-    /* PESTAÑAS PRINCIPALES (VISTA LIMPIA) */
+    /* PESTAÑAS PRINCIPALES */
     .tabs-nav { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #e1e4e8; padding-bottom: 2px; }
     .tab-button { background-color: #e1e4e8; border: none; padding: 12px 24px; font-size: 13px; font-weight: 700; border-radius: 6px 6px 0 0; cursor: pointer; color: #555; transition: all 0.2s; }
     .tab-button:hover { background-color: #d1d5db; color: #111; }
@@ -34,7 +34,7 @@
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
     .fila-comodin { background-color: #eff6ff !important; display: none; }
 
-    /* 🛡️ WIDGET FLOTANTE: SOPORTE DE VALIDACIÓN ESPECIALIZADA (SVE-ATC) */
+    /* 🛡️ WIDGET FLOTANTE: ADAS */
     .widget-ia-boton { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.2s ease; }
     .widget-ia-boton:hover { background: #0f172a; transform: translateY(-2px); }
     
@@ -135,18 +135,18 @@
   </div>
 
   <button class="widget-ia-boton" onclick="toggleWidgetIA()">
-    <span>🛡️</span> SVE-ATC: Soporte de Validación Especializada
+    <span>🧠</span> Consultar a ADAS (Asistente ATC)
   </button>
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div class="widget-header-titulo"><span>🛡️</span> SVE-ATC: CONTROL DE VALIDACIÓN</div>
+      <div class="widget-header-titulo"><span>🧠</span> ADAS - ASISTENTE PARA DICTÁMENES, ASESORES Y SEGUIMIENTOS</div>
       <button class="widget-btn-cerrar" onclick="toggleWidgetIA()">×</button>
     </div>
     <div class="widget-body">
       
       <div id="widget-tienda-activa" style="font-weight: bold; font-size: 11px; margin-bottom: 10px; color: #38bdf8; text-transform: uppercase;">
-        ⚠️ Selecciona una agencia en la tabla para activar el Soporte de Validación Especializada (SVE-ATC).
+        ⚠️ Selecciona una agencia en la tabla para que ADAS inicie el análisis de seguimiento.
       </div>
       
       <div class="wiz-card" id="widget-wizard-flujo" style="display:none;">
@@ -214,7 +214,7 @@
           <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Análisis SVE</button>
+        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Seguimiento ADAS</button>
       </div>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
@@ -295,7 +295,7 @@
         if(columnas[13].toUpperCase().includes("CHECK LIST")) claseColor = 'alerta-roja';
         
         tr.innerHTML = `
-          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🛡️ Validar</button></td>
+          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🛡️ Analizar</button></td>
           <td>${columnas[0]}</td>
           <td class="${claseColor}"><strong>${columnas[1]}</strong></td>
           <td>${columnas[13]}</td>
@@ -310,7 +310,7 @@
       
       document.getElementById('widget-tienda-activa').style.display = 'none';
       document.getElementById('widget-wizard-flujo').style.display = 'block';
-      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 UNIDAD DE DISTRIBUCIÓN: ${nombre}`;
+      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 EVALUACIÓN ADAS: ${nombre}`;
       
       document.getElementById('ventana-ia').style.display = 'flex';
       
@@ -404,7 +404,7 @@
       }
     }
 
-    /* MATRIZ DE FUNDAMENTOS SVE-ATC */
+    /* MATRIZ DE FUNDAMENTOS ADAS */
     function wEjecutarIA(escenario) {
       const boxAnalisis = document.getElementById('w-ia-analisis');
       boxAnalisis.style.display = 'block';
@@ -413,34 +413,34 @@
 
       switch(escenario) {
         case 'GARANTIA_BASE':
-          analisis = `📋 <b>Fundamento SVE:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
           break;
         case 'CESVE':
-          analisis = `📋 <b>Fundamento SVE:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
           break;
         case 'SIN_REGISTRO':
-          analisis = `📋 <b>Fundamento SVE:</b> ⚠️ Bloqueo por Control de Calidad. Unidad sin registro histórico de Armado/Activación. No se autorizan movimientos sin evidencia física documentada.`;
+          analisis = `📋 <b>Análisis ADAS:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro histórico de Armado/Activación. No se autorizan seguimientos sin evidencia física documentada.`;
           break;
         case 'ARMADO_SI':
-          analisis = `📋 <b>Fundamento SVE:</b> Trazabilidad correcta. Registro de Ticket de Armado validado exitosamente en la base de datos de control.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado exitosamente en la base de datos de control.`;
           break;
         case 'REVISION_PROHIBIDA':
-          analisis = `📋 <b>Fundamento SVE:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado de inmediato.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado.`;
           break;
         case 'BATERIA':
-          analisis = `📋 <b>Fundamento SVE:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente de soporte.`;
           break;
         case 'VICIO_OCULTO':
-          analisis = `📋 <b>Fundamento SVE:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa para el asesor.`;
           break;
         case 'ELEC_MEC':
-          analisis = `📋 <b>Fundamento SVE:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones ordinarias del perfil, la afectación compromete sistemas Eléctricos/Mecánicos esenciales. El contra-candado normativo de supervisión aprueba el caso.`;
+          analisis = `📋 <b>Análisis ADAS:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones del perfil de tienda, la afectación compromete sistemas Eléctricos o Mecánicos esenciales. Criterio de supervisión aprueba el caso.`;
           break;
         case 'PRIMERA_REVISION':
-          analisis = `📋 <b>Fundamento SVE:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento en sistema.`;
           break;
         case 'VARIAS_REVISIONES':
-          analisis = `📋 <b>Fundamento SVE:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
+          analisis = `📋 <b>Análisis ADAS:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
           break;
         case 'OTRA_FALLA_PROYECTOS':
           analisis = `🔄 Redireccionando automáticamente a matriz del "Proyecto S" para auditoría de fecha de recepción de la serie...`;
