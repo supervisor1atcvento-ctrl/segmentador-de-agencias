@@ -94,6 +94,7 @@
         <div class="btn-group">
           <button class="btn-wizard" onclick="evaluarVarianteFalla('BATERIA')">🔋 BATERÍA</button>
           <button class="btn-wizard" onclick="evaluarVarianteFalla('VICIO_OCULTO')">🔍 VICIO OCULTO</button>
+          <button class="btn-wizard" onclick="evaluarVarianteFalla('ELEC_MEC')">⚡ SISTEMA ELÉCTRICO / MECÁNICO</button>
           <button class="btn-wizard" onclick="evaluarVarianteFalla('OTRA')">⚙️ CUALQUIER OTRA FALLA</button>
         </div>
       </div>
@@ -202,7 +203,6 @@
       ejecutarCambioPestana(idModulo, esNegro);
     }
 
-    // Función núcleo para switchear pestañas programáticamente
     function ejecutarCambioPestana(idModulo, esNegro = false) {
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active', 'black-tab'));
@@ -320,6 +320,7 @@
         document.getElementById('step-variante-falla').classList.add('active');
       } else {
         if (agenciaSeleccionada.puedeReportar === 'NO') {
+          // Si no puede reportar revisión gral y seleccionó Revisión General -> Al check list/cotización directo
           mostrarResultado('res-pasa-cotizacion'); 
         } else {
           document.getElementById('step-revisiones').classList.add('active'); 
@@ -327,27 +328,20 @@
       }
     }
 
-    // 🚀 REDIRECCIÓN AUTOMÁTICA INTEGRADA AQUÍ
     function evaluarVarianteFalla(variante) {
       ocultarPasos();
-      if (variante === 'BATERIA' || variante === 'VICIO_OCULTO') {
+      // 🛠️ ACTUALIZACIÓN DE REGLA: Si es Batería, Vicio Oculto O Eléctrico/Mecánico -> PASA DIRECTO
+      if (variante === 'BATERIA' || variante === 'VICIO_OCULTO' || variante === 'ELEC_MEC') {
         mostrarResultado('res-pasa-garantia');
       } else {
+        // Cualquier otra falla -> Salto automático a Series
         mostrarResultado('res-ir-series');
         
-        // Retraso mínimo de 400 milisegundos para que el asesor note visualmente que el sistema decidió enviarlo a Series
         setTimeout(() => {
-          // 1. Cambiar a pestaña Proyecto S con estilo negro
           ejecutarCambioPestana('modulo-series', true);
-          
-          // 2. Enfocar de inmediato la caja de texto para que solo empiece a escribir
           const inputS = document.getElementById('input-serie');
           inputS.focus();
-          
-          // 3. Auto-scroll suave hasta el buscador
           document.getElementById('contenedor-buscador-series').scrollIntoView({ behavior: 'smooth' });
-          
-          // 4. Limpiar el asistente de agencias en background para cuando regrese
           reiniciarWizard(true);
         }, 400);
       }
