@@ -80,7 +80,7 @@
     <div class="search-container">
       <h3>1. Buscar Agencia / Distribuidor</h3>
       <div class="input-box">
-        <input type="text" id="input-agencia" placeholder="Escribe el nombre de la agencia..." onkeyup="buscarAgencias()">
+        <input type="text" id="input-agencia" placeholder="Escribe el nombre o número exacto de agencia..." onkeyup="buscarAgencias()">
       </div>
     </div>
     
@@ -221,7 +221,6 @@
           🔵 DICTAMEN: SE REQUIERE CHECK LIST Y EVIDENCIA MANDATORIA<br>
           <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
-        
       </div>
 
       <div id="wres-recordatorio-experto" class="resultado-widget-box wres-checklist" style="background-color: #1e3a8a; color: #dbeafe; border-left: 4px solid #3b82f6;">
@@ -302,6 +301,8 @@
         
         const tr = document.createElement('tr');
         tr.className = 'fila-datos';
+        // Agregamos data-id (Columna A) y data-search (Nombre) por separado para búsquedas precisas
+        tr.setAttribute('data-id', columnas[0].trim());
         tr.setAttribute('data-search', columnas[1].toLowerCase());
         tr.setAttribute('onclick', `abrirWidgetConAgencia('${columnas[1].replace(/'/g, "\\'")}', '${columnas[13].replace(/'/g, "\\'")}', '${columnas[14].replace(/'/g, "\\'")}')`);
         
@@ -319,16 +320,48 @@
       }
     }
 
+    /* MODIFICADO: FUNCIÓN DE BÚSQUEDA CON CAMBIO OPERACIONAL NUMÉRICO EXACTO */
+    function buscarAgencias() {
+      const val = document.getElementById('input-agencia').value.trim();
+      const valMinuscula = val.toLowerCase();
+      let coincidencias = 0;
+      
+      // Determinamos si lo ingresado es puramente numérico
+      const esNumero = /^\d+$/.test(val);
+
+      document.querySelectorAll('#tabla-agencias tbody tr.fila-datos').forEach(tr => {
+        let pertenece = false;
+        
+        if (val === '') {
+          pertenece = true; // Mostrar todo si está vacío
+        } else if (esNumero) {
+          // Si el usuario digita un número, buscamos coincidencia exacta en Columna A (data-id)
+          pertenece = (tr.getAttribute('data-id') === val);
+        } else {
+          // Si introduce letras, busca de manera normal por semejanzas en el nombre
+          pertenece = tr.getAttribute('data-search').includes(valMinuscula);
+        }
+
+        tr.style.display = pertenece ? '' : 'none';
+        if (pertenece) coincidencias++;
+      });
+
+      const filaComodin = document.getElementById('fila-nueva-agencia');
+      if (val.length > 0 && coincidencias === 0) {
+        filaComodin.style.setProperty('display', 'table-row', 'important'); 
+      } else {
+        filaComodin.style.setProperty('display', 'none', 'important');
+      }
+    }
+
     function abrirWidgetConAgencia(nombre, accionBase, puedeReportar) {
       agenciaSeleccionada = { nombre: nombre, accionBase: accionBase.toUpperCase().trim(), puedeReportar: puedeReportar.toUpperCase().trim() };
       
-      // Reset de vistas previas
       document.getElementById('widget-tienda-activa').style.display = 'none';
       document.getElementById('widget-wizard-flujo').style.display = 'none';
       document.querySelectorAll('.resultado-widget-box').forEach(r => r.style.display = 'none');
       document.getElementById('w-ia-analisis').style.display = 'none';
       
-      // Activar pantalla de saludo/presentación de EVA
       document.getElementById('widget-presentacion-eva').style.display = 'block';
       document.getElementById('lbl-saludo-tienda').innerText = `🤖 EVA: ${nombre}`;
       document.getElementById('btn-reset-eva-global').style.display = 'block';
@@ -336,12 +369,10 @@
       document.getElementById('ventana-ia').style.display = 'flex';
     }
 
-    /* EVALUACIÓN DE LA RESPUESTA DE AYUDA DE EVA */
     function wAceptarAyudaEVA(quiereAyuda) {
       document.getElementById('widget-presentacion-eva').style.display = 'none';
       
       if (quiereAyuda) {
-        // Flujo tradicional: Si es garantía directa base salta al dictamen final, si no, abre árbol
         document.getElementById('widget-wizard-flujo').style.display = 'block';
         document.getElementById('lbl-widget-agencia-nombre').innerText = `Matriz de Criterios`;
         
@@ -353,7 +384,6 @@
           wReiniciarFlujo(false);
         }
       } else {
-        // Al elegir "NO": Desplegar aviso mandatorio de captura de pantalla
         wMostrarResultado('wres-recordatorio-experto');
       }
     }
@@ -507,22 +537,6 @@
         tr.setAttribute('data-search', columnas[0].toLowerCase());
         tr.innerHTML = `<td><strong>${columnas[0]}</strong></td><td>${columnas[1]||''}</td><td>${columnas[2]||''}</td><td>${columnas[3]||''}</td>`;
         tbody.appendChild(tr);
-      }
-    }
-
-    function buscarAgencias() {
-      const val = document.getElementById('input-agencia').value.toLowerCase();
-      let coincidencias = 0;
-      document.querySelectorAll('#tabla-agencias tbody tr.fila-datos').forEach(tr => {
-        const pertenece = tr.getAttribute('data-search').includes(val);
-        tr.style.display = pertenece ? '' : 'none';
-        if (pertenece) coincidencias++;
-      });
-      const filaComodin = document.getElementById('fila-nueva-agencia');
-      if (val.trim().length > 0 && coincidencias === 0) {
-        filaComodin.style.setProperty('display', 'table-row', 'important'); 
-      } else {
-        filaComodin.style.setProperty('display', 'none', 'important');
       }
     }
 
