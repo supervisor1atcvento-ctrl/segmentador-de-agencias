@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento (ADAS)</title>
+  <title>Segmentador ATC - Vento (EVA)</title>
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #222; }
     .hub-header { background-color: #0d0d0d; color: #ffffff; padding: 15px; border-radius: 6px; margin-bottom: 25px; border-left: 6px solid #ff5722; }
@@ -34,7 +34,7 @@
     .alerta-garantia { background-color: #e8f5e9 !important; color: #1b5e20; }
     .fila-comodin { background-color: #eff6ff !important; display: none; }
 
-    /* 🛡️ WIDGET FLOTANTE: ADAS */
+    /* 🤖 WIDGET FLOTANTE: EVA */
     .widget-ia-boton { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.2s ease; }
     .widget-ia-boton:hover { background: #0f172a; transform: translateY(-2px); }
     
@@ -135,18 +135,18 @@
   </div>
 
   <button class="widget-ia-boton" onclick="toggleWidgetIA()">
-    <span>🧠</span> Consultar a ADAS (Asistente ATC)
+    <span>🤖</span> Consultar a EVA (Asistente ATC)
   </button>
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div class="widget-header-titulo"><span>🧠</span> ADAS - ASISTENTE PARA DICTÁMENES, ASESORES Y SEGUIMIENTOS</div>
+      <div class="widget-header-titulo"><span>🤖</span> EVA - ESPECIALISTA EN VALIDACIÓN DE ATENCIÓN A CLIENTES</div>
       <button class="widget-btn-cerrar" onclick="toggleWidgetIA()">×</button>
     </div>
     <div class="widget-body">
       
       <div id="widget-tienda-activa" style="font-weight: bold; font-size: 11px; margin-bottom: 10px; color: #38bdf8; text-transform: uppercase;">
-        ⚠️ Selecciona una agencia en la tabla para que ADAS inicie el análisis de seguimiento.
+        ⚠️ Selecciona una agencia en la tabla para que EVA inicie el análisis de validación.
       </div>
       
       <div class="wiz-card" id="widget-wizard-flujo" style="display:none;">
@@ -214,7 +214,7 @@
           <small style="font-weight: normal; font-size: 11px; display:block; margin-top:3px;">👉 Ejecución: Solicitar expediente técnico de arribo a la sucursal.</small>
         </div>
         
-        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Seguimiento ADAS</button>
+        <button class="btn-opcion-wiz" style="margin-top:15px; background:#475569;" onclick="wReiniciarFlujo(false)">🔄 Resetear Análisis EVA</button>
       </div>
 
       <div id="w-ia-analisis" class="ia-analisis-alerta"></div>
@@ -295,7 +295,7 @@
         if(columnas[13].toUpperCase().includes("CHECK LIST")) claseColor = 'alerta-roja';
         
         tr.innerHTML = `
-          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🛡️ Analizar</button></td>
+          <td><button class="btn-seleccionar" onclick="abrirWidgetConAgencia('${columnas[1]}', '${columnas[13]}', '${columnas[14]}')">🤖 Analizar</button></td>
           <td>${columnas[0]}</td>
           <td class="${claseColor}"><strong>${columnas[1]}</strong></td>
           <td>${columnas[13]}</td>
@@ -310,7 +310,7 @@
       
       document.getElementById('widget-tienda-activa').style.display = 'none';
       document.getElementById('widget-wizard-flujo').style.display = 'block';
-      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 EVALUACIÓN ADAS: ${nombre}`;
+      document.getElementById('lbl-widget-agencia-nombre').innerText = `📍 ANÁLISIS DE EVA: ${nombre}`;
       
       document.getElementById('ventana-ia').style.display = 'flex';
       
@@ -404,7 +404,7 @@
       }
     }
 
-    /* MATRIZ DE FUNDAMENTOS ADAS */
+    /* MATRIZ DE FUNDAMENTOS EVA */
     function wEjecutarIA(escenario) {
       const boxAnalisis = document.getElementById('w-ia-analisis');
       boxAnalisis.style.display = 'block';
@@ -413,34 +413,34 @@
 
       switch(escenario) {
         case 'GARANTIA_BASE':
-          analisis = `📋 <b>Análisis ADAS:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Estatus de Acción Base parametrizado como Garantía Directa (Columna N). Cuenta liberada de restricciones operativas básicas.`;
           break;
         case 'CESVE':
-          analisis = `📋 <b>Análisis ADAS:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Activación por CESVE validada. Los centros certificados cuentan con aprobación automática por protocolo técnico oficial.`;
           break;
         case 'SIN_REGISTRO':
-          analisis = `📋 <b>Análisis ADAS:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro histórico de Armado/Activación. No se autorizan seguimientos sin evidencia física documentada.`;
+          analisis = `📋 <b>Análisis de EVA:</b> ⚠️ Bloqueo de Control Técnico. Unidad sin registro histórico de Armado/Activación. No se autorizan movimientos sin evidencia física documentada.`;
           break;
         case 'ARMADO_SI':
-          analisis = `📋 <b>Análisis ADAS:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado exitosamente en la base de datos de control.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Trazabilidad operativa correcta. Registro de Ticket de Armado validado exitosamente en la base de datos de control.`;
           break;
         case 'REVISION_PROHIBIDA':
-          analisis = `📋 <b>Análisis ADAS:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Restricción por Perfil de Cuenta. Este distribuidor tiene inhabilitado el ingreso de Revisiones Generales (Columna O = NO). Procedimiento rechazado.`;
           break;
         case 'BATERIA':
-          analisis = `📋 <b>Análisis ADAS:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente de soporte.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Incidencia en componente catalogado como Refacción Prioritaria. Cobertura directa autorizada conforme a la norma vigente de soporte.`;
           break;
         case 'VICIO_OCULTO':
-          analisis = `📋 <b>Análisis ADAS:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa para el asesor.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Evidencia técnica apunta a un defecto de origen de ensamble/fábrica. Validación de garantía procedente de forma directa para el asesor.`;
           break;
         case 'ELEC_MEC':
-          analisis = `📋 <b>Análisis ADAS:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones del perfil de tienda, la afectación compromete sistemas Eléctricos o Mecánicos esenciales. Criterio de supervisión aprueba el caso.`;
+          analisis = `📋 <b>Análisis de EVA:</b> 🌟 Excepción por Naturaleza del Reporte: A pesar de las restricciones del perfil de tienda, la afectación compromete sistemas Eléctricos o Mecánicos esenciales. El contra-candado de supervisión aprueba el caso.`;
           break;
         case 'PRIMERA_REVISION':
-          analisis = `📋 <b>Análisis ADAS:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento en sistema.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Primera revisión general técnica documentada. Perfil de distribuidor con permisos vigentes para este procedimiento en sistema.`;
           break;
         case 'VARIAS_REVISIONES':
-          analisis = `📋 <b>Análisis ADAS:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
+          analisis = `📋 <b>Análisis de EVA:</b> Incumplimiento de términos. Se detectó reincidencia (segunda revisión general o posterior), excediendo las cláusulas de la póliza básica estipulada.`;
           break;
         case 'OTRA_FALLA_PROYECTOS':
           analisis = `🔄 Redireccionando automáticamente a matriz del "Proyecto S" para auditoría de fecha de recepción de la serie...`;
