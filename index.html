@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Segmentador ATC - Vento (EVA Directo)</title>
+  <title>Segmentador ATC - EVA Inteligente</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
@@ -12,17 +12,12 @@
     .brand-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
     .hub-title { font-size: 16px; font-weight: 800; margin-top: 2px; }
     
-    /* PESTAÑAS */
-    .tabs-nav { display: flex; gap: 8px; margin-bottom: 15px; }
-    .tab-button { background-color: #e2e8f0; border: none; padding: 10px 20px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; color: #475569; transition: 0.2s; }
-    .tab-button.active { background-color: #ff5722; color: #fff; }
-
     /* BUSCADOR */
     .search-container { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; }
     .input-box input { padding: 10px 20px; border: 2px solid #e2e8f0; border-radius: 25px; font-size: 14px; font-weight: 600; width: 100%; max-width: 450px; text-align: center; outline: none; }
     .input-box input:focus { border-color: #ff5722; }
 
-    /* GRID DE TARJETAS PEQUEÑAS */
+    /* GRID DE TARJETAS */
     #kiosco-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
     
     .kiosco-card { background: #fff; border-radius: 10px; padding: 15px; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; position: relative; }
@@ -34,13 +29,12 @@
     
     .card-legend { margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #ff5722; font-weight: 700; text-align: center; font-style: italic; }
 
-    /* COLORES SEGÚN ACCIÓN */
     .alerta-garantia { border-left: 4px solid #22c55e; }
     .alerta-roja { border-left: 4px solid #ef4444; }
 
     /* MODAL EVA */
     .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 999; backdrop-filter: blur(2px); }
-    .widget-ia-ventana { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 380px; max-height: 80vh; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border-top: 5px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+    .widget-ia-ventana { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; max-height: 85vh; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border-top: 5px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
     
     .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
     .widget-header-titulo { font-weight: bold; font-size: 12px; color: #38bdf8; }
@@ -55,6 +49,10 @@
     .btn-opcion-wiz { background: #334155; border: 1px solid #475569; color: #f8fafc; padding: 8px 12px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
     .btn-opcion-wiz:hover { border-color: #38bdf8; }
     
+    /* INPUT INTERNO PROYECTO S */
+    .input-vin-eva { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #475569; background: #1e293b; color: #fff; margin-top: 8px; box-sizing: border-box; font-weight: bold; letter-spacing: 1px; }
+
+    /* DICTÁMENES */
     .resultado-widget-box { padding: 12px; border-radius: 6px; font-weight: bold; margin-top: 10px; font-size: 12px; display: none; }
     .wres-garantia { background: #14532d; color: #bbf7d0; border-left: 4px solid #22c55e; }
     .wres-cotizacion { background: #7f1d1d; color: #fecaca; border-left: 4px solid #ef4444; }
@@ -67,25 +65,20 @@
   <div class="hub-header">
     <div>
       <div class="brand-title">VENTO MOTORCYCLES U.S.A.</div>
-      <div class="hub-title">SEGMENTADOR ATC - ASISTENTE EVA</div>
+      <div class="hub-title">SEGMENTADOR MULTIACCIONES ATC - ASISTENTE EVA</div>
     </div>
     <div id="reloj" style="font-size: 12px; font-weight: bold; color: #94a3b8;"></div>
   </div>
 
-  <div class="tabs-nav">
-    <button class="tab-button active" onclick="location.reload()">MÓDULO AGENCIAS</button>
-    <button class="tab-button" onclick="alert('Funcionalidad en desarrollo dentro de esta vista')">PROYECTO S (SERIES)</button>
-  </div>
-
   <div class="search-container">
     <div class="input-box">
-      <input type="text" id="input-agencia" placeholder="Escribe el número de agencia o nombre..." onkeyup="filtrarKiosco()">
+      <input type="text" id="input-agencia" placeholder="Escribe el número de agencia o nombre a buscar..." onkeyup="filtrarKiosco()">
     </div>
   </div>
 
   <div id="kiosco-container">
     <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
-      Cargando base de datos maestra...
+      Sincronizando bases de datos de Google Sheets de forma segura...
     </div>
   </div>
 
@@ -98,8 +91,9 @@
     </div>
     <div class="widget-body">
       <div class="wiz-card" id="wrapper-arbol-logico">
+        
         <div id="step-activacion" class="wiz-step active">
-          <label><b>1. ¿Quién realizó la activación?</b></label>
+          <label><b>1. ¿Quién realizó la activación de la unidad?</b></label>
           <div class="btn-group-wiz">
             <button class="btn-opcion-wiz" onclick="wP1('CESVE')">CESVE</button>
             <button class="btn-opcion-wiz" onclick="wP1('CEDIS')">CEDIS</button>
@@ -129,44 +123,74 @@
             <button class="btn-opcion-wiz" onclick="wP35('BATERIA')">🔋 BATERÍA</button>
             <button class="btn-opcion-wiz" onclick="wP35('VICIO_OCULTO')">🔍 DEFECTO FÁBRICA</button>
             <button class="btn-opcion-wiz" onclick="wP35('ELEC_MEC')">⚡ ELEC/MEC</button>
-            <button class="btn-opcion-wiz" onclick="wP35('OTRA')">⚙️ OTRA</button>
+            <button class="btn-opcion-wiz" onclick="wP35('PROYECTO_S')">⚙️ OTRA INCIDENCIA</button>
           </div>
         </div>
 
+        <div id="step-busqueda-series" class="wiz-step">
+          <label style="color: #38bdf8;"><b>🔍 Módulo Interno Proyecto S</b></label>
+          <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el Número de Serie (VIN) para cruzar datos con el archivo maestro:</p>
+          <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="Escribe el VIN completo..." onkeyup="auditarVinEnModal()">
+          <div id="resultado-vin-box" style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; padding: 8px; border-radius: 4px; background: #0f172a; display: none;"></div>
+        </div>
+
         <div id="step-revision-conteo" class="wiz-step">
-          <label><b>4. ¿Es la primera revisión?</b></label>
+          <label><b>4. ¿Es la primera revisión que registra?</b></label>
           <div class="btn-group-wiz">
             <button class="btn-opcion-wiz" onclick="wP4('PRIMERA')">SÍ, ES LA 1ª</button>
             <button class="btn-opcion-wiz" onclick="wP4('MAS')">NO, YA LLEVA MÁS</button>
           </div>
         </div>
 
-        <div id="res-garantia" class="resultado-widget-box wres-garantia">🟢 GARANTÍA DIRECTA AUTORIZADA</div>
-        <div id="res-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 PROCEDE COMO COTIZACIÓN</div>
-        <div id="res-checklist" class="resultado-widget-box wres-checklist">🔵 SOLICITAR CHECK LIST (EXPEDIENTE)</div>
+        <div id="res-garantia" class="resultado-widget-box wres-garantia">🟢 DICTAMEN: GARANTÍA DIRECTA AUTORIZADA</div>
+        <div id="res-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN</div>
+        <div id="res-checklist" class="resultado-widget-box wres-checklist">🔵 DICTAMEN: SOLICITAR CHECK LIST (EXPEDIENTE)</div>
       </div>
+      
       <div id="ia-fundamento" class="ia-analisis-alerta"></div>
-      <button onclick="toggleWidgetIA()" class="btn-opcion-wiz" style="width:100%; margin-top:10px; background:transparent; color:#94a3b8;">Cerrar asistente</button>
+      <button onclick="toggleWidgetIA()" class="btn-opcion-wiz" style="width:100%; margin-top:12px; background:transparent; color:#94a3b8; border-color:#334155;">Finalizar consulta</button>
     </div>
   </div>
 
   <script>
     const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
+    const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
+    const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
+    
+    let cacheAgencias = [];
+    let cacheSeries = []; // Base de datos cargada tras bambalinas
     let agenciaActiva = null;
 
     window.onload = () => {
-      fetch(url).then(r => r.text()).then(csv => procesarCSV(csv));
+      // Carga paralela de ambos Sheets
+      fetch(urlAgencias).then(r => r.text()).then(csv => procesarAgencias(csv));
+      fetch(urlSeries).then(r => r.text()).then(csv => procesarSeries(csv));
       setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString(); }, 1000);
     };
 
-    function procesarCSV(texto) {
+    function parsearLineaCSV(linea) {
+      let resultado = [];
+      let comillas = false;
+      let celda = '';
+      for (let i = 0; i < linea.length; i++) {
+        let char = linea[i];
+        if (char === '"') { comillas = !comillas; }
+        else if (char === ',' && !comillas) {
+          resultado.push(celda.trim()); celda = '';
+        } else { celda += char; }
+      }
+      resultado.push(celda.trim());
+      return resultado;
+    }
+
+    function procesarAgencias(texto) {
       const lineas = texto.split(/\r?\n/);
       const container = document.getElementById('kiosco-container');
       container.innerHTML = '';
 
       for(let i = 1; i < lineas.length; i++) {
-        const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        if(!lineas[i]) continue;
+        const col = parsearLineaCSV(lineas[i]);
         if(col.length < 2 || !col[1]) continue;
 
         const id = col[0].replace(/"/g, '').trim();
@@ -193,6 +217,23 @@
       }
     }
 
+    function procesarSeries(texto) {
+      const lineas = texto.split(/\r?\n/);
+      for(let i = 1; i < lineas.length; i++) {
+        if(!lineas[i]) continue;
+        const col = parsearLineaCSV(lineas[i]);
+        if(!col[0]) continue;
+        
+        cacheSeries.push({
+          vin: col[0].replace(/"/g, '').trim().toLowerCase(),
+          originalVin: col[0].replace(/"/g, '').trim(),
+          modelo: (col[1] || '').replace(/"/g, '').trim(),
+          fecha: (col[2] || '').replace(/"/g, '').trim(),
+          dictamen: (col[3] || '').replace(/"/g, '').trim()
+        });
+      }
+    }
+
     function filtrarKiosco() {
       const val = document.getElementById('input-agencia').value.trim();
       const esNum = /^\d+$/.test(val);
@@ -206,12 +247,13 @@
       agenciaActiva = { nombre, base: base.toUpperCase(), puede };
       document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ${nombre}`;
       
-      // Limpiar estados anteriores
+      // Limpieza de inputs y estados previos
+      document.getElementById('input-vin-modal').value = '';
+      document.getElementById('resultado-vin-box').style.display = 'none';
       document.querySelectorAll('.wiz-step, .resultado-widget-box, .ia-analisis-alerta').forEach(el => el.style.display = 'none');
       
       toggleWidgetIA();
 
-      // EVA Directa: Si es garantía base, da resultado, si no, inicia árbol
       if(base.toUpperCase().includes('GARANTIA') || base.toUpperCase().includes('GARANTÍA')) {
         document.getElementById('res-garantia').style.display = 'block';
         imprimirIA('BASE');
@@ -228,18 +270,20 @@
       b.style.display = s ? 'none' : 'block';
     }
 
-    // Funciones Lógicas
+    // FLUJO LOGICO GENERAL
     function wP1(v) {
       ocultarTodo();
       if(v === 'CESVE') { document.getElementById('res-garantia').style.display = 'block'; imprimirIA('CESVE'); }
       else if(v === 'SIN_REGISTRO') { document.getElementById('res-checklist').style.display = 'block'; imprimirIA('SIN'); }
       else { document.getElementById('step-armado').style.display = 'block'; }
     }
+    
     function wP2(v) {
       ocultarTodo();
       if(v === 'SI') { document.getElementById('res-garantia').style.display = 'block'; imprimirIA('ARMADO'); }
       else { document.getElementById('step-reporte').style.display = 'block'; }
     }
+    
     function wP3(v) {
       ocultarTodo();
       if(v === 'FALLA') { document.getElementById('step-falla-variante').style.display = 'block'; }
@@ -248,15 +292,54 @@
         else { document.getElementById('step-revision-conteo').style.display = 'block'; }
       }
     }
+    
     function wP35(v) {
       ocultarTodo();
-      if(v === 'OTRA') { alert('Favor de validar en módulo de SERIES'); toggleWidgetIA(); }
-      else { document.getElementById('res-garantia').style.display = 'block'; imprimirIA(v); }
+      if(v === 'PROYECTO_S') { 
+        document.getElementById('step-busqueda-series').style.display = 'block'; 
+      } else { 
+        document.getElementById('res-garantia').style.display = 'block'; imprimirIA(v); 
+      }
     }
+    
     function wP4(v) {
       ocultarTodo();
       if(v === 'PRIMERA') { document.getElementById('res-garantia').style.display = 'block'; imprimirIA('P1'); }
       else { document.getElementById('res-cotizacion').style.display = 'block'; imprimirIA('P2'); }
+    }
+
+    /* AUDITORÍA EN TIEMPO REAL DEL VIN DENTRO DE EVA */
+    function auditarVinEnModal() {
+      const buscador = document.getElementById('input-vin-modal').value.trim().toLowerCase();
+      const respuestaBox = document.getElementById('resultado-vin-box');
+      
+      if(buscador.length < 4) {
+        respuestaBox.style.display = 'none';
+        return;
+      }
+
+      // Búsqueda exacta o coincidencia en la base de datos precargada
+      const registro = cacheSeries.find(s => s.vin === buscador || s.vin.includes(buscador));
+
+      respuestaBox.style.display = 'block';
+
+      if(registro) {
+        respuestaBox.innerHTML = `
+          <b style="color:#38bdf8;"> Unidad Localizada:</b><br>
+          🏍️ Modelo: ${registro.modelo}<br>
+          📅 Ingreso: ${registro.fecha}<br>
+          ⚠️ Dictamen Oficial: <span style="color:#ffb74d; font-weight:bold;">${registro.dictamen}</span>
+        `;
+        
+        // Evaluación automática del dictamen de la serie encontrada
+        const dictamenUpper = registro.dictamen.toUpperCase();
+        document.getElementById('ia-fundamento').style.display = 'block';
+        document.getElementById('ia-fundamento').innerHTML = `📋 <b>Análisis EVA:</b> El VIN se encuentra registrado bajo estatus del Proyecto S. Acatar resolución oficial de planta.`;
+        
+      } else {
+        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">No se encontró registro exacto de este VIN en el listado del Proyecto S.</span>`;
+        document.getElementById('ia-fundamento').style.display = 'none';
+      }
     }
 
     function ocultarTodo() {
@@ -268,16 +351,16 @@
       box.style.display = 'block';
       let t = '';
       switch(c) {
-        case 'BASE': t = 'Parámetro base en Google Sheets permite garantía directa.'; break;
-        case 'CESVE': t = 'Activación vía CESVE certificada: Pase automático.'; break;
-        case 'SIN': t = '⚠️ Bloqueo: No hay registro de activación. Requiere expediente.'; break;
-        case 'ARMADO': t = 'Ticket de armado validado en sistema.'; break;
-        case 'BLOQUEO': t = 'Distribuidor restringido para Revisiones Generales.'; break;
-        case 'BATERIA': t = 'Falla en componente prioritario (Póliza Pág 8).'; break;
-        case 'VICIO_OCULTO': t = 'Se detectó defecto de ensamble de origen.'; break;
-        case 'ELEC_MEC': t = 'Compromiso de seguridad en sistema crítico.'; break;
-        case 'P1': t = 'Primera revisión validada como mantenimiento preventivo.'; break;
-        case 'P2': t = 'Reincidencia detectada: Procede como cobro.'; break;
+        case 'BASE': t = 'Parámetro base autorizado directamente en Google Sheets.'; break;
+        case 'CESVE': t = 'Activación por Centro CESVE certificado: Pase automático aprobado.'; break;
+        case 'SIN': t = '⚠️ Alerta: Bloqueo por falta de registro de activación en sistema.'; break;
+        case 'ARMADO': t = 'Trazabilidad correcta: Se localizó ticket de armado previo.'; break;
+        case 'BLOQUEO': t = 'Acceso Restringido: Distribuidor no tiene permitido meter Revisiones Generales.'; break;
+        case 'BATERIA': t = 'Falla tipificada en componentes de alta rotación (Batería). Procede.'; break;
+        case 'VICIO_OCULTO': t = 'Evidencia técnica apunta a daño o defecto de ensamble de origen.'; break;
+        case 'ELEC_MEC': t = 'Falla crítica que compromete el funcionamiento eléctrico o mecánico principal.'; break;
+        case 'P1': t = 'Mantenimiento Preventivo / Primera revisión validada correctamente.'; break;
+        case 'P2': t = 'Falla Reincidente: Excede el límite de la póliza general, pasar a presupuesto.'; break;
       }
       box.innerHTML = `📋 <b>Análisis EVA:</b> ${t}`;
     }
