@@ -7,6 +7,19 @@
   <style>
     body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
     
+    /* INTERFAZ EN SPLIT (GRID + EVA) */
+    .app-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .main-panel {
+      flex-grow: 1;
+      transition: all 0.3s ease;
+    }
+
     /* ENCABEZADO */
     .hub-header { background-color: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ff5722; display: flex; justify-content: space-between; align-items: center; }
     .brand-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
@@ -22,6 +35,7 @@
     
     .kiosco-card { background: #fff; border-radius: 10px; padding: 15px; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; position: relative; }
     .kiosco-card:hover { transform: translateY(-2px); border-color: #ff5722; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .kiosco-card.selected { border-color: #ff5722; background-color: #fff7ed; box-shadow: 0 4px 12px rgba(255,87,34,0.15); }
     
     .card-name { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 10px; line-height: 1.2; }
     .card-data-row { font-size: 11px; margin-bottom: 4px; color: #64748b; }
@@ -32,19 +46,29 @@
     .alerta-garantia { border-left: 4px solid #22c55e; }
     .alerta-roja { border-left: 4px solid #ef4444; }
 
-    /* BOTÓN FLOTANTE EVA */
-    .fab-eva { position: fixed; bottom: 30px; right: 30px; background: #ff5722; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4); cursor: pointer; z-index: 1001; transition: transform 0.2s, background 0.2s; }
-    .fab-eva:hover { transform: scale(1.08); background: #e64a19; }
-
-    /* WIDGET EVA */
-    .widget-ia-ventana { position: fixed; bottom: 110px; right: 30px; width: 380px; max-height: 80vh; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-top: 5px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; animation: slideUp 0.3s ease-out; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    /* SECCIÓN LATERAL DE EVA INTEGRADA (SUSTITUYE AL WIDGET FLOTANTE) */
+    .panel-eva-integrado { 
+      width: 400px; 
+      background: #1e293b; 
+      color: #f8fafc; 
+      border-radius: 12px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+      border-top: 5px solid #ff5722; 
+      display: none; /* Se activa al dar clic a la agencia */
+      flex-direction: column; 
+      flex-shrink: 0;
+      overflow: hidden; 
+      position: sticky;
+      top: 20px;
+      animation: fadeInSide 0.3s ease-out; 
+    }
+    @keyframes fadeInSide { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
     
-    .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-    .widget-header-titulo { font-weight: bold; font-size: 12px; color: #38bdf8; }
-    .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; margin-left: 10px; transition: color 0.2s; }
+    .widget-header { background: #0f172a; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .widget-header-titulo { font-weight: bold; font-size: 12px; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
+    .widget-btn-cerrar { background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; margin-left: 10px; transition: color 0.2s; }
     .widget-btn-cerrar:hover { color: #fff; }
-    .widget-body { padding: 15px; overflow-y: auto; }
+    .widget-body { padding: 15px; overflow-y: auto; max-height: 75vh; }
 
     /* PASOS ÁRBOL LÓGICO */
     .wiz-card { background: #2d3748; padding: 15px; border-radius: 8px; border-left: 4px solid #ff5722; }
@@ -73,115 +97,112 @@
   <div class="hub-header">
     <div>
       <div class="brand-title">VENTO MOTORCYCLES U.S.A.</div>
-      <div class="hub-title">SEGMENTADOR MULTIACCIONES ATC - ASISTENTE EVA</div>
+      <div class="hub-title">SEGMENTADOR MULTIACCIONES ATC - ASISTENTE EVA INTEGRADO</div>
     </div>
     <div id="reloj" style="font-size: 12px; font-weight: bold; color: #94a3b8;"></div>
   </div>
 
-  <div class="search-container">
-    <div class="input-box">
-      <input type="text" id="input-agencia" placeholder="Escribe el número de agencia o nombre a buscar..." onkeyup="filtrarKiosco()">
-    </div>
-  </div>
+  <div class="app-layout">
+    
+    <div class="main-panel">
+      <div class="search-container">
+        <div class="input-box">
+          <input type="text" id="input-agencia" placeholder="Escribe el número de agencia o nombre a buscar..." onkeyup="filtrarKiosco()">
+        </div>
+      </div>
 
-  <div id="kiosco-container">
-    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
-      Iniciando sistemas de soporte técnico...
-    </div>
-  </div>
-
-  <div class="fab-eva" id="btn-fab" onclick="abrirWidgetEVA()"><i class="fa-solid fa-robot"></i></div>
-
-  <div class="widget-ia-ventana" id="ventana-ia">
-    <div class="widget-header">
-      <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ESPECIALISTA EN VALIDACIÓN DE ATC</div>
-      <div>
-        <button class="widget-btn-cerrar" onclick="resetAEntradaPresentacion()" title="Reiniciar EVA y Limpiar Selección"><i class="fa-solid fa-rotate-left"></i></button>
-        <button class="widget-btn-cerrar" onclick="cerrarWidget()" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
+      <div id="kiosco-container">
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
+          Iniciando sistemas de soporte técnico...
+        </div>
       </div>
     </div>
-    <div class="widget-body">
-      <div class="wiz-card" id="wrapper-arbol-logico">
-        
-        <div id="step-presentacion" class="wiz-step active">
-          <p class="presentation-text">
-            ¡Hola! Soy <b>EVA</b>, tu asistente de validación para Vento ATC. <br><br>
-            Mi función es ayudarte a agilizar los dictámenes técnicos y cruzar la información de garantías con nuestras bases de datos en tiempo real.
-          </p>
+
+    <div class="panel-eva-integrado" id="ventana-ia">
+      <div class="widget-header">
+        <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ESPECIALISTA EN VALIDACIÓN</div>
+        <div>
+          <button class="widget-btn-cerrar" onclick="resetAEntradaPresentacion()" title="Reiniciar EVA y Limpiar Selección"><i class="fa-solid fa-rotate-left"></i></button>
+          <button class="widget-btn-cerrar" onclick="cerrarWidget()" title="Ocultar Panel"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div class="wiz-card" id="wrapper-arbol-logico">
           
-          <div id="status-bloqueo">
-            <div class="instruction-alert">
-              <i class="fa-solid fa-circle-exclamation"></i> <b>SISTEMA EN ESPERA</b><br>
-              Para comenzar con tu trabajo y habilitar mis herramientas de validación, por favor <b>selecciona una agencia</b> del listado principal.
+          <div id="step-presentacion" class="wiz-step active">
+            <p class="presentation-text">
+              ¡Hola! Soy <b>EVA</b>, tu asistente de validación para Vento ATC. <br><br>
+              Mi función es ayudarte a agilizar los dictámenes técnicos y cruzar la información de garantías con nuestras bases de datos en tiempo real.
+            </p>
+
+            <div id="status-listo">
+              <p style="font-size:12px; color:#38bdf8; margin-bottom:12px;"><b>✅ Agencia Seleccionada.</b> ¿Qué deseas validar?</p>
+              <div class="btn-group-wiz">
+                <button class="btn-opcion-wiz" onclick="iniciarProceso()"><i class="fa-solid fa-code-branch"></i> Validar proceso a seguir</button>
+                <button class="btn-opcion-wiz" onclick="iniciarProyectoS()"><i class="fa-solid fa-magnifying-glass"></i> Solo validar serie (Proyecto S)</button>
+              </div>
             </div>
           </div>
 
-          <div id="status-listo" style="display:none;">
-            <p style="font-size:12px; color:#38bdf8; margin-bottom:12px;"><b>✅ Agencia Seleccionada.</b> ¿Qué deseas validar?</p>
+          <div id="step-activacion" class="wiz-step">
+            <label><b>1. ¿Quién realizó la activación de la unidad?</b></label>
             <div class="btn-group-wiz">
-              <button class="btn-opcion-wiz" onclick="iniciarProceso()"><i class="fa-solid fa-code-branch"></i> Validar proceso a seguir</button>
-              <button class="btn-opcion-wiz" onclick="iniciarProyectoS()"><i class="fa-solid fa-magnifying-glass"></i> Solo validar serie (Proyecto S)</button>
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP1('CESVE')">CESVE</button>
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP1('CEDIS')">CEDIS</button>
+              <button class="btn-opcion-wiz" style="width:100%; background:#7f1d1d;" onclick="wP1('SIN_REGISTRO')">⚠️ SIN REGISTRO</button>
             </div>
           </div>
-        </div>
 
-        <div id="step-activacion" class="wiz-step">
-          <label><b>1. ¿Quién realizó la activación de la unidad?</b></label>
-          <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP1('CESVE')">CESVE</button>
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP1('CEDIS')">CEDIS</button>
-            <button class="btn-opcion-wiz" style="width:100%; background:#7f1d1d;" onclick="wP1('SIN_REGISTRO')">⚠️ SIN REGISTRO</button>
+          <div id="step-armado" class="wiz-step">
+            <label><b>2. ¿Existe Ticket de Armado previo?</b></label>
+            <div class="btn-group-wiz">
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP2('SI')">SÍ TIENE</button>
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP2('NO')">NO TIENE</button>
+            </div>
           </div>
-        </div>
 
-        <div id="step-armado" class="wiz-step">
-          <label><b>2. ¿Existe Ticket de Armado previo?</b></label>
-          <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP2('SI')">SÍ TIENE</button>
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP2('NO')">NO TIENE</button>
+          <div id="step-reporte" class="wiz-step">
+            <label><b>3. ¿Tipo de reporte de la agencia?</b></label>
+            <div class="btn-group-wiz">
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP3('REVISION')">REVISIÓN GRAL.</button>
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP3('FALLA')">FALLA ESPECÍFICA</button>
+            </div>
           </div>
-        </div>
 
-        <div id="step-reporte" class="wiz-step">
-          <label><b>3. ¿Tipo de reporte de la agencia?</b></label>
-          <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP3('REVISION')">REVISIÓN GRAL.</button>
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP3('FALLA')">FALLA ESPECÍFICA</button>
+          <div id="step-falla-variante" class="wiz-step">
+            <label><b>3.5. Selecciona el sistema afectado:</b></label>
+            <div class="btn-group-wiz">
+              <button class="btn-opcion-wiz" onclick="wP35('BATERIA')">🔋 BATERÍA</button>
+              <button class="btn-opcion-wiz" onclick="wP35('VICIO_OCULTO')">🔍 DEFECTO FÁBRICA</button>
+              <button class="btn-opcion-wiz" onclick="wP35('ELEC_MEC')">⚡ ELEC/MEC</button>
+              <button class="btn-opcion-wiz" onclick="wP35('PROYECTO_S')">⚙️ OTRA INCIDENCIA</button>
+            </div>
           </div>
-        </div>
 
-        <div id="step-falla-variante" class="wiz-step">
-          <label><b>3.5. Selecciona el sistema afectado:</b></label>
-          <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz" onclick="wP35('BATERIA')">🔋 BATERÍA</button>
-            <button class="btn-opcion-wiz" onclick="wP35('VICIO_OCULTO')">🔍 DEFECTO FÁBRICA</button>
-            <button class="btn-opcion-wiz" onclick="wP35('ELEC_MEC')">⚡ ELEC/MEC</button>
-            <button class="btn-opcion-wiz" onclick="wP35('PROYECTO_S')">⚙️ OTRA INCIDENCIA</button>
+          <div id="step-busqueda-series" class="wiz-step">
+            <label style="color: #38bdf8;"><b>🔍 Módulo Proyecto S</b></label>
+            <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el VIN completo para auditar historial:</p>
+            <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="VIN..." onkeyup="auditarVinEnModal()">
+            <div id="resultado-vin-box" style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; padding: 8px; border-radius: 4px; background: #0f172a; display: none;"></div>
           </div>
-        </div>
 
-        <div id="step-busqueda-series" class="wiz-step">
-          <label style="color: #38bdf8;"><b>🔍 Módulo Proyecto S</b></label>
-          <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el VIN completo para auditar historial:</p>
-          <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="VIN..." onkeyup="auditarVinEnModal()">
-          <div id="resultado-vin-box" style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; padding: 8px; border-radius: 4px; background: #0f172a; display: none;"></div>
-        </div>
-
-        <div id="step-revision-conteo" class="wiz-step">
-          <label><b>4. ¿Es la primera revisión que registra?</b></label>
-          <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP4('PRIMERA')">SÍ, ES LA 1ª</button>
-            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP4('MAS')">NO, YA LLEVA MÁS</button>
+          <div id="step-revision-conteo" class="wiz-step">
+            <label><b>4. ¿Es la primera revisión que registra?</b></label>
+            <div class="btn-group-wiz">
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP4('PRIMERA')">SÍ, ES LA 1ª</button>
+              <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP4('MAS')">NO, YA LLEVA MÁS</button>
+            </div>
           </div>
-        </div>
 
-        <div id="res-garantia" class="resultado-widget-box wres-garantia">🟢 DICTAMEN: GARANTÍA DIRECTA</div>
-        <div id="res-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 DICTAMEN: COTIZACIÓN / COBRO</div>
-        <div id="res-checklist" class="resultado-widget-box wres-checklist">🔵 DICTAMEN: SOLICITAR CHECK LIST</div>
+          <div id="res-garantia" class="resultado-widget-box wres-garantia">🟢 DICTAMEN: GARANTÍA DIRECTA</div>
+          <div id="res-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 DICTAMEN: COTIZACIÓN / COBRO</div>
+          <div id="res-checklist" class="resultado-widget-box wres-checklist">🔵 DICTAMEN: SOLICITAR CHECK LIST</div>
+        </div>
+        
+        <div id="ia-fundamento" class="ia-analisis-alerta"></div>
       </div>
-      
-      <div id="ia-fundamento" class="ia-analisis-alerta"></div>
     </div>
+
   </div>
 
   <script>
@@ -237,15 +258,27 @@
           <div class="card-name">${nombre}</div>
           <div class="card-data-row">Acción Base: <b>${base}</b></div>
           <div class="card-data-row">Rev. Gral: <b>${txtPuede}</b></div>
-          <div class="card-legend">Haz clic para seleccionar agencia</div>
+          <div class="card-legend">Haz clic para evaluar con EVA</div>
         `;
 
         card.onclick = () => {
+            // Manejo visual de selección de tarjeta
+            document.querySelectorAll('.kiosco-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+
             agenciaActiva = { nombre, base: base.toUpperCase(), puede };
-            document.getElementById('header-eva-titulo').innerText = `🤖 EVA `;
-            document.getElementById('status-bloqueo').style.display = 'none';
-            document.getElementById('status-listo').style.display = 'block';
-            abrirWidgetEVA();
+            
+            // Reiniciar pasos internos del árbol por seguridad al cambiar de distribuidor
+            ocultarTodo();
+            document.getElementById('step-presentacion').style.display = 'block';
+            document.getElementById('input-vin-modal').value = '';
+            document.getElementById('resultado-vin-box').style.display = 'none';
+
+            // Cargar datos de la agencia seleccionada en el Header de EVA
+            document.getElementById('header-eva-titulo').innerHTML = `🤖 EVA: ${nombre}`;
+            
+            // Desplegar panel lateral
+            document.getElementById('ventana-ia').style.display = 'flex';
         };
         container.appendChild(card);
       }
@@ -276,27 +309,18 @@
       });
     }
 
-    function abrirWidgetEVA() {
-        document.getElementById('ventana-ia').style.display = 'flex';
-    }
-
-    /* NUEVA FUNCIÓN: Al refrescar, se borra la agencia y arranca desde cero con bloqueo */
     function resetAEntradaPresentacion() {
-        agenciaActiva = null; // Olvidar agencia activa
+        if(!agenciaActiva) return;
         ocultarTodo();
-        
         document.getElementById('input-vin-modal').value = '';
         document.getElementById('resultado-vin-box').style.display = 'none';
-        document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ESPECIALISTA EN VALIDACIÓN DE ATC`;
-        
-        // Regresar a pantalla de bienvenida bloqueada
-        document.getElementById('status-bloqueo').style.display = 'block';
-        document.getElementById('status-listo').style.display = 'none';
         document.getElementById('step-presentacion').style.display = 'block';
     }
 
     function cerrarWidget() {
         document.getElementById('ventana-ia').style.display = 'none';
+        document.querySelectorAll('.kiosco-card').forEach(c => c.classList.remove('selected'));
+        agenciaActiva = null;
     }
 
     function iniciarProceso() {
