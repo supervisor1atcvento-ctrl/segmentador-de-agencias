@@ -94,7 +94,7 @@
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ASISTENTE TÉCNICA</div>
+      <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ESPECIALISTA EN VALIDACIÓN DE ATC</div>
       <div>
         <button class="widget-btn-cerrar" onclick="resetAEntradaPresentacion()" title="Reiniciar EVA y Limpiar Selección"><i class="fa-solid fa-rotate-left"></i></button>
         <button class="widget-btn-cerrar" onclick="cerrarWidget()" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
@@ -242,7 +242,7 @@
 
         card.onclick = () => {
             agenciaActiva = { nombre, base: base.toUpperCase(), puede };
-            document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ${nombre}`;
+            document.getElementById('header-eva-titulo').innerText = `🤖 EVA `;
             document.getElementById('status-bloqueo').style.display = 'none';
             document.getElementById('status-listo').style.display = 'block';
             abrirWidgetEVA();
@@ -287,7 +287,7 @@
         
         document.getElementById('input-vin-modal').value = '';
         document.getElementById('resultado-vin-box').style.display = 'none';
-        document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ASISTENTE TÉCNICA`;
+        document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ESPECIALISTA EN VALIDACIÓN DE ATC`;
         
         // Regresar a pantalla de bienvenida bloqueada
         document.getElementById('status-bloqueo').style.display = 'block';
