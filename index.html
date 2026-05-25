@@ -36,8 +36,8 @@
     .fab-eva { position: fixed; bottom: 30px; right: 30px; background: #ff5722; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4); cursor: pointer; z-index: 1001; transition: transform 0.2s, background 0.2s; }
     .fab-eva:hover { transform: scale(1.08); background: #e64a19; }
 
-    /* WIDGET EVA (Separado de la información) */
-    .widget-ia-ventana { position: fixed; bottom: 110px; right: 30px; width: 380px; max-height: 75vh; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-top: 5px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; animation: slideUp 0.3s ease-out; }
+    /* WIDGET EVA */
+    .widget-ia-ventana { position: fixed; bottom: 110px; right: 30px; width: 380px; max-height: 80vh; background: #1e293b; color: #f8fafc; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-top: 5px solid #ff5722; display: none; flex-direction: column; z-index: 1000; overflow: hidden; animation: slideUp 0.3s ease-out; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     
     .widget-header { background: #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
@@ -53,8 +53,10 @@
     .btn-group-wiz { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
     .btn-opcion-wiz { background: #334155; border: 1px solid #475569; color: #f8fafc; padding: 10px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; text-align: center; width: 100%; transition: background 0.2s; }
     .btn-opcion-wiz:hover { border-color: #38bdf8; background: #475569; }
-    .btn-opcion-inline { width: auto; flex-grow: 1; }
     
+    .presentation-text { font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 15px; }
+    .instruction-alert { background: #0f172a; border-radius: 6px; padding: 12px; border-left: 4px solid #facc15; font-size: 11px; color: #facc15; margin-top: 10px; line-height: 1.4; }
+
     /* INPUT INTERNO PROYECTO S */
     .input-vin-eva { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #475569; background: #1e293b; color: #fff; margin-top: 8px; box-sizing: border-box; font-weight: bold; letter-spacing: 1px; }
 
@@ -84,88 +86,98 @@
 
   <div id="kiosco-container">
     <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
-      Sincronizando bases de datos de Google Sheets de forma segura...
+      Iniciando sistemas de soporte técnico...
     </div>
   </div>
 
-  <div class="fab-eva" onclick="abrirWidgetVacio()"><i class="fa-solid fa-robot"></i></div>
+  <div class="fab-eva" id="btn-fab" onclick="abrirWidgetEVA()"><i class="fa-solid fa-robot"></i></div>
 
   <div class="widget-ia-ventana" id="ventana-ia">
     <div class="widget-header">
-      <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ASISTENTE EN LÍNEA</div>
+      <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ASISTENTE TÉCNICA</div>
       <div>
-        <button class="widget-btn-cerrar" onclick="volverMenuEVA()" title="Volver al menú inicial"><i class="fa-solid fa-house"></i></button>
-        <button class="widget-btn-cerrar" onclick="cerrarWidget()" title="Minimizar EVA"><i class="fa-solid fa-xmark"></i></button>
+        <button class="widget-btn-cerrar" onclick="resetEVA()" title="Reiniciar EVA"><i class="fa-solid fa-rotate-left"></i></button>
+        <button class="widget-btn-cerrar" onclick="cerrarWidget()" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
       </div>
     </div>
     <div class="widget-body">
       <div class="wiz-card" id="wrapper-arbol-logico">
         
-        <div id="step-menu-eva" class="wiz-step active">
-          <label style="color:#38bdf8; font-size:14px;"><b>¡Hola! Soy EVA.</b></label>
-          <p style="font-size:12px; margin:8px 0 15px 0; color:#cbd5e1;">¿Qué tipo de validación necesitas realizar en este momento?</p>
-          <div class="btn-group-wiz" style="flex-direction: column;">
-            <button class="btn-opcion-wiz" onclick="iniciarProceso()"><i class="fa-solid fa-code-branch"></i> Validar proceso a seguir</button>
-            <button class="btn-opcion-wiz" onclick="iniciarProyectoS()"><i class="fa-solid fa-magnifying-glass"></i> Solo buscar VIN (Proyecto S)</button>
+        <div id="step-presentacion" class="wiz-step active">
+          <p class="presentation-text">
+            ¡Hola! Soy <b>EVA</b>, tu asistente de validación para Vento ATC. <br><br>
+            Mi función es ayudarte a agilizar los dictámenes técnicos y cruzar la información de garantías con nuestras bases de datos en tiempo real.
+          </p>
+          
+          <div id="status-bloqueo">
+            <div class="instruction-alert">
+              <i class="fa-solid fa-circle-exclamation"></i> <b>SISTEMA EN ESPERA</b><br>
+              Para comenzar con tu trabajo y habilitar mis herramientas de validación, por favor <b>selecciona una agencia</b> del listado principal.
+            </div>
           </div>
-          <div id="msg-selecciona-agencia" style="display:none; color:#ef4444; font-size:11px; margin-top:12px; padding:8px; background:#7f1d1d20; border-radius:4px; border-left:3px solid #ef4444;">
-            ⚠️ <b>Agencia no seleccionada:</b> Para validar el proceso completo, por favor haz clic primero en una agencia del listado principal.
+
+          <div id="status-listo" style="display:none;">
+            <p style="font-size:12px; color:#38bdf8; margin-bottom:12px;"><b>✅ Agencia Seleccionada.</b> ¿Qué deseas validar?</p>
+            <div class="btn-group-wiz">
+              <button class="btn-opcion-wiz" onclick="iniciarProceso()"><i class="fa-solid fa-code-branch"></i> Validar proceso a seguir</button>
+              <button class="btn-opcion-wiz" onclick="iniciarProyectoS()"><i class="fa-solid fa-magnifying-glass"></i> Solo validar serie (Proyecto S)</button>
+            </div>
           </div>
         </div>
 
         <div id="step-activacion" class="wiz-step">
           <label><b>1. ¿Quién realizó la activación de la unidad?</b></label>
           <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP1('CESVE')">CESVE</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP1('CEDIS')">CEDIS</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" style="background:#7f1d1d;" onclick="wP1('SIN_REGISTRO')">⚠️ SIN REGISTRO</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP1('CESVE')">CESVE</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP1('CEDIS')">CEDIS</button>
+            <button class="btn-opcion-wiz" style="width:100%; background:#7f1d1d;" onclick="wP1('SIN_REGISTRO')">⚠️ SIN REGISTRO</button>
           </div>
         </div>
 
         <div id="step-armado" class="wiz-step">
           <label><b>2. ¿Existe Ticket de Armado previo?</b></label>
           <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP2('SI')">SÍ TIENE</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP2('NO')">NO TIENE</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP2('SI')">SÍ TIENE</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP2('NO')">NO TIENE</button>
           </div>
         </div>
 
         <div id="step-reporte" class="wiz-step">
           <label><b>3. ¿Tipo de reporte de la agencia?</b></label>
           <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP3('REVISION')">REVISIÓN GRAL.</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP3('FALLA')">FALLA ESPECÍFICA</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP3('REVISION')">REVISIÓN GRAL.</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP3('FALLA')">FALLA ESPECÍFICA</button>
           </div>
         </div>
 
         <div id="step-falla-variante" class="wiz-step">
           <label><b>3.5. Selecciona el sistema afectado:</b></label>
           <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP35('BATERIA')">🔋 BATERÍA</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP35('VICIO_OCULTO')">🔍 DEFECTO FÁBRICA</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP35('ELEC_MEC')">⚡ ELEC/MEC</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP35('PROYECTO_S')">⚙️ OTRA INCIDENCIA</button>
+            <button class="btn-opcion-wiz" onclick="wP35('BATERIA')">🔋 BATERÍA</button>
+            <button class="btn-opcion-wiz" onclick="wP35('VICIO_OCULTO')">🔍 DEFECTO FÁBRICA</button>
+            <button class="btn-opcion-wiz" onclick="wP35('ELEC_MEC')">⚡ ELEC/MEC</button>
+            <button class="btn-opcion-wiz" onclick="wP35('PROYECTO_S')">⚙️ OTRA INCIDENCIA</button>
           </div>
         </div>
 
         <div id="step-busqueda-series" class="wiz-step">
-          <label style="color: #38bdf8;"><b>🔍 Buscador Directo: Proyecto S</b></label>
-          <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el Número de Serie (VIN) para auditar historial:</p>
-          <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="Escribe el VIN completo..." onkeyup="auditarVinEnModal()">
+          <label style="color: #38bdf8;"><b>🔍 Módulo Proyecto S</b></label>
+          <p style="font-size:11px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el VIN completo para auditar historial:</p>
+          <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="VIN..." onkeyup="auditarVinEnModal()">
           <div id="resultado-vin-box" style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; padding: 8px; border-radius: 4px; background: #0f172a; display: none;"></div>
         </div>
 
         <div id="step-revision-conteo" class="wiz-step">
           <label><b>4. ¿Es la primera revisión que registra?</b></label>
           <div class="btn-group-wiz">
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP4('PRIMERA')">SÍ, ES LA 1ª</button>
-            <button class="btn-opcion-wiz btn-opcion-inline" onclick="wP4('MAS')">NO, YA LLEVA MÁS</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP4('PRIMERA')">SÍ, ES LA 1ª</button>
+            <button class="btn-opcion-wiz" style="width:auto; flex:1;" onclick="wP4('MAS')">NO, YA LLEVA MÁS</button>
           </div>
         </div>
 
-        <div id="res-garantia" class="resultado-widget-box wres-garantia">🟢 DICTAMEN: GARANTÍA DIRECTA AUTORIZADA</div>
-        <div id="res-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 DICTAMEN: PROCEDE COMO COTIZACIÓN</div>
-        <div id="res-checklist" class="resultado-widget-box wres-checklist">🔵 DICTAMEN: SOLICITAR CHECK LIST (EXPEDIENTE)</div>
+        <div id="res-garantia" class="resultado-widget-box wres-garantia">🟢 DICTAMEN: GARANTÍA DIRECTA</div>
+        <div id="res-cotizacion" class="resultado-widget-box wres-cotizacion">🔴 DICTAMEN: COTIZACIÓN / COBRO</div>
+        <div id="res-checklist" class="resultado-widget-box wres-checklist">🔵 DICTAMEN: SOLICITAR CHECK LIST</div>
       </div>
       
       <div id="ia-fundamento" class="ia-analisis-alerta"></div>
@@ -177,7 +189,6 @@
     const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
     const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
     
-    let cacheAgencias = [];
     let cacheSeries = []; 
     let agenciaActiva = null;
 
@@ -206,12 +217,10 @@
       const lineas = texto.split(/\r?\n/);
       const container = document.getElementById('kiosco-container');
       container.innerHTML = '';
-
       for(let i = 1; i < lineas.length; i++) {
         if(!lineas[i]) continue;
         const col = parsearLineaCSV(lineas[i]);
         if(col.length < 2 || !col[1]) continue;
-
         const id = col[0].replace(/"/g, '').trim();
         const nombre = col[1].replace(/"/g, '').trim();
         const base = (col[13] || '').replace(/"/g, '').trim();
@@ -222,20 +231,21 @@
         card.setAttribute('data-id', id);
         card.setAttribute('data-search', nombre.toLowerCase());
 
-        const txtPuede = (puede === 'SI') ? '<span style="color:#22c55e;">Puede reportar Revisión General</span>' : '<span style="color:#ef4444;">No puede reportar Revisión General</span>';
+        const txtPuede = (puede === 'SI') ? '<span style="color:#22c55e;">Puede reportar</span>' : '<span style="color:#ef4444;">No puede reportar</span>';
 
         card.innerHTML = `
           <div class="card-name">${nombre}</div>
-          <div class="card-data-row">Acción a realizar: <b>${base}</b></div>
-          <div class="card-data-row">Revisión General: <b>${txtPuede}</b></div>
-          <div class="card-legend">Agencia cargada. Clic para seleccionar.</div>
+          <div class="card-data-row">Acción Base: <b>${base}</b></div>
+          <div class="card-data-row">Rev. Gral: <b>${txtPuede}</b></div>
+          <div class="card-legend">Haz clic para seleccionar agencia</div>
         `;
 
-        // Al hacer clic en la tarjeta, seleccionamos la agencia y abrimos EVA en el menú
         card.onclick = () => {
             agenciaActiva = { nombre, base: base.toUpperCase(), puede };
-            abrirWidgetVacio();
             document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ${nombre}`;
+            document.getElementById('status-bloqueo').style.display = 'none';
+            document.getElementById('status-listo').style.display = 'block';
+            abrirWidgetEVA();
         };
         container.appendChild(card);
       }
@@ -247,7 +257,6 @@
         if(!lineas[i]) continue;
         const col = parsearLineaCSV(lineas[i]);
         if(col.length <= 5 || !col[5]) continue; 
-        
         cacheSeries.push({
           vin: col[5].replace(/"/g, '').trim().toLowerCase(), 
           originalVin: col[5].replace(/"/g, '').trim(),
@@ -267,36 +276,28 @@
       });
     }
 
-    /* CONTROL DEL WIDGET EVA */
-    function abrirWidgetVacio() {
+    function abrirWidgetEVA() {
         document.getElementById('ventana-ia').style.display = 'flex';
-        volverMenuEVA();
     }
 
     function cerrarWidget() {
         document.getElementById('ventana-ia').style.display = 'none';
     }
 
-    function volverMenuEVA() {
+    function resetEVA() {
         ocultarTodo();
-        document.getElementById('input-vin-modal').value = '';
-        document.getElementById('resultado-vin-box').style.display = 'none';
-        document.getElementById('msg-selecciona-agencia').style.display = 'none';
-        document.getElementById('step-menu-eva').style.display = 'block';
-        if(agenciaActiva) {
-            document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ${agenciaActiva.nombre}`;
+        document.getElementById('step-presentacion').style.display = 'block';
+        if(!agenciaActiva) {
+            document.getElementById('status-bloqueo').style.display = 'block';
+            document.getElementById('status-listo').style.display = 'none';
+            document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ASISTENTE TÉCNICA`;
         } else {
-            document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ASISTENTE EN LÍNEA`;
+            document.getElementById('status-bloqueo').style.display = 'none';
+            document.getElementById('status-listo').style.display = 'block';
         }
     }
 
-    /* LÓGICA DE BOTONES DEL MENÚ */
     function iniciarProceso() {
-        if(!agenciaActiva) {
-            document.getElementById('msg-selecciona-agencia').style.display = 'block';
-            return;
-        }
-        
         ocultarTodo();
         if(agenciaActiva.base.includes('GARANTIA') || agenciaActiva.base.includes('GARANTÍA')) {
             document.getElementById('res-garantia').style.display = 'block';
@@ -349,19 +350,13 @@
       else { document.getElementById('res-cotizacion').style.display = 'block'; imprimirIA('P2'); }
     }
 
-    /* AUDITORÍA PROYECTO S */
     function auditarVinEnModal() {
       const buscador = document.getElementById('input-vin-modal').value.trim().toLowerCase();
       const respuestaBox = document.getElementById('resultado-vin-box');
       const boxFundamento = document.getElementById('ia-fundamento');
-      
       document.querySelectorAll('.resultado-widget-box').forEach(el => el.style.display = 'none');
       boxFundamento.style.display = 'none';
-
-      if(buscador.length < 4) {
-        respuestaBox.style.display = 'none';
-        return;
-      }
+      if(buscador.length < 4) { respuestaBox.style.display = 'none'; return; }
 
       const registro = cacheSeries.find(s => s.vin === buscador || s.vin.includes(buscador));
       respuestaBox.style.display = 'block';
@@ -369,10 +364,8 @@
       if(registro) {
         const celdaFecha = (registro.fechaRecepcion || '').trim();
         const estatusDictamen = (registro.dictamen || '').trim().toUpperCase();
-        
         const esProyectoS = celdaFecha.toUpperCase() === "PROYECTO S";
         const esGarantiaDictamen = estatusDictamen.includes("PASA POR GARANTIA");
-        
         let esGarantiaDirecta = (esProyectoS || esGarantiaDictamen);
         let motivoGarantia = esProyectoS ? "Unidad identificada como Proyecto S." : "Dictamen técnico: Pasa por Garantía.";
 
@@ -383,26 +376,21 @@
             let mes = parseInt(partes[1], 10) - 1;
             let anio = parseInt(partes[2], 10);
             if (anio < 100) anio += 2000;
-
             const fechaMoto = new Date(anio, mes, dia);
             const fechaCorte = new Date(2026, 1, 1); 
-
             if (!isNaN(fechaMoto.getTime()) && fechaMoto < fechaCorte) {
               esGarantiaDirecta = true;
               motivoGarantia = `Fecha de recepción (${celdaFecha}) anterior al 01/Feb/26.`;
             }
           }
         }
-
         respuestaBox.innerHTML = `
           <b style="color:#38bdf8;"> Unidad Localizada:</b><br>
           🏍️ Modelo: ${registro.modelo || 'N/A'}<br>
           📅 Recepción: <b>${celdaFecha || 'N/A'}</b><br>
           ⚠️ Estatus Base: ${registro.dictamen || 'Registrado'}
         `;
-
         boxFundamento.style.display = 'block';
-
         if(esGarantiaDirecta) {
           document.getElementById('res-garantia').style.display = 'block';
           boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> ${motivoGarantia} 🟢 Pase automático por Garantía.`;
@@ -410,16 +398,14 @@
           document.getElementById('res-checklist').style.display = 'block';
           boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Ingreso posterior al 01/Feb/26 o proceso por cotización. Solicitar Check List obligatorio.`;
         }
-        
       } else {
-        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">El VIN no se encuentra registrado en el listado maestro.</span>`;
+        respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">VIN no localizado en base de datos.</span>`;
         document.getElementById('res-checklist').style.display = 'block';
         boxFundamento.style.display = 'block';
-        boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Unidad no localizada. Al ser externa, el proceso corre por cotización y se requiere solicitar Check List obligatorio.`;
+        boxFundamento.innerHTML = `📋 <b>Análisis EVA:</b> Unidad no registrada en listado maestro. Proceso corre por cotización; solicitar Check List obligatorio.`;
       }
     }
 
-    /* UTILIDADES */
     function ocultarTodo() {
       document.querySelectorAll('.wiz-step, .resultado-widget-box, .ia-analisis-alerta').forEach(el => el.style.display = 'none');
     }
