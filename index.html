@@ -96,7 +96,7 @@
     <div class="widget-header">
       <div id="header-eva-titulo" class="widget-header-titulo">🤖 EVA: ASISTENTE TÉCNICA</div>
       <div>
-        <button class="widget-btn-cerrar" onclick="resetEVA()" title="Reiniciar EVA"><i class="fa-solid fa-rotate-left"></i></button>
+        <button class="widget-btn-cerrar" onclick="resetAEntradaPresentacion()" title="Reiniciar EVA y Limpiar Selección"><i class="fa-solid fa-rotate-left"></i></button>
         <button class="widget-btn-cerrar" onclick="cerrarWidget()" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
       </div>
     </div>
@@ -280,21 +280,23 @@
         document.getElementById('ventana-ia').style.display = 'flex';
     }
 
-    function cerrarWidget() {
-        document.getElementById('ventana-ia').style.display = 'none';
+    /* NUEVA FUNCIÓN: Al refrescar, se borra la agencia y arranca desde cero con bloqueo */
+    function resetAEntradaPresentacion() {
+        agenciaActiva = null; // Olvidar agencia activa
+        ocultarTodo();
+        
+        document.getElementById('input-vin-modal').value = '';
+        document.getElementById('resultado-vin-box').style.display = 'none';
+        document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ASISTENTE TÉCNICA`;
+        
+        // Regresar a pantalla de bienvenida bloqueada
+        document.getElementById('status-bloqueo').style.display = 'block';
+        document.getElementById('status-listo').style.display = 'none';
+        document.getElementById('step-presentacion').style.display = 'block';
     }
 
-    function resetEVA() {
-        ocultarTodo();
-        document.getElementById('step-presentacion').style.display = 'block';
-        if(!agenciaActiva) {
-            document.getElementById('status-bloqueo').style.display = 'block';
-            document.getElementById('status-listo').style.display = 'none';
-            document.getElementById('header-eva-titulo').innerText = `🤖 EVA: ASISTENTE TÉCNICA`;
-        } else {
-            document.getElementById('status-bloqueo').style.display = 'none';
-            document.getElementById('status-listo').style.display = 'block';
-        }
+    function cerrarWidget() {
+        document.getElementById('ventana-ia').style.display = 'none';
     }
 
     function iniciarProceso() {
