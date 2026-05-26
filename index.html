@@ -33,27 +33,23 @@
     .alerta-garantia { border-left: 4px solid #22c55e; }
     .alerta-roja { border-left: 4px solid #ef4444; }
 
-    /* =========================================
-       NUEVO: CAPA DE FONDO BORROSO (OVERLAY)
-       ========================================= */
+    /* CAPA DE FONDO BORROSO (OVERLAY) */
     .overlay-blur {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: rgba(15, 23, 42, 0.4); /* Fondo oscuro semitransparente */
-      backdrop-filter: blur(6px); /* Efecto de desenfoque */
-      -webkit-backdrop-filter: blur(6px); /* Soporte para Safari */
-      z-index: 999; /* Por encima de todo, pero debajo de EVA */
+      background-color: rgba(15, 23, 42, 0.4); 
+      backdrop-filter: blur(6px); 
+      -webkit-backdrop-filter: blur(6px); 
+      z-index: 999; 
       display: none;
       animation: fadeIn 0.3s ease-out;
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* =========================================
-       NUEVO: PANEL EVA (MODAL FLOTANTE CENTRAL)
-       ========================================= */
+    /* PANEL EVA (MODAL FLOTANTE CENTRAL) */
     .panel-eva-integrado { 
       position: fixed;
       top: 50%;
@@ -69,7 +65,7 @@
       border-top: 5px solid #ff5722; 
       display: none; 
       flex-direction: column; 
-      z-index: 1000; /* Por encima del fondo borroso */
+      z-index: 1000; 
       overflow: hidden; 
       animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
@@ -95,7 +91,7 @@
     .presentation-text { font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 15px; }
     .instruction-alert { background: #0f172a; border-radius: 6px; padding: 12px; border-left: 4px solid #facc15; font-size: 11px; color: #facc15; margin-top: 10px; line-height: 1.4; }
 
-    /* INPUT INTERNO PROYECTO S */
+    /* INPUT INTERNO PROYECTO S E IA */
     .input-vin-eva { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; margin-top: 8px; box-sizing: border-box; font-weight: bold; font-size: 14px; letter-spacing: 1px; outline: none; transition: border-color 0.2s; }
     .input-vin-eva:focus { border-color: #38bdf8; }
 
@@ -153,6 +149,7 @@
             <div class="btn-group-wiz">
               <button class="btn-opcion-wiz" onclick="iniciarProceso()"><i class="fa-solid fa-code-branch"></i> Validar proceso a seguir</button>
               <button class="btn-opcion-wiz" onclick="iniciarProyectoS()"><i class="fa-solid fa-magnifying-glass"></i> Solo validar serie (Proyecto S)</button>
+              <button class="btn-opcion-wiz" style="background: #0284c7; border-color: #0369a1;" onclick="iniciarChatIA()"><i class="fa-solid fa-robot"></i> Consultar Manuales (IA)</button>
             </div>
           </div>
         </div>
@@ -197,6 +194,16 @@
           <p style="font-size:11.5px; color:#94a3b8; margin: 4px 0 8px 0;">Ingresa el VIN completo para auditar historial:</p>
           <input type="text" id="input-vin-modal" class="input-vin-eva" placeholder="Ingresa los 17 dígitos..." onkeyup="auditarVinEnModal()">
           <div id="resultado-vin-box" style="margin-top: 10px; font-size: 11.5px; line-height: 1.4; padding: 10px; border-radius: 4px; background: #0f172a; display: none;"></div>
+        </div>
+
+        <div id="step-chat-ia" class="wiz-step">
+          <label style="color: #38bdf8;"><b>🧠 Consulta a Manuales (EVA IA)</b></label>
+          <p style="font-size:11.5px; color:#94a3b8; margin: 4px 0 8px 0;">Pregunta sobre procesos, garantías o políticas:</p>
+          <input type="text" id="input-pregunta-ia" class="input-vin-eva" placeholder="Ej. ¿Cuál es la garantía de la batería?" onkeypress="manejarEnterIA(event)">
+          <button class="btn-opcion-wiz" style="margin-top: 10px; background: #ea580c;" onclick="enviarPreguntaIA()">Consultar Manuales</button>
+          
+          <div id="respuesta-ia-box" style="margin-top: 15px; font-size: 12px; line-height: 1.5; padding: 12px; border-radius: 6px; background: #0f172a; border-left: 4px solid #38bdf8; display: none; max-height: 200px; overflow-y: auto;">
+          </div>
         </div>
 
         <div id="step-revision-conteo" class="wiz-step">
@@ -322,6 +329,7 @@
         if(!agenciaActiva) return;
         ocultarTodo();
         document.getElementById('input-vin-modal').value = '';
+        document.getElementById('input-pregunta-ia').value = '';
         document.getElementById('resultado-vin-box').style.display = 'none';
         document.getElementById('step-presentacion').style.display = 'block';
     }
@@ -347,11 +355,10 @@
     function iniciarProyectoS() {
         ocultarTodo();
         document.getElementById('step-busqueda-series').style.display = 'block';
-        // Auto-enfocar el campo de VIN para ahorrar un clic al asesor
         setTimeout(() => document.getElementById('input-vin-modal').focus(), 100);
     }
 
-    /* FLUJO DE PASOS */
+    /* FLUJO DE PASOS MÚLTIPLES */
     function wP1(v) {
       ocultarTodo();
       if(v === 'CESVE') { document.getElementById('res-garantia').style.display = 'block'; imprimirIA('CESVE'); }
@@ -467,6 +474,70 @@
         case 'P2': t = 'Falla Reincidente: Excede el límite de la póliza general, pasar a presupuesto.'; break;
       }
       box.innerHTML = `📋 <b>Análisis EVA:</b> ${t}`;
+    }
+
+    /* =========================================
+       NUEVAS FUNCIONES PARA INTEGRACIÓN API (ANYTHINGLLM)
+       ========================================= */
+
+    function iniciarChatIA() {
+      ocultarTodo();
+      document.getElementById('step-chat-ia').style.display = 'block';
+      setTimeout(() => document.getElementById('input-pregunta-ia').focus(), 100);
+    }
+
+    function manejarEnterIA(event) {
+      if (event.key === 'Enter') {
+        enviarPreguntaIA();
+      }
+    }
+
+    async function enviarPreguntaIA() {
+      const input = document.getElementById('input-pregunta-ia');
+      const pregunta = input.value.trim();
+      const cajaRespuesta = document.getElementById('respuesta-ia-box');
+
+      if (!pregunta) return;
+
+      // Mostrar estado de carga
+      cajaRespuesta.style.display = 'block';
+      cajaRespuesta.innerHTML = `⏳ <i>Buscando en los documentos técnicos de Vento...</i>`;
+
+      try {
+        // REEMPLAZA ESTA CLAVE POR LA QUE GENERES EN ANYTHINGLLM -> SETTINGS -> API KEYS
+        const miApiKey = "PQV1660-CJ6MA9F-MTD0APB-7H4BFZ6"; 
+        
+        // REEMPLAZA "EVA_ATC" POR EL NOMBRE EXACTO DE TU WORKSPACE EN ANYTHINGLLM
+        const urlAnythingLLM = 'http://localhost:3001/api/v1/workspace/EVA_ATC/chat';
+
+        const respuesta = await fetch(urlAnythingLLM, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${miApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: pregunta,
+            mode: "chat"
+          })
+        });
+
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP: ${respuesta.status}`);
+        }
+
+        const datos = await respuesta.json();
+        
+        if (datos.textResponse) {
+            cajaRespuesta.innerHTML = `🤖 <b>Respuesta de EVA:</b><br><br>${datos.textResponse.replace(/\n/g, '<br>')}`;
+        } else {
+            cajaRespuesta.innerHTML = `⚠️ No se pudo obtener una respuesta clara de los manuales.`;
+        }
+
+      } catch (error) {
+        console.error("Error conectando con IA local:", error);
+        cajaRespuesta.innerHTML = `❌ <b>Error de conexión:</b> Asegúrate de que AnythingLLM esté abierto, que la API Key sea correcta y que el Workspace se llame igual que en la URL.`;
+      }
     }
   </script>
 </body>
