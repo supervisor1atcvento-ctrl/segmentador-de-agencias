@@ -5,7 +5,6 @@
 <title>Consulta Agencias y VIN - Detalle</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-/* (estilos idénticos a los previos, omitidos aquí por brevedad) */
 body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
 .hub-header { background-color: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ff5722; display: flex; justify-content: space-between; align-items: center; }
 .brand-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
@@ -27,6 +26,8 @@ body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: 
 .modal-close { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
 .input-vin { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; color: #0f172a; margin-top: 8px; box-sizing: border-box; font-weight: 600; font-size: 14px; outline: none; }
 .result-box { margin-top: 12px; padding: 12px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px; color: #0f172a; display: none; }
+.result-box.warn { background: #fff7ed; border-color: #ffedd5; color: #92400e; }
+.result-box.error { background: #fff1f2; border-color: #fecaca; color: #7f1d1d; }
 .small-note { font-size: 12px; color: #64748b; margin-top: 8px; }
 </style>
 </head>
@@ -67,14 +68,12 @@ body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: 
     <hr style="margin:12px 0; border:none; border-top:1px solid #eef2f7;">
 
     <div style="font-weight:700; margin-bottom:6px;">Detalle de Agencia</div>
-    <div id="detalle-agencia" style="font-size:13px; color:#0f172a; line-height:1.4;">
-      <!-- Aquí se inyecta: Nombre, ID, Acción Base (col L) y Rev. General -->
-    </div>
+    <div id="detalle-agencia" style="font-size:13px; color:#0f172a; line-height:1.4;"></div>
 
     <label style="margin-top:12px; display:block; font-weight:700; color:#0f172a;">Buscar VIN</label>
-    <input type="text" id="input-vin-modal" class="input-vin" placeholder="Ingresa parte o todo el VIN..." onkeyup="auditarVinEnModal()">
+    <input type="text" id="input-vin-modal" class="input-vin" placeholder="Ingresa el VIN (17 caracteres)..." onkeyup="auditarVinEnModal()">
     <div id="resultado-vin-box" class="result-box"></div>
-    <div class="small-note">La búsqueda usa la base "Proyecto S" cargada desde Google Sheets.</div>
+    <div class="small-note">La búsqueda usa la base "Proyecto S" cargada desde Google Sheets. El VIN debe tener 17 caracteres alfanuméricos.</div>
   </div>
 </div>
 
@@ -116,7 +115,6 @@ function procesarAgencias(texto) {
     if(col.length < 2 || !col[1]) continue;
     const id = col[0].replace(/"/g, '').trim();
     const nombre = col[1].replace(/"/g, '').trim();
-    // Asumimos que la columna L (índice 11) contiene "Acción Base" y la columna 14 (índice 13) u otra contiene "base" si aplica
     const accionBase = (col[11] || '').replace(/"/g, '').trim(); // Columna L -> índice 11
     const base = (col[13] || '').replace(/"/g, '').trim();
     const puede = (col[14] || '').replace(/"/g, '').trim().toUpperCase();
@@ -154,8 +152,7 @@ function procesarSeries(texto) {
       originalVin: (col[5] || '').replace(/"/g, '').trim(),
       modelo: (col[3] || '').replace(/"/g, '').trim(),        // Columna D
       fechaRecepcion: (col[7] || '').replace(/"/g, '').trim(),// Columna H
-      accion: (col[11] || '').replace(/"/g, '').trim(),       // Columna L
-      dictamen: (col[7] || '').replace(/"/g, '').trim()       // si necesitas dictamen en otra columna, ajusta aquí
+      accion: (col[11] || '').replace(/"/g, '').trim()       // Columna L
     });
   }
 }
@@ -178,7 +175,10 @@ function abrirModalConAgencia() {
     <div><b>Rev. General:</b> ${agenciaActiva.puede === 'SI' ? 'Puede reportar' : 'No puede reportar'}</div>
   `;
   document.getElementById('input-vin-modal').value = '';
-  document.getElementById('resultado-vin-box').style.display = 'none';
+  const rb = document.getElementById('resultado-vin-box');
+  rb.style.display = 'none';
+  rb.className = 'result-box';
+  rb.innerHTML = '';
   document.getElementById('overlay').style.display = 'block';
   document.getElementById('modal').style.display = 'flex';
   setTimeout(() => document.getElementById('input-vin-modal').focus(), 120);
@@ -191,13 +191,43 @@ function cerrarModal() {
   agenciaActiva = null;
 }
 
+function limpiarVIN(v) {
+  // Eliminar espacios y guiones, mantener solo caracteres alfanuméricos
+  return v.replace(/[\s\-]/g, '').replace(/[^a-zA-Z0-9]/g, '');
+}
+
 function auditarVinEnModal() {
-  const buscador = document.getElementById('input-vin-modal').value.trim().toLowerCase();
+  const raw = document.getElementById('input-vin-modal').value;
+  const vinClean = limpiarVIN(raw).toLowerCase();
   const respuestaBox = document.getElementById('resultado-vin-box');
-  if(buscador.length < 3) { respuestaBox.style.display = 'none'; return; }
-  const registro = cacheSeries.find(s => s.vin === buscador || s.vin.includes(buscador));
+
+  // Si no hay entrada, ocultar
+  if(vinClean.length === 0) { respuestaBox.style.display = 'none'; respuestaBox.className = 'result-box'; respuestaBox.innerHTML = ''; return; }
+
+  // Si menos de 17 caracteres, mostrar advertencia con cuantos faltan
+  if (vinClean.length < 17) {
+    const faltan = 17 - vinClean.length;
+    respuestaBox.style.display = 'block';
+    respuestaBox.className = 'result-box warn';
+    respuestaBox.innerHTML = `⚠️ VIN incompleto: faltan <b>${faltan}</b> dígitos para completar 17 caracteres.`;
+    return;
+  }
+
+  // Si más de 17, indicar que excede y no buscar
+  if (vinClean.length > 17) {
+    respuestaBox.style.display = 'block';
+    respuestaBox.className = 'result-box warn';
+    respuestaBox.innerHTML = `⚠️ VIN inválido: contiene <b>${vinClean.length}</b> caracteres. El VIN debe tener exactamente 17 caracteres.`;
+    return;
+  }
+
+  // Aquí vinClean tiene exactamente 17 caracteres: buscar en la base
+  const registro = cacheSeries.find(s => s.vin === vinClean || s.vin.includes(vinClean));
+
   respuestaBox.style.display = 'block';
-  if(registro) {
+
+  if (registro) {
+    respuestaBox.className = 'result-box';
     respuestaBox.innerHTML = `
       <b>Unidad Localizada:</b><br>
       Modelo: ${registro.modelo || 'N/A'}<br>
@@ -206,7 +236,12 @@ function auditarVinEnModal() {
       Acción / Dictamen: ${registro.accion || 'N/A'}
     `;
   } else {
-    respuestaBox.innerHTML = `❌ <span style="color:#ef4444;">VIN no localizado en la base de datos.</span>`;
+    // No existe registro: mostrar mensaje de error y solicitar Check List
+    respuestaBox.className = 'result-box error';
+    respuestaBox.innerHTML = `
+      ❌ <b>No hay registro del VIN en la base de datos.</b><br>
+      Será necesario solicitar el <b>Check List</b> a la agencia para continuar con el proceso.
+    `;
   }
 }
 </script>
