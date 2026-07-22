@@ -2,96 +2,563 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Consulta Agencias y VIN - Detalle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta Agencias y VIN - Vento Postventa</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
-.hub-header { background-color: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ff5722; display: flex; justify-content: space-between; align-items: center; }
-.brand-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #ff5722; }
-.hub-title { font-size: 16px; font-weight: 800; margin-top: 2px; }
-.search-container { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; }
-.input-box input { padding: 10px 20px; border: 2px solid #e2e8f0; border-radius: 25px; font-size: 14px; font-weight: 600; width: 100%; max-width: 450px; text-align: center; outline: none; transition: border-color 0.2s; }
-.input-box input:focus { border-color: #ff5722; }
-#kiosco-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
-.kiosco-card { background: #fff; border-radius: 10px; padding: 15px; border: 1px solid #e2e8f0; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; display: flex; flex-direction: column; position: relative; }
-.kiosco-card:hover { transform: translateY(-2px); border-color: #ff5722; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-.kiosco-card.selected { border-color: #ff5722; background-color: #fff7ed; box-shadow: 0 4px 12px rgba(255,87,34,0.15); }
-.card-name { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 10px; line-height: 1.2; }
-.card-data-row { font-size: 11px; margin-bottom: 4px; color: #64748b; }
-.card-legend { margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #ff5722; font-weight: 700; text-align: center; font-style: italic; }
-.overlay-blur { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(6px); z-index: 999; display: none; }
-.panel-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 520px; max-width: 95vw; background: #ffffff; color: #0f172a; border-radius: 10px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); z-index: 1000; display: none; flex-direction: column; overflow: hidden; }
-.modal-header { background: #0f172a; color: #fff; padding: 12px 14px; display:flex; justify-content:space-between; align-items:center; }
-.modal-body { padding: 14px; max-height: 60vh; overflow-y: auto; }
-.modal-close { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
-.input-vin { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; color: #0f172a; margin-top: 8px; box-sizing: border-box; font-weight: 600; font-size: 14px; outline: none; }
-.result-box { margin-top: 12px; padding: 12px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px; color: #0f172a; display: none; }
-.result-box.warn { background: #fff7ed; border-color: #ffedd5; color: #92400e; }
-.result-box.error { background: #fff1f2; border-color: #fecaca; color: #7f1d1d; }
-.small-note { font-size: 12px; color: #64748b; margin-top: 8px; }
+/* 
+  ESTÁNDARES INSTITUCIONALES MODERNIZADOS
+  Tipografía: Inter (Moderna y legible para dashboards)
+  Colores: Blanco, Negro, Naranja institucional
+*/
+:root {
+  --vento-white: #FFFFFF;
+  --vento-bg: #F8F9FA;
+  --vento-black: #1A1A1A;
+  --vento-gray-dark: #4B5563;
+  --vento-gray-light: #E5E7EB;
+  --vento-orange: #F28F17;
+  --vento-orange-hover: #D97D11;
+  --vento-green: #10B981; /* Acentos de éxito/garantía */
+  --vento-red: #EF4444;   /* Para errores/alertas/checklist */
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius: 12px;
+}
+body { 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+  background-color: var(--vento-bg); 
+  margin: 0; 
+  padding: 0; 
+  color: var(--vento-black); 
+  font-size: 15px; 
+}
+/* Layout Principal */
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+}
+/* Encabezado */
+.hub-header { 
+  background-color: var(--vento-white); 
+  padding: 20px 30px; 
+  border-bottom: 4px solid var(--vento-black); 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.brand-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.brand-title { 
+  font-size: 13px; 
+  font-weight: 600; 
+  color: var(--vento-gray-dark); 
+  letter-spacing: 1px;
+  text-transform: uppercase; 
+  margin-bottom: 4px;
+}
+.hub-title { 
+  font-size: 24px; 
+  font-weight: 700; 
+  color: var(--vento-black);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hub-title i {
+  color: var(--vento-orange);
+}
+.clock-display {
+  font-size: 15px; 
+  font-weight: 500; 
+  color: var(--vento-gray-dark);
+  background: var(--vento-bg);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--vento-gray-light);
+}
+/* Buscador Moderno */
+.search-section { 
+  margin: 30px 0; 
+  display: flex;
+  justify-content: center;
+}
+.input-box {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+}
+.input-box i {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--vento-gray-dark);
+  font-size: 18px;
+}
+.input-box input { 
+  width: 100%;
+  padding: 16px 20px 16px 50px; 
+  border: 2px solid var(--vento-gray-light); 
+  border-radius: var(--radius); 
+  font-size: 16px; 
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none; 
+  transition: all 0.3s ease; 
+  background: var(--vento-white);
+  box-shadow: var(--shadow-sm);
+}
+.input-box input:focus { 
+  border-color: var(--vento-orange); 
+  box-shadow: 0 0 0 4px rgba(242, 143, 23, 0.1);
+}
+/* Grid de Tarjetas */
+#kiosco-container { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 20px; 
+  position: relative;
+}
+.kiosco-card { 
+  background: var(--vento-white); 
+  border-radius: var(--radius); 
+  padding: 24px; 
+  border: 1px solid var(--vento-gray-light); 
+  cursor: pointer; 
+  transition: all 0.2s ease; 
+  display: flex; 
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.kiosco-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+.kiosco-card:hover { 
+  transform: translateY(-4px); 
+  border-color: var(--vento-orange); 
+  box-shadow: var(--shadow-lg); 
+}
+.kiosco-card:hover::before {
+  background-color: var(--vento-orange);
+}
+.card-header {
+  margin-bottom: 16px;
+}
+.card-name { 
+  font-size: 18px; 
+  font-weight: 700; 
+  color: var(--vento-black); 
+  line-height: 1.3;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+.data-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.data-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--vento-gray-dark);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.data-value {
+  font-size: 15px;
+  font-weight: 500;
+}
+/* Badges Modernos */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  width: fit-content;
+}
+.badge-orange { 
+  background-color: rgba(242, 143, 23, 0.1); 
+  color: var(--vento-orange-hover); 
+  border: 1px solid rgba(242, 143, 23, 0.2);
+}
+.badge-dark { 
+  background-color: var(--vento-gray-light); 
+  color: var(--vento-black); 
+  border: 1px solid #D1D5DB;
+}
+.badge-green {
+  background-color: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+.badge-red {
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+/* Mensaje de Agencia No Encontrada */
+#no-results-msg {
+  grid-column: 1 / -1;
+  background: var(--vento-white);
+  border: 2px dashed var(--vento-gray-light);
+  padding: 40px 30px;
+  border-radius: var(--radius);
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+#no-results-msg i {
+  font-size: 40px;
+  color: var(--vento-orange);
+}
+.no-results-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--vento-black);
+}
+.no-results-text {
+  font-size: 15px;
+  color: var(--vento-gray-dark);
+  max-width: 650px;
+  line-height: 1.6;
+}
+.no-results-highlight {
+  color: #059669;
+  font-weight: 700;
+  background: #ECFDF5;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #A7F3D0;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* Modal Moderno */
+.overlay-blur { 
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+  background-color: rgba(26, 26, 26, 0.4); 
+  backdrop-filter: blur(6px); 
+  z-index: 999; 
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.panel-modal { 
+  position: fixed; top: 50%; left: 50%; 
+  transform: translate(-50%, -48%) scale(0.96); 
+  width: 650px; 
+  max-width: 90vw; 
+  background: var(--vento-white); 
+  border-radius: 16px; 
+  box-shadow: var(--shadow-lg); 
+  z-index: 1000; 
+  display: none; 
+  flex-direction: column; 
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.panel-modal.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+.modal-header { 
+  padding: 24px 30px; 
+  display:flex; 
+  justify-content:space-between; 
+  align-items:flex-start; 
+  border-bottom: 1px solid var(--vento-gray-light); 
+}
+.modal-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.modal-header-title { 
+  font-size: 22px; 
+  font-weight: 700; 
+  color: var(--vento-black); 
+}
+.modal-close { 
+  background: var(--vento-gray-light); 
+  border: none; 
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--vento-gray-dark); 
+  font-size: 16px; 
+  cursor: pointer; 
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover { 
+  background: var(--vento-black);
+  color: var(--vento-white); 
+}
+.modal-body { 
+  padding: 30px; 
+  max-height: 75vh; 
+  overflow-y: auto; 
+}
+/* Sección Acción Base */
+.action-box {
+  background: var(--vento-black);
+  color: var(--vento-white);
+  padding: 20px;
+  border-radius: var(--radius);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-left: 6px solid var(--vento-orange);
+}
+.action-icon {
+  font-size: 24px;
+  color: var(--vento-orange);
+}
+.action-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.action-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9CA3AF;
+  font-weight: 600;
+}
+.action-text {
+  font-size: 18px;
+  font-weight: 600;
+}
+/* Input VIN */
+.vin-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vento-black);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.input-vin { 
+  width: 100%; 
+  padding: 16px 20px; 
+  border-radius: var(--radius); 
+  border: 2px solid var(--vento-gray-light); 
+  background: #F9FAFB; 
+  color: var(--vento-black); 
+  box-sizing: border-box; 
+  font-family: 'Inter', sans-serif; 
+  font-size: 18px; 
+  font-weight: 500;
+  outline: none; 
+  text-transform: uppercase; 
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+.input-vin:focus { 
+  border-color: var(--vento-orange); 
+  background: var(--vento-white);
+  box-shadow: 0 0 0 4px rgba(242, 143, 23, 0.1);
+}
+.input-vin::placeholder {
+  color: #9CA3AF;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+.small-note { 
+  font-size: 13px; 
+  color: var(--vento-gray-dark); 
+  margin-top: 10px; 
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Resultados VIN */
+.result-box { 
+  margin-top: 20px; 
+  padding: 20px; 
+  border-radius: var(--radius); 
+  font-size: 14px; 
+  display: none; 
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.result-box.warn { 
+  background-color: #FEF3C7;
+  border: 1px solid #F59E0B;
+  color: #92400E;
+}
+.result-box.success {
+  background-color: #ECFDF5;
+  border: 1px solid #34D399;
+  color: #065F46;
+}
+.result-box.error { 
+  background-color: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #991B1B;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 15px;
+  background: rgba(255,255,255,0.5);
+  padding: 15px;
+  border-radius: 8px;
+}
+.result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* Loader */
+.loader-container {
+  grid-column: 1/-1; 
+  text-align: center; 
+  padding: 60px; 
+  color: var(--vento-gray-dark); 
+  font-weight: 500; 
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+.loader-container i {
+  font-size: 32px;
+  color: var(--vento-orange);
+}
 </style>
 </head>
 <body>
-
-<div class="hub-header">
-  <div>
+<header class="hub-header">
+  <div class="brand-wrapper">
     <div class="brand-title">VENTO MOTORCYCLES U.S.A.</div>
-    <div class="hub-title">CONSULTA DE AGENCIAS Y VIN</div>
+    <div class="hub-title"><i class="fa-solid fa-motorcycle"></i> Validación de Postventa</div>
   </div>
-  <div id="reloj" style="font-size: 12px; font-weight: bold; color: #94a3b8;"></div>
-</div>
-
-<div class="search-container">
-  <div class="input-box">
-    <input type="text" id="input-agencia" placeholder="Escribe el número de agencia o nombre a buscar..." onkeyup="filtrarKiosco()">
-  </div>
-</div>
-
-<div id="kiosco-container">
-  <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
-    Iniciando sistemas...
-  </div>
-</div>
-
-<div class="overlay-blur" id="overlay" onclick="cerrarModal()"></div>
-
-<div class="panel-modal" id="modal">
-  <div class="modal-header">
-    <div id="modal-titulo" style="font-weight:700;">Agencia</div>
-    <div>
-      <button class="modal-close" onclick="cerrarModal()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+  <div id="reloj" class="clock-display"></div>
+</header>
+<main class="app-container">
+  <div class="search-section">
+    <div class="input-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="input-agencia" placeholder="Buscar agencia por nombre o ubicación..." onkeyup="filtrarKiosco()">
     </div>
   </div>
+  <div id="kiosco-container">
+    <div class="loader-container">
+      <i class="fa-solid fa-circle-notch fa-spin"></i>
+      Sincronizando bases de datos operativas...
+    </div>
+    
+    <!-- Contenedor dinámico de agencia no encontrada -->
+    <div id="no-results-msg">
+      <i class="fa-solid fa-store-slash"></i>
+      <div class="no-results-title">Agencia no localizada en el directorio</div>
+      <div class="no-results-text">
+        Actualmente nuestro sistema central abarca las sucursales VENTO de la <strong>1 a la 292</strong>. <br><br>
+        Si la agencia que buscas tiene una numeración superior, se clasifica como una <strong>agencia de reciente apertura</strong>, por lo que su validación automática será:
+        <br><span class="no-results-highlight">PASA COMO GARANTÍA</span>
+      </div>
+    </div>
+    
+  </div>
+</main>
+<div class="overlay-blur" id="overlay" onclick="cerrarModal()"></div>
+<div class="panel-modal" id="modal">
+  <div class="modal-header">
+    <div class="modal-header-content">
+      <div id="modal-badge-rev"></div>
+      <div id="modal-titulo" class="modal-header-title">Agencia</div>
+    </div>
+    <button class="modal-close" onclick="cerrarModal()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  
   <div class="modal-body">
-    <div id="modal-info" style="font-size:13px; color:#64748b;">Información de la agencia</div>
-
-    <hr style="margin:12px 0; border:none; border-top:1px solid #eef2f7;">
-
-    <div style="font-weight:700; margin-bottom:6px;">Detalle de Agencia</div>
-    <div id="detalle-agencia" style="font-size:13px; color:#0f172a; line-height:1.4;"></div>
-
-    <label style="margin-top:12px; display:block; font-weight:700; color:#0f172a;">Buscar VIN</label>
-    <input type="text" id="input-vin-modal" class="input-vin" placeholder="Ingresa el VIN (17 caracteres)..." onkeyup="auditarVinEnModal()">
+    
+    <div class="action-box">
+      <i class="fa-solid fa-clipboard-check action-icon"></i>
+      <div class="action-details">
+        <span class="action-label">Acción Base Dictaminada</span>
+        <div id="detalle-accion-container"></div>
+      </div>
+    </div>
+    
+    <div class="vin-section-title">
+      <i class="fa-solid fa-barcode" style="color: var(--vento-orange);"></i> 
+      Validación de VIN (Proyecto S)
+    </div>
+    
+    <input type="text" id="input-vin-modal" class="input-vin" placeholder="Ingresa los 17 caracteres de la moto..." onkeyup="auditarVinEnModal()" maxlength="17">
+    <div class="small-note"><i class="fa-solid fa-circle-info"></i> El VIN debe contener exactamente 17 caracteres alfanuméricos.</div>
+    
     <div id="resultado-vin-box" class="result-box"></div>
-    <div class="small-note">La búsqueda usa la base "Proyecto S" cargada desde Google Sheets. El VIN debe tener 17 caracteres alfanuméricos.</div>
+    
   </div>
 </div>
-
 <script>
-const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
-const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`;
-const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`;
-
+// ==========================================
+// CONFIGURACIÓN DE COLUMNAS 
+// ==========================================
+const COL_AGENCIA_NOMBRE = 1;   // Columna B
+const COL_ACCION_BASE = 13;     // Columna N (Índice 13)
+const COL_PUEDE_REPORTAR = 14;  // Columna O
+// ==========================================
+const sheetId = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY'; 
+const urlAgencias = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Agencias`; 
+const urlSeries = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Proyecto+S`; 
 let cacheSeries = [];
 let agenciaActiva = null;
 
 window.onload = () => {
-  fetch(urlAgencias).then(r => r.text()).then(csv => procesarAgencias(csv)).catch(e => console.error(e));
-  fetch(urlSeries).then(r => r.text()).then(csv => procesarSeries(csv)).catch(e => console.error(e));
-  setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString(); }, 1000);
+  fetch(urlAgencias).then(r => r.text()).then(csv => procesarAgencias(csv)).catch(e => console.error(e)); 
+  fetch(urlSeries).then(r => r.text()).then(csv => procesarSeries(csv)).catch(e => console.error(e)); 
+  setInterval(() => { 
+    document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
+  }, 1000);
 };
 
-function parsearLineaCSV(linea) {
+function parsearLineaCSV(linea) { 
   let resultado = [];
   let comillas = false;
   let celda = '';
@@ -105,146 +572,237 @@ function parsearLineaCSV(linea) {
   return resultado;
 }
 
-function procesarAgencias(texto) {
+function procesarAgencias(texto) { 
   const lineas = texto.split(/\r?\n/);
   const container = document.getElementById('kiosco-container');
-  container.innerHTML = '';
+  const noResultsMsg = document.getElementById('no-results-msg');
+  
+  // Limpiar contenedor (sin borrar el mensaje de no resultados)
+  Array.from(container.children).forEach(child => {
+    if (child.id !== 'no-results-msg') {
+      child.remove();
+    }
+  });
+  
   for(let i = 1; i < lineas.length; i++) {
     if(!lineas[i]) continue;
     const col = parsearLineaCSV(lineas[i]);
-    if(col.length < 2 || !col[1]) continue;
-    const id = col[0].replace(/"/g, '').trim();
-    const nombre = col[1].replace(/"/g, '').trim();
-    const accionBase = (col[11] || '').replace(/"/g, '').trim(); // Columna L -> índice 11
-    const base = (col[13] || '').replace(/"/g, '').trim();
-    const puede = (col[14] || '').replace(/"/g, '').trim().toUpperCase();
+    
+    if(col.length <= COL_AGENCIA_NOMBRE || !col[COL_AGENCIA_NOMBRE]) continue;
+    
+    const nombre = col[COL_AGENCIA_NOMBRE].replace(/"/g, '').trim();
+    let accionFinal = (col[COL_ACCION_BASE] || '').replace(/"/g, '').trim();
+    if(accionFinal === '') accionFinal = 'No especificada';
+    
+    const puede = (col[COL_PUEDE_REPORTAR] || '').replace(/"/g, '').trim().toUpperCase();
+    
     const card = document.createElement('div');
     card.className = 'kiosco-card';
-    card.setAttribute('data-id', id);
     card.setAttribute('data-search', nombre.toLowerCase());
-    const txtPuede = (puede === 'SI') ? '<span style="color:#22c55e;">Puede reportar</span>' : '<span style="color:#ef4444;">No puede reportar</span>';
+    
+    // UI Lógica para Badges
+    const classPuede = (puede === 'SI') ? 'badge-red' : 'badge-green';
+    const txtPuede = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
+    
+    // Lógica para Acción Base como Badge
+    let classAccion = 'badge-dark';
+    if (accionFinal.toUpperCase().includes('PASA COMO GARANTIA') || accionFinal.toUpperCase().includes('PASA POR GARANTIA')) {
+      classAccion = 'badge-green';
+    } else if (accionFinal.toUpperCase().includes('SE REQUIERE CHECK LIST')) {
+      classAccion = 'badge-red';
+    }
+    
+    // Renderizado del HTML con la acción base como Badge
     card.innerHTML = `
-      <div class="card-name">${nombre}</div>
-      <div class="card-data-row">ID: <b>${id}</b></div>
-      <div class="card-data-row">Acción Base: <b>${accionBase || base || 'N/A'}</b></div>
-      <div class="card-data-row">Rev. Gral: <b>${txtPuede}</b></div>
-      <div class="card-legend">Haz clic para ver detalle y consultar VIN</div>
+      <div class="card-header">
+        <div class="card-name">${nombre}</div>
+      </div>
+      <div class="card-body">
+        <div class="data-group">
+          <span class="data-label">Acción Base</span>
+          <span class="badge ${classAccion}">${accionFinal}</span>
+        </div>
+        <div style="margin-top: 8px;">
+          <span class="badge ${classPuede}">${txtPuede}</span>
+        </div>
+      </div>
     `;
+    
     card.onclick = () => {
-      document.querySelectorAll('.kiosco-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      agenciaActiva = { id, nombre, accionBase: accionBase || base || 'N/A', puede };
+      agenciaActiva = { nombre, accionBase: accionFinal, classAccion, puede, txtPuede, classPuede };
       abrirModalConAgencia();
     };
-    container.appendChild(card);
+    
+    // Insertamos la tarjeta antes del mensaje de no resultados
+    container.insertBefore(card, noResultsMsg);
   }
 }
 
-function procesarSeries(texto) {
+function procesarSeries(texto) { 
   const lineas = texto.split(/\r?\n/);
   for(let i = 1; i < lineas.length; i++) {
     if(!lineas[i]) continue;
     const col = parsearLineaCSV(lineas[i]);
-    // Mapeo corregido: D -> índice 3 (modelo), H -> índice 7 (recepción), L -> índice 11 (acción/dictamen)
-    if(col.length <= 5 || !col[5]) continue;
+    if(col.length <= 5 || !col[5]) continue; 
     cacheSeries.push({
-      vin: (col[5] || '').replace(/"/g, '').trim().toLowerCase(),
-      originalVin: (col[5] || '').replace(/"/g, '').trim(),
-      modelo: (col[3] || '').replace(/"/g, '').trim(),        // Columna D
-      fechaRecepcion: (col[7] || '').replace(/"/g, '').trim(),// Columna H
-      accion: (col[11] || '').replace(/"/g, '').trim()       // Columna L
+      vin: (col[5] || '').replace(/"/g, '').trim().toLowerCase(), 
+      originalVin: (col[5] || '').replace(/"/g, '').trim(), 
+      modelo: (col[3] || '').replace(/"/g, '').trim(), 
+      fechaRecepcion: (col[7] || '').replace(/"/g, '').trim(), 
+      accion: (col[11] || '').replace(/"/g, '').trim() 
     });
   }
 }
 
-function filtrarKiosco() {
-  const val = document.getElementById('input-agencia').value.trim();
-  const esNum = /^\d+$/.test(val);
+function filtrarKiosco() { 
+  const val = document.getElementById('input-agencia').value.trim().toLowerCase();
+  let tarjetasVisibles = 0;
+  
   document.querySelectorAll('.kiosco-card').forEach(c => {
-    const match = esNum ? c.getAttribute('data-id') === val : c.getAttribute('data-search').includes(val.toLowerCase());
-    c.style.display = (val === '' || match) ? 'flex' : 'none';
+    const match = c.getAttribute('data-search').includes(val);
+    if (val === '' || match) {
+      c.style.display = 'flex';
+      tarjetasVisibles++;
+    } else {
+      c.style.display = 'none';
+    }
   });
+  
+  // Mostrar u ocultar el mensaje de agencia no encontrada
+  const msjNoResultados = document.getElementById('no-results-msg');
+  if (msjNoResultados) {
+    msjNoResultados.style.display = (tarjetasVisibles === 0) ? 'flex' : 'none';
+  }
 }
 
 function abrirModalConAgencia() {
   if(!agenciaActiva) return;
+  
   document.getElementById('modal-titulo').innerText = agenciaActiva.nombre;
-  document.getElementById('modal-info').innerHTML = `ID: <b>${agenciaActiva.id}</b>`;
-  document.getElementById('detalle-agencia').innerHTML = `
-    <div><b>Acción Base:</b> ${agenciaActiva.accionBase}</div>
-    <div><b>Rev. General:</b> ${agenciaActiva.puede === 'SI' ? 'Puede reportar' : 'No puede reportar'}</div>
-  `;
-  document.getElementById('input-vin-modal').value = '';
+  document.getElementById('modal-badge-rev').innerHTML = `<span class="badge ${agenciaActiva.classPuede}">${agenciaActiva.txtPuede}</span>`;
+  
+  // Inserción de la acción base como Badge dentro del modal
+  const contenedorAccion = document.getElementById('detalle-accion-container');
+  contenedorAccion.innerHTML = `<span class="badge ${agenciaActiva.classAccion}" style="font-size: 15px; padding: 8px 16px;">${agenciaActiva.accionBase}</span>`;
+  
+  // Resetear input y resultados
+  const inputVin = document.getElementById('input-vin-modal');
+  inputVin.value = '';
+  
   const rb = document.getElementById('resultado-vin-box');
   rb.style.display = 'none';
   rb.className = 'result-box';
   rb.innerHTML = '';
+  
+  // Mostrar modal con animación
   document.getElementById('overlay').style.display = 'block';
-  document.getElementById('modal').style.display = 'flex';
-  setTimeout(() => document.getElementById('input-vin-modal').focus(), 120);
+  const modal = document.getElementById('modal');
+  modal.style.display = 'flex';
+  
+  // Pequeño timeout para permitir la transición CSS
+  setTimeout(() => {
+    document.getElementById('overlay').style.opacity = '1';
+    modal.classList.add('show');
+    inputVin.focus();
+  }, 10);
 }
 
 function cerrarModal() {
-  document.getElementById('overlay').style.display = 'none';
-  document.getElementById('modal').style.display = 'none';
-  document.querySelectorAll('.kiosco-card').forEach(c => c.classList.remove('selected'));
-  agenciaActiva = null;
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  
+  overlay.style.opacity = '0';
+  modal.classList.remove('show');
+  
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    modal.style.display = 'none';
+    agenciaActiva = null;
+  }, 300); // Tiempo de la transición CSS
 }
 
-function limpiarVIN(v) {
-  // Eliminar espacios y guiones, mantener solo caracteres alfanuméricos
+function limpiarVIN(v) { 
   return v.replace(/[\s\-]/g, '').replace(/[^a-zA-Z0-9]/g, '');
 }
 
-function auditarVinEnModal() {
+function auditarVinEnModal() { 
   const raw = document.getElementById('input-vin-modal').value;
-  const vinClean = limpiarVIN(raw).toLowerCase();
+  const vinClean = limpiarVIN(raw).toLowerCase(); 
   const respuestaBox = document.getElementById('resultado-vin-box');
-
-  // Si no hay entrada, ocultar
-  if(vinClean.length === 0) { respuestaBox.style.display = 'none'; respuestaBox.className = 'result-box'; respuestaBox.innerHTML = ''; return; }
-
-  // Si menos de 17 caracteres, mostrar advertencia con cuantos faltan
-  if (vinClean.length < 17) {
+  
+  if(vinClean.length === 0) { 
+    respuestaBox.style.display = 'none'; 
+    respuestaBox.className = 'result-box'; 
+    return; 
+  }
+  
+  if (vinClean.length < 17) { 
     const faltan = 17 - vinClean.length;
     respuestaBox.style.display = 'block';
     respuestaBox.className = 'result-box warn';
-    respuestaBox.innerHTML = `⚠️ VIN incompleto: faltan <b>${faltan}</b> dígitos para completar 17 caracteres.`;
+    respuestaBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <b>VIN incompleto:</b> faltan <b>${faltan}</b> dígitos para los 17 requeridos.`;
     return;
   }
-
-  // Si más de 17, indicar que excede y no buscar
-  if (vinClean.length > 17) {
+  
+  if (vinClean.length > 17) { 
     respuestaBox.style.display = 'block';
     respuestaBox.className = 'result-box warn';
-    respuestaBox.innerHTML = `⚠️ VIN inválido: contiene <b>${vinClean.length}</b> caracteres. El VIN debe tener exactamente 17 caracteres.`;
+    respuestaBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <b>VIN excedido:</b> contiene <b>${vinClean.length}</b> caracteres.`;
     return;
   }
-
-  // Aquí vinClean tiene exactamente 17 caracteres: buscar en la base
-  const registro = cacheSeries.find(s => s.vin === vinClean || s.vin.includes(vinClean));
-
+  
+  const registro = cacheSeries.find(s => s.vin === vinClean || s.vin.includes(vinClean)); 
   respuestaBox.style.display = 'block';
-
+  
   if (registro) {
-    respuestaBox.className = 'result-box';
+    const accionUpper = (registro.accion || '').toUpperCase();
+    
+    // Lógica dinámica para asignar color e ícono al recuadro de resultados del VIN
+    let boxClass = 'result-box success'; // Por defecto verde
+    let titleIcon = '<i class="fa-solid fa-circle-check"></i>';
+    
+    if (accionUpper.includes('SE REQUIERE CHECK LIST')) {
+      boxClass = 'result-box error'; // Cambia a fondo/bordes rojos
+      titleIcon = '<i class="fa-solid fa-triangle-exclamation"></i>'; // Cambia el ícono a advertencia
+    } else if (accionUpper.includes('PASA POR GARANTIA') || accionUpper.includes('PASA COMO GARANTIA')) {
+      boxClass = 'result-box success';
+      titleIcon = '<i class="fa-solid fa-circle-check"></i>';
+    }
+
+    respuestaBox.className = boxClass;
     respuestaBox.innerHTML = `
-      <b>Unidad Localizada:</b><br>
-      Modelo: ${registro.modelo || 'N/A'}<br>
-      VIN: <b>${registro.originalVin}</b><br>
-      Recepción: <b>${registro.fechaRecepcion || 'N/A'}</b><br>
-      Acción / Dictamen: ${registro.accion || 'N/A'}
+      <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+        ${titleIcon} Unidad Localizada en Proyecto S
+      </div>
+      <div class="result-grid">
+        <div class="result-item">
+          <span class="data-label">Modelo</span>
+          <span class="data-value">${registro.modelo || 'N/A'}</span>
+        </div>
+        <div class="result-item">
+          <span class="data-label">VIN Registrado</span>
+          <span class="data-value" style="font-family: monospace; font-size: 16px;">${registro.originalVin}</span>
+        </div>
+        <div class="result-item">
+          <span class="data-label">Recepción</span>
+          <span class="data-value">${registro.fechaRecepcion || 'N/A'}</span>
+        </div>
+        <div class="result-item">
+          <span class="data-label">Dictamen</span>
+          <span class="data-value" style="font-weight: 700;">${registro.accion || 'N/A'}</span>
+        </div>
+      </div>
     `;
   } else {
-    // No existe registro: mostrar mensaje de error y solicitar Check List
     respuestaBox.className = 'result-box error';
     respuestaBox.innerHTML = `
-      ❌ <b>No hay registro del VIN en la base de datos.</b><br>
-      Será necesario solicitar el <b>Check List</b> a la agencia para continuar con el proceso.
+      <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-circle-xmark"></i> VIN no localizado
+      </div>
+      <div style="line-height: 1.5;">Será necesario solicitar el <b>Check List</b> y la cotización correspondiente a la agencia para poder continuar con el proceso.</div>
     `;
   }
 }
 </script>
-
 </body>
 </html>
